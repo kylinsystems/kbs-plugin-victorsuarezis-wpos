@@ -35,7 +35,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.ValueNamePair;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zkex.zul.Center;
+import org.zkoss.zul.Center;
 
 public class PaymentPanel extends Collect implements EventListener {
 	

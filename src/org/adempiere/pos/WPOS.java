@@ -47,9 +47,9 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zkex.zul.Center;
-import org.zkoss.zkex.zul.East;
-import org.zkoss.zkex.zul.North;
+import org.zkoss.zul.Center;
+import org.zkoss.zul.East;
+import org.zkoss.zul.North;
 import org.zkoss.zul.Iframe;
 
 /**
@@ -192,7 +192,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, I_POSP
 //		setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		boolean ok = setPOS(salesRep_ID);
 		if(!ok && getMsgLocator() == null){
-			MPOS[] poss = getPOSs(salesRep_ID);
+			org.idempiere.model.MPOS[] poss = getPOSs(salesRep_ID);
 			//	Select POS
 			String msg = Msg.getMsg(m_ctx, "SelectPOS");
 			selection = new Window();

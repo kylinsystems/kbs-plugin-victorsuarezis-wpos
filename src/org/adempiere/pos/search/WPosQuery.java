@@ -37,13 +37,13 @@ import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.WListbox;
 import org.adempiere.webui.component.Window;
-import org.compiere.apps.ConfirmPanel;
+import org.adempiere.webui.component.ConfirmPanel;
 import org.compiere.model.MPOS;
 import org.compiere.pos.QueryProduct;
 import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zkex.zul.South;
+import org.zkoss.zul.South;
 
 /**
  * 
@@ -71,7 +71,7 @@ public abstract class WPosQuery extends Window implements  MouseListener, ListSe
 	/**	Logger			*/
 	protected static CLogger log = CLogger.getCLogger(QueryProduct.class);
 	/**	Underlying POS Model				*/
-	protected MPOS p_pos = null;
+	protected org.idempiere.model.MPOS p_pos = null;
 
 	private Button f_New;
 	public Button f_Edit;
