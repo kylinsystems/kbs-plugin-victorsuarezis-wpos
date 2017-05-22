@@ -16,7 +16,7 @@ import org.compiere.model.PO;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zkex.zul.Center;
+import org.zkoss.zul.Center;
 
 public class WPOSOrderLinePanel extends WPosSubPanel implements WTableModelListener, I_POSPanel,FocusListener {
 	

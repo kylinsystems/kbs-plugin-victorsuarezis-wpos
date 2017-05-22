@@ -18,6 +18,7 @@ import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.ListboxFactory;
+import org.adempiere.webui.component.ListboxPOS;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
@@ -44,7 +45,7 @@ public class PaymentPanel extends Collect implements EventListener {
 	private Grid mainGrid;
 	private Properties p_ctx;
 
-	private Listbox tenderTypePick = ListboxFactory.newDropdownListbox();
+	private ListboxPOS tenderTypePick = (ListboxPOS) ListboxFactory.newDropdownListbox();
 	private Listbox bankList = ListboxFactory.newDropdownListbox();
 	public POSNumberBox fPayAmt;
 	private WPosTextField fCheckAccountNo;
@@ -108,11 +109,11 @@ public class PaymentPanel extends Collect implements EventListener {
 		// Payment type selection
 		int AD_Column_ID = 8416; //C_Payment_v.TenderType
 		MLookup lookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
-		ArrayList<Object> types = lookup.getData(true, false, true, true);
+		ArrayList<Object> types = lookup.getData(true, false, true, true, false);
 		
 		AD_Column_ID = 8374; //C_Payment_v.TenderType
 		MLookup cardlookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
-		ArrayList<Object> cards = cardlookup.getData(true, false, true, true);
+		ArrayList<Object> cards = cardlookup.getData(true, false, true, true, false);
 		
 		// Add Bank List
 		ValueNamePair[] banks = getBank();
@@ -166,11 +167,11 @@ public class PaymentPanel extends Collect implements EventListener {
 		// Payment type selection
 		int AD_Column_ID = 8416; //C_Payment_v.TenderType
 		MLookup lookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
-		ArrayList<Object> types = lookup.getData(true, false, true, true);
+		ArrayList<Object> types = lookup.getData(true, false, true, true, false);
 		
 		AD_Column_ID = 8374; //C_Payment_v.TenderType
 		MLookup cardlookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
-		ArrayList<Object> cards = cardlookup.getData(true, false, true, true);
+		ArrayList<Object> cards = cardlookup.getData(true, false, true, true, false);
 		
 		// Add Bank List
 		ValueNamePair[] banks = getBank();

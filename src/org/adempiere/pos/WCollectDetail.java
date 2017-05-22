@@ -19,6 +19,7 @@ import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.ListboxFactory;
+import org.adempiere.webui.component.ListboxPOS;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.compiere.model.MLookup;
@@ -43,7 +44,7 @@ public class WCollectDetail extends CollectDetail implements EventListener, I_PO
 	private Grid 			v_CreditPanel;
 	private Grid 			v_DebitPanel;
 	private Properties 		p_ctx;
-	private Listbox 		fTenderType;
+	private ListboxPOS 		fTenderType;
 	public POSNumberBox 	fPayAmt;
 	
 	/**	Check				*/
@@ -57,9 +58,9 @@ public class WCollectDetail extends CollectDetail implements EventListener, I_PO
 	/**	Credit Card			*/
 	private WPosTextField 	fCCardNo;
 	private WPosTextField 	fCCardName;
-	private Listbox 		fCCardType;
-	private Listbox 		fCreditCardExpMM;
-	private Listbox 		fCreditCardExpYY;
+	private ListboxPOS 		fCCardType;
+	private ListboxPOS 		fCreditCardExpMM;
+	private ListboxPOS		fCreditCardExpYY;
 	private WPosTextField 	fCCardVC;
 	private Label 			lCCardNo;
 	private Label 			lCCardName;
@@ -109,13 +110,13 @@ public class WCollectDetail extends CollectDetail implements EventListener, I_PO
 		// Payment type selection
 		int AD_Column_ID = 8416; //C_Payment_v.TenderType
 		MLookup lookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
-		ArrayList<Object> types = lookup.getData(true, false, true, true);
+		ArrayList<Object> types = lookup.getData(true, false, true, true, false);
 		
 		bMinus = v_Parent.createButtonAction("Minus", KeyStroke.getKeyStroke(KeyEvent.VK_F3, Event.F3));
 		bMinus.addActionListener(this);
 		row.setHeight("55px");
 		
-		fTenderType = ListboxFactory.newDropdownListbox();
+		fTenderType = (ListboxPOS) ListboxFactory.newDropdownListbox();
 				
 		// default to cash payment
 		for (Object obj : types) {
@@ -186,11 +187,11 @@ public class WCollectDetail extends CollectDetail implements EventListener, I_PO
 		
 		int AD_Column_ID = 8374; //C_Payment_v.TenderType
 		MLookup cardlookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
-		ArrayList<Object> cards = cardlookup.getData(true, false, true, true);
+		ArrayList<Object> cards = cardlookup.getData(true, false, true, true, false);
 		
 		lCCardType = new Label(Msg.translate(p_ctx, "CreditCardType"));
 		row = rows.newRow();
-		fCCardType = ListboxFactory.newDropdownListbox();
+		fCCardType = (ListboxPOS) ListboxFactory.newDropdownListbox();
 		row.appendChild(fCCardType);
 		fCCardType.setStyle(HEIGHT+WIDTH+FONT_SIZE);
 		fCCardType.setValue(lCCardType.getValue());
@@ -222,7 +223,7 @@ public class WCollectDetail extends CollectDetail implements EventListener, I_PO
 		fCCardName.addEventListener("onFocus", this);
 		
 		//	For Card Month
-		fCreditCardExpMM = ListboxFactory.newDropdownListbox();
+		fCreditCardExpMM = (ListboxPOS) ListboxFactory.newDropdownListbox();
 		ValueNamePair[] data = getCCMonths();
 		for(ValueNamePair pp : data) {
 			fCreditCardExpMM.appendItem(String.valueOf(pp.getName()),pp.getID());
@@ -233,7 +234,7 @@ public class WCollectDetail extends CollectDetail implements EventListener, I_PO
 		fCreditCardExpMM.setStyle(HEIGHT+"width:"+75+"px;"+FONT_SIZE);
 		
 		//	For Card Year
-		fCreditCardExpYY = ListboxFactory.newDropdownListbox();
+		fCreditCardExpYY = (ListboxPOS) ListboxFactory.newDropdownListbox();
 		data = getCCYears();
 		for(ValueNamePair pp : data) {
 			fCreditCardExpYY.appendItem(String.valueOf(pp.getName()),pp.getID());

@@ -24,7 +24,7 @@ import javax.swing.KeyStroke;
 import org.adempiere.webui.component.Borderlayout;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.session.SessionManager;
-import org.compiere.model.MPOS;
+import org.idempiere.model.MPOS;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.EventListener;

@@ -27,7 +27,7 @@ import java.util.logging.Level;
 
 import javax.swing.KeyStroke;
 
-import org.adempiere.pipo.exception.POSaveFailedException;
+import org.adempiere.pipo2.exception.POSaveFailedException;
 import org.adempiere.pos.service.Collect;
 import org.adempiere.pos.service.I_POSPanel;
 import org.adempiere.webui.apps.AEnv;
@@ -55,9 +55,9 @@ import org.compiere.util.Trx;
 import org.compiere.util.TrxRunnable;
 import org.compiere.util.ValueNamePair;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zkex.zul.Center;
-import org.zkoss.zkex.zul.North;
-import org.zkoss.zkex.zul.South;
+import org.zkoss.zul.Center;
+import org.zkoss.zul.North;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
 
 

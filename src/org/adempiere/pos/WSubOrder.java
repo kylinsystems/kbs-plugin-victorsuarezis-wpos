@@ -83,11 +83,11 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zkex.zul.Center;
-import org.zkoss.zkex.zul.East;
-import org.zkoss.zkex.zul.North;
-import org.zkoss.zkex.zul.South;
-import org.zkoss.zkex.zul.West;
+import org.zkoss.zul.Center;
+import org.zkoss.zul.East;
+import org.zkoss.zul.North;
+import org.zkoss.zul.South;
+import org.zkoss.zul.West;
 import org.zkoss.zul.Doublebox;
 import org.zkoss.zul.Image;
 import org.zkoss.zul.Space;
@@ -279,7 +279,7 @@ public class WSubOrder extends WPosSubPanel
 		m_table.getModel().addTableModelListener(this);
 		
 		m_table.setColumnClass(4, BigDecimal.class, !isModifiyPrice);
-		m_table.setInnerHeight("20%");
+		m_table.setHeight("20%");
 		Center center = new Center();
 		center.setStyle("border: none; width:400px");
 		appendChild(center);

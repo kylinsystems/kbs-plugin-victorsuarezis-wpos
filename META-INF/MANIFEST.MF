@@ -9,12 +9,22 @@ Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
  org.adempiere.plugin.utils;bundle-version="3.1.0",
  org.adempiere.ui.zk;bundle-version="3.1.0",
  org.adempiere.ui;bundle-version="3.1.0",
+ org.adempiere.ui.swing,
  org.zkoss.zk.library,
- org.adempiere.ui.swing;bundle-version="3.1.0"
+ org.adempiere.pipo;bundle-version="3.1.0"
 Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
 Bundle-Vendor: Ing. Victor Suárez - victor.suarez.is@gmail.com
 Service-Component: OSGI-INF/FormFactoryWPOS.xml
-Import-Package: org.zkoss.zhtml,
+Import-Package: org.adempiere.plaf,
+ org.adempiere.pos,
+ org.compiere.apps.search,
+ org.compiere.grid.ed,
+ org.compiere.minigrid,
+ org.compiere.plaf,
+ org.compiere.pos,
+ org.compiere.swing,
+ org.zkoss.zhtml,
  org.zkoss.zk.ui,
  org.zkoss.zk.ui.event,
  org.zkoss.zul
+Export-Package: net.miginfocom.swing

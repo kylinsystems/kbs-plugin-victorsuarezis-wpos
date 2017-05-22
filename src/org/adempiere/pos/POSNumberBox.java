@@ -148,7 +148,7 @@ public class POSNumberBox extends Div
     public void setValue(Object value)
     {
     	if (value == null)
-    		decimalBox.setValue(null);
+    		decimalBox.setValue(Env.ZERO);
     	else if (value instanceof BigDecimal)
     		decimalBox.setValue((BigDecimal) value);
     	else if (value instanceof Number)

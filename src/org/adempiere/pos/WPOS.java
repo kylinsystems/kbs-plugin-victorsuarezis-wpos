@@ -40,7 +40,7 @@ import org.adempiere.webui.panel.ADForm;
 import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.window.FDialog;
-import org.compiere.model.MPOS;
+import org.idempiere.model.MPOS;
 import org.compiere.pos.PosKeyboardFocusManager;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
