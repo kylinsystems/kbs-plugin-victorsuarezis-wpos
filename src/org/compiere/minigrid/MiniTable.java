@@ -35,9 +35,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.compiere.apps.search.Info_Column;
-import org.compiere.grid.ed.VCellRenderer;
-import org.compiere.grid.ed.VHeaderRenderer;
-import org.compiere.model.MRole;
+import org.compiere.grid.ed.VCellRendererPOS;
+import org.compiere.grid.ed.VHeaderRendererPOS;
+import org.compiere.model.MRolePOS;
 import org.compiere.model.PO;
 import org.compiere.swing.CCheckBox;
 import org.compiere.swing.CTable;
@@ -295,8 +295,8 @@ public class MiniTable extends CTable implements IMiniTable
 		if (from.length() == 0)
 			return sql.toString();
 		//
-		String finalSQL = MRole.getDefault().addAccessSQL(sql.toString(), 
-			tableName, MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+		String finalSQL = MRolePOS.getDefault().addAccessSQL(sql.toString(), 
+			tableName, MRolePOS.SQL_FULLYQUALIFIED, MRolePOS.SQL_RO);
 		log.finest(finalSQL);
 		return finalSQL;
 	}   //  prepareTable
@@ -372,12 +372,12 @@ public class MiniTable extends CTable implements IMiniTable
 			tc.setPreferredWidth(20);
 			tc.setResizable(false);
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.Number));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.Number));
 		}
 		//  Boolean
 		else if (c == Boolean.class)
 		{
-			tc.setCellRenderer(new CheckRenderer());
+			tc.setCellRenderer(new CheckRendererPOS());
 			if (readOnly)
 				tc.setCellEditor(new ROCellEditor());
 			else
@@ -389,24 +389,24 @@ public class MiniTable extends CTable implements IMiniTable
 			}
 			m_minWidth.add(new Integer(30));
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.YesNo));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.YesNo));
 		}
 		//  Date
 		else if (c == Timestamp.class)
 		{
-			tc.setCellRenderer(new VCellRenderer(DisplayType.Date));
+			tc.setCellRenderer(new VCellRendererPOS(DisplayType.Date));
 			if (readOnly)
 				tc.setCellEditor(new ROCellEditor());
 			else
 				tc.setCellEditor(new MiniCellEditor(c));
 			m_minWidth.add(new Integer(30));
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.DateTime));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.DateTime));
 		}
 		//  Amount
 		else if (c == BigDecimal.class)
 		{
-			tc.setCellRenderer(new VCellRenderer(DisplayType.Amount));
+			tc.setCellRenderer(new VCellRendererPOS(DisplayType.Amount));
 			if (readOnly)
 			{
 				tc.setCellEditor(new ROCellEditor());
@@ -418,12 +418,12 @@ public class MiniTable extends CTable implements IMiniTable
 				m_minWidth.add(new Integer(80));
 			}
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.Number));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.Number));
 		}
 		//  Number
 		else if (c == Double.class)
 		{
-			tc.setCellRenderer(new VCellRenderer(DisplayType.Number));
+			tc.setCellRenderer(new VCellRendererPOS(DisplayType.Number));
 			if (readOnly)
 			{
 				tc.setCellEditor(new ROCellEditor());
@@ -435,31 +435,31 @@ public class MiniTable extends CTable implements IMiniTable
 				m_minWidth.add(new Integer(80));
 			}
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.Number));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.Number));
 		}
 		//  Integer
 		else if (c == Integer.class)
 		{
-			tc.setCellRenderer(new VCellRenderer(DisplayType.Integer));
+			tc.setCellRenderer(new VCellRendererPOS(DisplayType.Integer));
 			if (readOnly)
 				tc.setCellEditor(new ROCellEditor());
 			else
 				tc.setCellEditor(new MiniCellEditor(c));
 			m_minWidth.add(new Integer(30));
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.Number));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.Number));
 		}
 		//  String
 		else
 		{
-			tc.setCellRenderer(new VCellRenderer(DisplayType.String));
+			tc.setCellRenderer(new VCellRendererPOS(DisplayType.String));
 			if (readOnly)
 				tc.setCellEditor(new ROCellEditor());
 			else
 				tc.setCellEditor(new MiniCellEditor(String.class));
 			m_minWidth.add(new Integer(30));
 			
-			tc.setHeaderRenderer(new VHeaderRenderer(DisplayType.String));
+			tc.setHeaderRenderer(new VHeaderRendererPOS(DisplayType.String));
 		}
 	//	log.fine( "Renderer=" + tc.getCellRenderer().toString() + ", Editor=" + tc.getCellEditor().toString());
 	}   //  setColumnClass
