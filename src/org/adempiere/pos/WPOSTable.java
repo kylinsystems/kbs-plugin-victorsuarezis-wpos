@@ -146,11 +146,11 @@ public class WPOSTable extends WListboxPOS {
 						data = new KeyNamePair(key, display);
 						rsColOffset++;
 					}
-					else if (columnClass == DeleteColumn.class)
-					{
-						// TODO factor out this generation
-						data = new DeleteColumn(rs.getInt(rsColIndex));
-					}
+//					else if (columnClass == DeleteColumn.class)
+//					{
+//						// TODO factor out this generation
+//						data = new DeleteColumn(rs.getInt(rsColIndex));
+//					}
 					else
 					{
 						// TODO factor out this cleanup
