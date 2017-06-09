@@ -25,11 +25,12 @@ import org.compiere.model.MTable;
 import org.compiere.model.PO;
 import org.compiere.model.POInfo;
 import org.compiere.util.KeyNamePair;
+import org.idempiere.model.I_C_POS;
 
 /** Generated Model for C_POS
  *  @author iDempiere (generated) 
  *  @version Release 3.1 - $Id$ */
-public class X_C_POS extends PO implements org.idempiere.model.I_C_POS, I_Persistent 
+public class X_C_POS extends PO implements I_C_POS, I_Persistent 
 {
 
 	/**

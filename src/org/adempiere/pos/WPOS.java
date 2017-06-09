@@ -18,16 +18,19 @@
 package org.adempiere.pos;
 
 import java.awt.KeyboardFocusManager;
-import java.sql.Timestamp;
+import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Properties;
-import java.util.logging.Level;
+import java.util.List;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.service.CPOS;
-import org.adempiere.pos.service.I_POSPanel;
+import org.adempiere.pos.service.POSPanelInterface;
+import org.adempiere.pos.service.POSScalesPanelInterface;
+import org.adempiere.pos.test.SideServer;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Borderlayout;
 import org.adempiere.webui.component.Button;
+import org.adempiere.webui.component.ConfirmPanel;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Listbox;
@@ -39,89 +42,136 @@ import org.adempiere.webui.component.Window;
 import org.adempiere.webui.panel.ADForm;
 import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
+import org.adempiere.webui.panel.StatusBarPanel;
 import org.adempiere.webui.window.FDialog;
 import org.idempiere.model.MPOS;
-import org.compiere.pos.PosKeyboardFocusManager;
+import org.compiere.model.MPOSKey;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.East;
-import org.zkoss.zul.North;
+import org.zkoss.zul.South;
+import org.zkoss.zul.West;
 import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Timer;
 
 /**
- *	Point of Sales Main Window.
- * @author Raul Muñoz 19/03/2015, 12:57
- *
+ *	Point of Sales Main Window. 
+ * @author Mario Calderon, mario.calderon@westfalia-it.com, Systemhaus Westfalia, http://www.westfalia-it.com
+ * @author Raul Muñoz, rmunoz@erpcya.com, ERPCYA http://www.erpcya.com
+ * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
+ * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public class WPOS extends CPOS implements IFormController, EventListener, I_POSPanel {
+public class WPOS extends CPOS implements IFormController, EventListener, POSPanelInterface, POSScalesPanelInterface {
+
+	/** Window No 							*/
+	private int 							windowNo 	 = 0 ;
+	private CustomForm 						form 		 = new CustomForm();
+	/**	FormFrame							*/
+	private Iframe 							frame;
+	/**	Logger								*/
+	private CLogger							log 		 = CLogger.getCLogger(getClass());
+	/** Window								*/
+	private Window 							selection;
+	/** Panel								*/
+	public Panel 							v_Panel 	 = new Panel();
+	/**	Timer for logout					*/
+	private Timer							logoutTimer;
+	/**	Timer for User Pin					*/
+	private Timer 							userPinTimer;
+	/** Find scales Timer 					*/
+	private Timer 							scalesTimer;
+	/** Is Correct User Pin			*/
+	private Boolean							isCorrectUserPin;
+	/** User Pin Listener 			*/
+	private WPOSUserPinListener 			userPinListener;
+	/** Electronic Scales			*/
+	private WPOSScalesListener 				scalesListener;
+	/** Keyoard Focus Manager				*/
+	private POSKeyboardFocusManager 		focusManager = null;
+	/**	Key Boards							*/
+	private HashMap<Integer, WPOSKeyboard> 	keyboards 	 = new HashMap<Integer, WPOSKeyboard>();
+	/** Order Panel							*/
+	private WPOSActionPanel 				actionPanel;
+	/** Quantity panel **/
+	private WPOSQuantityPanel 				quantityPanel;
+	/**	Info Product Panel	*/
+	private WPOSInfoProduct 				infoProductPanel;
+	/** Current Line		*/
+	private WPOSOrderLinePanel 				orderLinePanel;
+	/** Function Keys		*/
+	private WPOSDocumentPanel 				documentPanel;
+	/** Status Bar 							*/
+	private StatusBarPanel 					statusBar = new StatusBarPanel();
+
+	/** Actions 							*/
+	private Button 							okButton = new Button("Ok");
+	private Button 							cancelButton = new Button("Cancel");
+	private ConfirmPanel 					confirm;
+	private Listbox 						listTerminal = ListboxFactory.newDropdownListbox();
+	private List<MPOS> poss;
+
+	/** Default Font Size Medium 				*/
+	public static final String 	FONTSIZEMEDIUM	= "Font-size:1.3em;";
+	/** Default Font Size Small 				*/
+	public static final String 	FONTSIZESMALL 	= "Font-size:small;";
+	/** Default Font Size Large 				*/
+	public static final String 	FONTSIZELARGE 	= "Font-size:large;";
+	/** Default Font Weight	 					*/
+	public static final String 	FONTSTYLE 		= "font-weight:bold;";
+	/** Status bar info							*/
+	private String 							statusBarInfo = "";
+	/** Side Server for Printer 				*/
+	private static SideServer 				sideServer;
 	/**
 	 * 	Constructor - see init 
 	 */
-	public WPOS()
-	{
-		m_focusMgr = new PosKeyboardFocusManager();
-		KeyboardFocusManager.setCurrentKeyboardFocusManager(m_focusMgr);
+	public WPOS() {
+		//Setting Keyboard Manager
+		settingKeyboardFocusManager();
 		init();
 	}	//	PosPanel
-	
 
-	private CustomForm form = new CustomForm();
-	/**	FormFrame			*/
-	private Iframe 		m_frame;
-	/**	Logger				*/
-	private CLogger			log = CLogger.getCLogger(getClass());
-	
-	/** Keyoard Focus Manager		*/
-	private PosKeyboardFocusManager	m_focusMgr = null;
-	
-	/** Order Panel				*/
-	private WPOSActionPanel f_OrderPanel;
-	private WPOSProductPanel f_ProductKeysPanel;
-	private WPOSOrderLinePanel f_OrderLinePanel;
-	/** Current Line				*/
-	
-	private boolean action = false;
+	/**
+	 * Load keyboard
+	 */
+	private void settingKeyboardFocusManager() {
+		if (isVirtualKeyboard()) {
+			focusManager = new POSKeyboardFocusManager();
+			KeyboardFocusManager.setCurrentKeyboardFocusManager(focusManager);
+		}
+	}
 
-	private Button b_ok = new Button("Ok");
-	private Button b_cancel = new Button("Cancel");
-	private int m_Sales_ID = 0;
-	private Window selection;
-	//	Today's (login) date		*/
-	private Timestamp			m_today = Env.getContextAsDate(m_ctx, "#Date");
-	
-	private Iframe frame;
-	private HashMap<Integer, WPOSKeyboard> keyboards = new HashMap<Integer, WPOSKeyboard>();
-	public Panel parameterPanel = new Panel();
-	private Listbox listTerminal = ListboxFactory.newDropdownListbox();
-	/**	POS Message					*/
-	private String 				m_POSMsg;	
-	/**	POS Configuration		*/
-	private MPOS 				m_POS;
+
+
 	/**
 	 *	zk Initialize Panel
 	 *  @param WindowNo window
 	 *  @param frame parent frame
 	 */
-	public void init ()
-	{
+	public void init () {
 		log.info("init - SalesRep_ID=" + Env.getAD_User_ID(getCtx()));
-//		m_WindowNo = 0;
-		m_frame = frame;
+		windowNo = form.getWindowNo();
+		isCorrectUserPin = null;
 		//
-		try
-		{
-			dynInit();
-			
-		}
-		catch(Exception e)
-		{
-			log.log(Level.SEVERE, "init", e);
+		try {
+			dynInit();	
+		} catch (AdempierePOSException exception) {
+			FDialog.error( getWindowNo() , frame, exception.getLocalizedMessage());
+			dispose();
+			return;
 		}
 		
+		if (getAutoLogoutDelay() > 0 && logoutTimer == null) {
+			logoutTimer = new Timer(1000);
+			logoutTimer.start();
+		}
+		
+		startServerSocket();
 	}	//	init
 
 	/**************************************************************************
@@ -129,171 +179,173 @@ public class WPOS extends CPOS implements IFormController, EventListener, I_POSP
 	 * 	PosPanel has a GridBagLayout.
 	 * 	The Sub Panels return their position
 	 */
-	private boolean dynInit()
-	{
+	private boolean dynInit() { 
+		setMPOS();
+		userPinListener = new WPOSUserPinListener(this);
+		//Delay 5 seconds by default
+		userPinTimer = new Timer((getPINEntryTimeout() + 5)  * 1000);
+		userPinTimer.addEventListener(Events.ON_TIMER, userPinListener);
+		userPinListener.setTimer(userPinTimer);
+		userPinTimer.setRunning(false);
 		Borderlayout mainLayout = new Borderlayout();	
-		
-		if (!setMPOS()){
-			m_POSMsg = "@POS.NoPOSForUser@";
-			dispose();
-			return false;
-		}
-
-		f_OrderPanel = new WPOSActionPanel(this);
-		f_ProductKeysPanel = new WPOSProductPanel(this);
-		f_OrderLinePanel = new WPOSOrderLinePanel(this);
-
+		actionPanel = new WPOSActionPanel(this);
+		documentPanel = new WPOSDocumentPanel(this);
+		orderLinePanel = new WPOSOrderLinePanel(this);
+		infoProductPanel = new WPOSInfoProduct(this);
+		quantityPanel = new WPOSQuantityPanel(this);
 		East east = new East();
 		Center center = new Center();
-		North north = new North();
+		West westPanel = new West();
+		South southPanel = new South();
 		Borderlayout fullPanel = new Borderlayout();
-		
+		Borderlayout mediumPanel = new Borderlayout();
+		statusBar.appendChild(userPinTimer);
+		southPanel.appendChild(statusBar);
 		center.setStyle("border: none; width:40%");
 		center.appendChild(fullPanel);
 		mainLayout.appendChild(center);
+		center.setStyle("border: none; height:auto%;");
+		fullPanel.setWidth("100%");
+		fullPanel.setHeight("auto");
+		fullPanel.setStyle("overflow:hidden;height:auto;");
 
-		center.setStyle("border: none; width:40%");
-		fullPanel.setWidth("80%");
-		fullPanel.setHeight("100%");
-		Center v_Table = new Center();
-		v_Table.appendChild(f_OrderLinePanel);
-		north.appendChild(f_OrderPanel);
-		east.appendChild(f_ProductKeysPanel);
-		east.setStyle("border: none; width:35%");
+		westPanel.appendChild(this.actionPanel);
+		east.appendChild(documentPanel);
+		this.actionPanel.appendChild(infoProductPanel.getPanel());
+		if(IsShowLineControl())
+			this.actionPanel.appendChild(quantityPanel.getPanel());
+		this.actionPanel.appendChild(orderLinePanel);
+		
+		east.setSplittable(true);
+		east.setStyle("border: none; min-width:44%; width:44%");
 
-		fullPanel.appendChild(v_Table);
-		fullPanel.appendChild(north);
-		north.setStyle("border: none; width:40%; height:15%");
-		v_Table.setStyle("border: none; width:40%;  height:85%; ");
+		fullPanel.appendChild(westPanel);
+
+		Center centerPanel = new Center();
+		fullPanel.appendChild(centerPanel);
+		centerPanel.appendChild(mediumPanel);
+
+		//	FR [ 44 ] Change Button location
+		westPanel.setStyle("display:inline-block;border: none; width:100%; height:auto;float:left;overflow:hidden;");
 		
 		mainLayout.setWidth("100%");
 		mainLayout.setHeight("100%");
 		mainLayout.appendChild(east);
-
+		mainLayout.appendChild(southPanel);
 		form.appendChild(mainLayout);
-		
+		//	Seek to last
+		if(hasRecord()){
+			lastRecord();	
+		}
+		refreshPanel();
+		form.setHeight("100%");
 		return true;
 	}	//	dynInit
-
-	/**
-	 * Load POS
-	 * @author Raul Munoz, rmunoz@erpcya.com, ERPCyA http://www.erpcya.com
-	 * @return boolean
-	 */
-	
 
 	/**
 	 * 	Set MPOS
 	 *	@return true if found/set
 	 */
-	private boolean setMPOS()
-	{
+	private void setMPOS() {
 		int salesRep_ID = Env.getAD_User_ID(getCtx());
-//		setSalesRep_ID(Env.getAD_User_ID(getCtx()));
-		boolean ok = setPOS(salesRep_ID);
-		if(!ok && getMsgLocator() == null){
-			org.idempiere.model.MPOS[] poss = getPOSs(salesRep_ID);
-			//	Select POS
-			String msg = Msg.getMsg(m_ctx, "SelectPOS");
-			selection = new Window();
-			Panel mainPanel = new Panel();
-			Panel panel = new Panel();
-			selection.setTitle(msg);
-			Borderlayout mainLayout = new Borderlayout();
-			Grid layout = GridFactory.newGridLayout();
-			selection.appendChild(panel);
-			selection.setWidth("200px");
-			selection.setHeight("100px");
-			//	North
-			Panel centerPanel = new Panel();
-			mainPanel.appendChild(mainLayout);
-			mainPanel.setStyle("width: 100%; height: 100%; padding: 0; margin: 0");
-			mainLayout.setHeight("100%");
-			mainLayout.setWidth("100%");
-			//
-			Center center = new Center();
-			center.setStyle("border: none");
-			mainLayout.appendChild(center);
-			center.appendChild(centerPanel);
-			centerPanel.appendChild(layout);
-			layout.setWidth("100%");
-			layout.setHeight("100%");
-			selection.appendChild(mainPanel);
-			Rows rows = null;
-			Row row = null;
-			rows = layout.newRows();
-			row = rows.newRow();
-			for(int x=0; x<poss.length; x++){
-				listTerminal.addItem(poss[x].getKeyNamePair());
-			}
-			b_ok.addActionListener(this);
-			b_cancel.addEventListener("onClick", this);
-			row.setSpans("2");
-			row.appendChild(listTerminal);
-			row = rows.newRow();
-			row.appendChild(b_ok);
-			row.appendChild(b_cancel);
-			AEnv.showWindow(selection);
+		setPOS(salesRep_ID);
+		if(getM_POS() != null) {
+			validLocator();
+			return;
 		}
-		else
-			return true;
+		int orgId = Env.getAD_Org_ID(getCtx());
+		poss = getPOSByOrganization(orgId);
+		//	Select POS
+		String msg = Msg.getMsg(ctx, "SelectPOS");
+		selection = new Window();
+		Panel mainPanel = new Panel();
+		Panel panel = new Panel();
+		selection.setTitle(msg);
+		Borderlayout mainLayout = new Borderlayout();
+		Grid layout = GridFactory.newGridLayout();
+		selection.appendChild(panel);
+		selection.setWidth("200px");
+		selection.setHeight("140px");
+		//	North
+		Panel centerPanel = new Panel();
+		mainPanel.appendChild(mainLayout);
+		mainPanel.setStyle("width: 100%; height: 100%; padding: 0; margin: 0");
+		mainLayout.setHeight("100%");
+		mainLayout.setWidth("100%");
+		//
+		Center center = new Center();
+		center.setStyle("border: none");
+		mainLayout.appendChild(center);
+		center.appendChild(centerPanel);
+		centerPanel.appendChild(layout);
+		layout.setWidth("100%");
+		layout.setHeight("100%");
+		selection.appendChild(mainPanel);
+		Rows rows = null;
+		Row row = null;
+		rows = layout.newRows();
+		row = rows.newRow();
+		for(MPOS pos : poss){
+			listTerminal.addItem(pos.getKeyNamePair());
+		}
+		okButton.addActionListener(this);
+		cancelButton.addEventListener("onClick", this);
+		okButton.setWidth("45px");
+		okButton.setHeight("45px");
+		cancelButton.setWidth("45px");
+		cancelButton.setHeight("45px");
+		listTerminal.setHeight("45px");
+		listTerminal.setStyle("height:45px;"+WPOS.FONTSIZEMEDIUM);
+		row.setSpans("2");
+		row.appendChild(listTerminal);
+		row.setHeight("45px");
+		row = rows.newRow();
+		confirm = new ConfirmPanel(true);
+		confirm.addActionListener(this);
+		confirm.getOKButton().setWidth("55px");
+		confirm.getOKButton().setHeight("55px");
+		confirm.getButton(ConfirmPanel.A_CANCEL).setWidth("55px");
+		confirm.getButton(ConfirmPanel.A_CANCEL).setHeight("55px");
 		
+		row.appendChild(confirm);
+		row.setHeight("55px");
+		AEnv.showWindow(selection);
 			
-		return action;
 	}	//	setMPOS
-	
-	/**
-	 * 	Get POSs for specific Sales Rep or all
-	 *	@param SalesRep_ID
-	 *	@return array of POS
-	 */
-//	private MPOS[] getPOSs (int SalesRep_ID)
-//	{
-//		String pass_field = "SalesRep_ID";
-//		int pass_ID = SalesRep_ID;
-//		if (SalesRep_ID==0)
-//			{
-//			pass_field = "AD_Client_ID";
-//			pass_ID = Env.getAD_Client_ID(m_ctx);
-//			}
-//		return MPOS.getAll(m_ctx, pass_field, pass_ID);
-//	}	//	getPOSs
-	
-	
-	
-	/**************************************************************************
-	 * 	Get Today's date
-	 *	@return date
-	 */
-	public Timestamp getToday()
-	{
-		return m_today;
-	}	//	getToday
 
-	/**
-	 * Get the properties for the process calls that it needs
-	 * 
-	 * @return getProperties m_ctx
+	/**	
+	 * Get Keyboard
+	 * @param keyLayoutId
+	 * @return
 	 */
-	public Properties getCtx()
-	{
-		return m_ctx;
-	}
-
 	public WPOSKeyboard getKeyboard(int keyLayoutId) {
+		if (keyLayoutId > 0 ){
 			WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
 			keyboards.put(keyLayoutId, keyboard);
+			keyboard.setWidth("750px");
+			keyboard.setHeight("350px");
 			return keyboard;
+		}
+		return null;
 	}
 	
-	public WPOSKeyboard getKeyboard(int keyLayoutId, WPosTextField field) {
-		WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
-		keyboard.setPosTextField(field);
-		keyboards.put(keyLayoutId, keyboard);
-		return keyboard;
+	/**
+	 * Get Keyboard with text field
+	 * @param keyLayoutId
+	 * @param field
+	 * @return
+	 */
+	public WPOSKeyboard getKeyboard(int keyLayoutId, WPOSTextField field) {
+		if (keyLayoutId > 0 ){
+			WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
+			keyboard.setPosTextField(field);
+			keyboards.put(keyLayoutId, keyboard);
+			return keyboard;
+		}
+		return null;
 	}
 	
-	public WPOSKeyboard getKeyboard(int keyLayoutId, Window wPosQuery, WPosTextField field) {
+	public WPOSKeyboard getKeyboard(int keyLayoutId, Window wPosQuery, WPOSTextField field) {
 			WPOSKeyboard keyboard = new WPOSKeyboard(wPosQuery,this, keyLayoutId, field);
 			keyboards.put(keyLayoutId, keyboard);
 			return keyboard;
@@ -305,29 +357,32 @@ public class WPOS extends CPOS implements IFormController, EventListener, I_POSP
 	{
 		keyboards.clear();
 		keyboards = null;
+
+		if ( logoutTimer != null )
+			logoutTimer.stop();
+		logoutTimer = null;
 		
-		if (m_focusMgr != null)
-			m_focusMgr.stop();
-		m_focusMgr = null;
+		if (isVirtualKeyboard()) {
+			if (focusManager != null)
+				focusManager.stop();
+			focusManager = null;
+		}
 		//
-		if (m_frame != null)
-			m_frame.detach();
+		if (frame != null)
+			frame.detach();
 		
-		m_frame = null;
-		m_ctx = null;
+		frame = null;
+		ctx = null;
 	}	//	dispose
 
 	@Override
 	public void onEvent(Event e) throws Exception {
-		if(e.getTarget().equals(b_ok)){
-			MPOS[] poss = getPOSs (m_Sales_ID);
-			m_POS = poss[listTerminal.getSelectedIndex()];
-			setM_POS(m_POS);
-			action = true;
+		String action = e.getTarget().getId();
+		if(action.equals(ConfirmPanel.A_OK)){
+			setM_POS(poss.get(listTerminal.getSelectedIndex()));
 			selection.dispose();
 		}
-		if(e.getTarget().equals(b_cancel)){
-			action = false;
+		if(action.equals(ConfirmPanel.A_CANCEL)){
 			selection.dispose();
 		}
 	}
@@ -346,8 +401,9 @@ public class WPOS extends CPOS implements IFormController, EventListener, I_POSP
 	public WPOSKeyboard getKeyboard() {
 		return getKeyboard(getOSKeyLayout_ID());
 	}
+
 	@Override
-	public String validatePanel() {
+	public String validatePayment() {
 		return null;
 	}
 
@@ -355,27 +411,300 @@ public class WPOS extends CPOS implements IFormController, EventListener, I_POSP
 	public void refreshPanel() {
 		//	Reload from DB
 		reloadOrder();
-		f_OrderPanel.changeViewPanel();
-		f_ProductKeysPanel.refreshPanel();
-		f_OrderLinePanel.refreshPanel();
-		
+		orderLinePanel.refreshPanel();
+		actionPanel.refreshPanel();
+		documentPanel.refreshPanel();
+		if(!hasLines()) {
+			infoProductPanel.resetValues();
+			quantityPanel.resetPanel();
+			actionPanel.resetPanel();
+		}
 	}
 
+	/**
+	 * Refresh Product Info from Key
+	 * @param key
+	 * @return void
+	 */
+	public void refreshProductInfo(MPOSKey key) {
+		infoProductPanel.refreshProduct(key , getQty() , getM_PriceList_ID() , getC_BPartner_ID());
+		//parameterPanel.invalidate();
+	}
+
+	/**
+	 * Refresh Product Info from Product
+	 * @param p_M_Product_ID
+	 * @return void
+	 */
+	public void refreshProductInfo(int p_M_Product_ID) {
+		infoProductPanel.refreshProduct(p_M_Product_ID , getQty() , getM_PriceList_ID() , getC_BPartner_ID());
+		infoProductPanel.invalidate();
+	}
+
+	/**
+	 * Add or replace order line
+	 * @param p_M_Product_ID
+	 * @param m_QtyOrdered
+	 * @return void
+	 */
+	public void addOrUpdateLine(int p_M_Product_ID, BigDecimal m_QtyOrdered) {
+		//	Create Order if not exists
+		if (!hasOrder()) {
+			newOrder();
+		}
+		//	Show Product Info
+		refreshProductInfo(p_M_Product_ID);
+		//	
+		String lineError = addOrUpdate(p_M_Product_ID, m_QtyOrdered);
+		if (lineError != null) {
+			log.warning("POS Error " + lineError);
+			FDialog.error(0,
+					frame, Msg.parseTranslation(ctx, lineError));
+		}
+		//	Update Info
+		refreshPanel();
+		orderLinePanel.seekFromProduct(p_M_Product_ID);
+	}
+	
 	@Override
 	public void changeViewPanel() {
-	
-		
+		quantityPanel.changeViewPanel();
+		orderLinePanel.changeViewPanel();
+//		quantityPanel.refreshPanel();
 	}
+	
 	/**
 	 * New Order
-	 * @author Raul Munoz, rmunoz@erpcya.com, ERPCyA http://www.erpcya.com
 	 * @return void
 	 */
 	public void newOrder() {
-		//	Do you want to use the alternate Document type?
-		boolean isDocType = FDialog.ask(0, null, Msg.getMsg(m_ctx, "POS.AlternateDT"));
-		setC_BPartner_ID(0);
-		newOrder(isDocType);
+		newOrder(0);
+		infoProductPanel.resetValues();
+		quantityPanel.resetPanel();
+		getMainFocus();
+	}
+
+	public int getWindowNo()
+	{
+		return windowNo;
+	}
+
+	@Override
+	public void setScalesMeasure(String measure) {
+
+	}
+	
+	/**
+	 * Refresh Header
+	 * @return void
+	 */
+	public void refreshHeader() {
+		reloadOrder();
+		actionPanel.changeViewPanel();
+		documentPanel.refreshPanel();
+	}
+	
+	/**
+	 * Update Line Table
+	 * @param p_M_Product_ID
+	 */
+	public void updateLineTable() {
+		orderLinePanel.updateLine();
+	}
+
+	@Override
+	public void hideScales() {
+
+	}
+
+	/**
+	 * Show Collect Payment Panel
+	 * @return void
+	 */
+	public void showCollectPayment()
+	{
+		documentPanel.getCollectPayment().showCollect();
+	}
+	
+	/**
+	 * Close Collect Payment Panel
+	 * @return void
+	 */
+	public void closeCollectPayment()
+	{
+		documentPanel.closeCollectPayment();
+	}
+
+	@Override
+	public void moveUp() {
+		orderLinePanel.moveUp();
+	}
+
+	@Override
+	public void moveDown() {
+		orderLinePanel.moveDown();
+	}
+
+	public StatusBarPanel getStatusBar()
+	{
+		return statusBar;
+	}
+
+	public void addStatusBarInfo(String info)
+	{
+		statusBarInfo = statusBarInfo + " " + info + " ";
+		getStatusBar().setStatusLine(statusBarInfo);
+	}
+
+	public int getC_OrderLine_ID()
+	{
+		return orderLinePanel.getC_OrderLine_ID();
+	}
+	
+	/**
+	 * return User Pin Listener
+	 * @return
+     */
+	public EventListener getUserPinListener()
+	{
+		return userPinListener;
+	}
+
+	/**
+	 * return Electronic Scales Listener
+	 * @return
+	 */
+	public WPOSScalesListener getScalesListener()
+	{
+		return scalesListener;
+	}
+
+	/**
+	 * set the correct user pin
+	 * @param isCorrectUserPin
+     */
+	protected void setIsCorrectUserPin(boolean isCorrectUserPin)
+	{
+		this.isCorrectUserPin = isCorrectUserPin;
+	}
+
+	/**
+	 * Set user PIN based on pin validation
+	 * @param userPin
+     */
+	protected void validateAndSetUserPin(char[] userPin)
+	{
+		if (isCorrectUserPin != null && isCorrectUserPin)
+			return;
+		boolean isValidUserPin = isValidUserPin(userPin);
+		if (isValidUserPin)
+		{
+			userPinTimer.start();
+			setIsCorrectUserPin(isValidUserPin);
+		}
+	}
+
+	/**
+	 * invalidate user pin
+	 */
+	protected void invalidateUserPin()
+	{
+		this.isCorrectUserPin = null;
+	}
+
+	/**
+	 * Is correct User Pin asynchronous validation
+	 * @return
+     */
+	public boolean isUserPinValid()
+	{
+		if (!isRequiredPIN())
+			return true;
+
+		if (isCorrectUserPin == null)
+			WPOSUserPinDialog.show(this);
+
+		if (isCorrectUserPin == null || !isCorrectUserPin)
+			throw new AdempiereException("@Supervisor_ID@: @UserPin@ @IsInvalid@.");
+
+		return isCorrectUserPin;
+	}
+
+	public void showKeyboard()
+	{
+		documentPanel.getKeyboard().showPanel();
+	}
+
+	public void hideKeyboard()
+	{
+		documentPanel.getKeyboard().hidePanel();
+	}
+
+	public void disablePOSButtons()
+	{
+		infoProductPanel.resetValues();
+		quantityPanel.resetPanel();
+		actionPanel.disableButtons();
+		orderLinePanel.disableTable();
+	}
+	
+	public void restoreTable(){
+		orderLinePanel.enableTable();
+	}
+	
+	public String getProductUOMSymbol()
+	{
+		return infoProductPanel.getUOMSymbol();
+	}
+
+	public Timer getUserPinTimer()
+	{
+		return userPinTimer;
+	}
+
+	public Timer getScalesTimer()
+	{
+		return scalesTimer;
+	}
+
+	public void quantityRequestFocus()
+	{
+		quantityPanel.requestFocus();
+	}
+
+	public void getMainFocus()
+	{
+		actionPanel.getMainFocus();
+	}
+
+	/**
+	 * Set Quantity of Product
+	 * @param qty
+	 */
+	public void setQty(BigDecimal qty) {
+		quantityPanel.setQuantity(qty);
+		super.setQty(qty);
+	}
+	
+	/**
+	 * Start Server Socket
+	 * @return void
+	 */
+	private void startServerSocket(){
+		sideServer = new SideServer();
+		new Thread(sideServer).start();
+	}
+
+	/**
+	 * Print File
+	 * @param data
+	 */
+	public void printFile(byte[] data, int record_ID){
+		sideServer.printFile(data, record_ID);
+	}
+	
+	public void updateProductPlaceholder(String name)
+	{
+		actionPanel.updateProductPlaceholder(name);
 	}
 }	//	PosPanel
-

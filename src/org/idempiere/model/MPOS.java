@@ -17,6 +17,7 @@
 package org.idempiere.model;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.Msg;
-
+import org.idempiere.model.X_C_POS;
 
 /**
  *	POS Terminal definition
@@ -34,7 +35,7 @@ import org.compiere.util.Msg;
  *  @author Jorg Janke
  *  @version $Id: MPOS.java,v 1.3 2006/07/30 00:51:05 jjanke Exp $
  */
-public class MPOS extends org.idempiere.model.X_C_POS
+public class MPOS extends X_C_POS
 {
 	/**
 	 * 
@@ -164,4 +165,20 @@ public class MPOS extends org.idempiere.model.X_C_POS
 	public String toString() {
 		return super.getName();
 		}
+	
+	public static List<MPOS> getByOrganization(Properties ctx,int   orgId , String trxName)
+	{
+		List<MPOS> poss = new ArrayList<MPOS>();
+		List<org.compiere.model.MPOS> cpos = new Query(ctx , Table_Name , "AD_Org_ID = ?" , trxName )
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setParameters(orgId)
+				.setOrderBy(COLUMNNAME_Name)
+				.list();
+		for(org.compiere.model.MPOS pos : cpos) {
+			MPOS myPOS = new MPOS(ctx, pos.getC_POS_ID(), trxName);
+			poss.add(myPOS);
+		}
+		return poss;
+	}
 }	//	MPOS
