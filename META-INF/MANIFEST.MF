@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ID_WPOS
+Bundle-Name: WPOS
 Bundle-SymbolicName: org.idempiere.wpos;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -11,7 +11,7 @@ Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
  org.adempiere.ui;bundle-version="3.1.0",
  org.zkoss.zk.library,
  org.adempiere.pipo;bundle-version="3.1.0"
-Bundle-Activator: org.adempiere.plugin.utils.AdempiereActivator
+Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Ing. Victor Suárez - victor.suarez.is@gmail.com
 Service-Component: OSGI-INF/FormFactoryWPOS.xml
 Import-Package: org.compiere.grid.ed,
