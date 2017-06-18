@@ -1,6 +1,6 @@
 # iDempiere WPOS #
 
-Point Of Sales Developed by Yamel Senih (ysenih@erpcya.com) and ERP Consultores y Asociados (http://erpcya.com/es/), for ADempiere 3.9.0 (http://www.adempiere.net/web/guest/inicio). Migrated and adapted by Victor Suarez (victor.suarez.is@gmail.com) to iDempiere ERP Plugin.
+Point Of Sales Developed by Yamel Senih (ysenih@erpcya.com) and ERP Consultores y Asociados (http://erpcya.com/es/), for ADempiere 3.9.0 (http://www.adempiere.net/web/guest/inicio). Migrated and adapted by Victor Suarez (victor.suarez.is@gmail.com) to iDempiere ERP Plugin, Together with Alejandro Guerra (aguerra@algeconsultores.com).
 
 This is the WebUI Version. You can see Swing version: https://bitbucket.org/victorsuarez/org.idempiere.pos
 
