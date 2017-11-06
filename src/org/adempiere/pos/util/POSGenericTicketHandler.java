@@ -18,10 +18,14 @@ package org.adempiere.pos.util;
 
 import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.service.CPOS;
+import org.compiere.model.MDocType;
 import org.compiere.model.MInvoice;
+import org.compiere.print.MPrintFormat;
 import org.compiere.print.ReportCtlPOS;
 import org.compiere.print.ReportEngine;
 import org.compiere.process.ProcessInfo;
+import org.compiere.util.DB;
+import org.compiere.util.Env;
 
 /**
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
@@ -44,9 +48,22 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 			ProcessInfo info = new ProcessInfo(null, 0);
 			info.setTransactionName(getPOS().get_TrxName());
 			if(!getPOS().isInvoiced()) {
+				
+				MPrintFormat printformat = null;
+				if(getPOS().getOrder().isSOTrx()){
+					int LIT_POS_SOPrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_SOPrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));
+					printformat = new MPrintFormat(Env.getCtx(), LIT_POS_SOPrintForm_ID, null);
+					info.setAD_Process_ID(printformat.getJasperProcess_ID());
+				}
+				else{
+					int LIT_POS_POPrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_POPrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));
+					printformat = new MPrintFormat(Env.getCtx(), LIT_POS_POPrintForm_ID, null);
+					info.setAD_Process_ID(printformat.getJasperProcess_ID());
+				}
+				
 				ReportCtlPOS.startDocumentPrint(
 						ReportEngine.ORDER, 
-						null, 
+						printformat, 
 						getPOS().getC_Order_ID(), 
 						null, 
 						getPOS().getWindowNo(), 
@@ -55,9 +72,11 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 						info);
 			} else {
 				for (MInvoice invoice :  getPOS().getOrder().getInvoices()) {
+					int LIT_POS_InvoicePrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_InvoicePrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));
+					MPrintFormat printformat = new MPrintFormat(Env.getCtx(), LIT_POS_InvoicePrintForm_ID, null);
 					ReportCtlPOS.startDocumentPrint(
 							ReportEngine.INVOICE, 
-							null, 
+							printformat, 
 							invoice.getC_Invoice_ID(), 
 							null, 
 							getPOS().getWindowNo(), 

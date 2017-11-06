@@ -23,6 +23,7 @@ import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Textbox;
+import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.model.MLookup;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MOrder;
@@ -368,7 +369,7 @@ public class PaymentPanel extends Collect implements EventListener {
 	protected Button createButtonAction (String action, KeyStroke accelerator)
 	{
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setTooltiptext(Msg.translate(p_ctx, action));
 		button.setWidth("55px");
 		button.setHeight("55px");

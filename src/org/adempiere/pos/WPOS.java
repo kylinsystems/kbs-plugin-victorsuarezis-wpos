@@ -399,7 +399,8 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @return POSKeyboard
 	 */
 	public WPOSKeyboard getKeyboard() {
-		return getKeyboard(getOSKeyLayout_ID());
+//		return getKeyboard(getOSKeyLayout_ID());
+		return getKeyboard(-1);
 	}
 
 	@Override
@@ -650,6 +651,10 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	
 	public void restoreTable(){
 		orderLinePanel.enableTable();
+	}
+	
+	public WPOSOrderLinePanel getOrdLinePanel(){
+		return orderLinePanel;
 	}
 	
 	public String getProductUOMSymbol()

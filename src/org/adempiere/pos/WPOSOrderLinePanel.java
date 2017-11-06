@@ -33,6 +33,8 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.event.ListDataEvent;
 
 /**
@@ -67,6 +69,8 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	public 	POSOrderLineTableHandle lineTableHandle;
 	/**	Logger				*/
 	private static CLogger logger = CLogger.getCLogger(WPOSOrderLinePanel.class);
+	
+	public boolean isFilter = false;
 
 	@Override
 	protected void init() {
@@ -84,6 +88,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		posTable.addEventListener(Events.ON_CLICK, this);
 		posTable.getModel().addTableModelListener(this);
 		posTable.setClass("Table-OrderLine");
+		posTable.setStyle("overflow-y: scroll");
 		posTable.setColumnReadOnly(POSOrderLineTableHandle.POSITION_QTYORDERED, true);
 	}
 
@@ -114,6 +119,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 				showProductInfo(0);
 			}
 		}
+		
 		return;
 	}
 	
@@ -140,8 +146,8 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	@Override
 	public void onEvent(Event arg0) throws Exception {
 		String action = arg0.getTarget().getId();
-		if (action == null || action.length() == 0)
-			return;
+//		if (action == null || action.length() == 0)
+//			return;
 		posTable.getModel().removeTableModelListener(this);
 		logger.info( "POSOrderLinePanel - actionPerformed: " + action);
 		
@@ -152,6 +158,15 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		//	Refresh All
 		posPanel.refreshPanel();
 		posTable.getModel().addTableModelListener(this);
+		
+		int numItem = posTable.getItems().size();
+		for (int i = 0; i < numItem; i++) {
+			if(isFilter)
+				posTable.getItems().get(i).setStyle("background:yellow !important");
+			else
+				posTable.getItems().get(i).setStyle(null);
+		}
+		
 	}
 	
 	public void selectLine(){
@@ -199,6 +214,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 					//	Set Current Order Line
 					orderLineId = key.getRecord_ID();
 					BigDecimal m_QtyOrdered       = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_QTYORDERED);
+					m_QtyOrdered = m_QtyOrdered.setScale(0);
 					BigDecimal m_Price            = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_PRICE);
 					BigDecimal discountPercentage = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_DISCOUNT);
 					posPanel.setQty(m_QtyOrdered);
@@ -252,9 +268,12 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	}
 	
 	public void moveDown() {
-		if((posTable.getRowCount()-1) > posTable.getSelectedRow() && posTable.getRowCount() != 0)
-			posTable.setSelectedIndex(posTable.getSelectedRow()+1);
-		else
+		if((posTable.getRowCount()-1) > posTable.getSelectedRow() && posTable.getRowCount() != 0){
+			if((posTable.getRowCount()-1)>posTable.getSelectedRow()+4)
+				posTable.setSelectedIndex(posTable.getSelectedRow()+4);
+			else
+				posTable.setSelectedIndex(0);
+		}else
 			posTable.setSelectedIndex(0);
 		selectLine();
 		posPanel.changeViewPanel();
@@ -263,9 +282,12 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	}
 	
 	public void moveUp() {
-		if((posTable.getRowCount()-1) >= posTable.getSelectedRow() && posTable.getSelectedRow() != 0)
-			posTable.setSelectedIndex(posTable.getSelectedRow()-1);
-		else
+		if((posTable.getRowCount()-1) >= posTable.getSelectedRow() && posTable.getSelectedRow() != 0){
+			if((posTable.getRowCount()-1) >= posTable.getSelectedRow()-4 && posTable.getSelectedRow()-4>=0)
+				posTable.setSelectedIndex(posTable.getSelectedRow()-4);
+			else 
+				posTable.setSelectedIndex(posTable.getRowCount()-1);
+		}else
 			posTable.setSelectedIndex(posTable.getRowCount()-1);
 		selectLine();		
 		posPanel.changeViewPanel();
@@ -382,4 +404,9 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	{
 		return orderLineId;
 	}
+	
+	public WPOSTable posTable(){
+		return posTable;
+	}
+	
 }

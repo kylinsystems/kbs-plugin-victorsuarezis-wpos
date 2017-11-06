@@ -36,7 +36,7 @@ public class WListboxPOS extends WListbox {
 	public void addColumn (ColumnInfo info)
 	{
 		WListItemRenderer renderer = (WListItemRenderer) getItemRenderer();
-		renderer.addColumn(info);
+		renderer.addColumn(info.getColHeader());
 		getModel().addColumn();
 
 		return;

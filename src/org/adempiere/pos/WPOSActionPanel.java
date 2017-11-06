@@ -17,9 +17,11 @@
 
 package org.adempiere.pos;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.search.WQueryBPartner;
@@ -30,21 +32,36 @@ import org.adempiere.pos.service.POSLookupProductInterface;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.pos.service.POSQueryInterface;
 import org.adempiere.pos.service.POSQueryListener;
+import org.adempiere.util.Callback;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.component.Textbox;
+import org.adempiere.webui.component.Window;
+import org.adempiere.webui.editor.WSearchEditor;
+import org.adempiere.webui.event.DialogEvents;
+import org.adempiere.webui.event.ValueChangeEvent;
+import org.adempiere.webui.event.ValueChangeListener;
 import org.adempiere.webui.info.InfoProductWindow;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
+import org.compiere.model.Lookup;
+import org.compiere.model.MColumn;
+import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
+import org.compiere.model.MResource;
+import org.compiere.model.Query;
 import org.compiere.util.CLogger;
+import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkforge.keylistener.Keylistener;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zul.Timer;
@@ -90,6 +107,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 	private boolean			isKeyboard;
 	/**	For Show Product	*/
 	private	WPOSTextField 	fieldProductName;
+	private WSearchEditor onlyProduct = null; 
 	/** Find Product Timer **/
 	private Timer findProductTimer;
 	private WPOSLookupProduct lookupProduct;
@@ -110,7 +128,9 @@ public class WPOSActionPanel extends WPOSSubPanel
 	private final String ACTION_NEXT  		= "Detail";
 	private final String ACTION_PAYMENT     = "Payment";
 	private final String ACTION_CANCEL      = "Cancel";
-	private final String ACTION_LOGOUT      = "End";
+	private final String ACTION_LOGOUT      = "Logout";
+	
+	private String errorMsg = null;
 	
 	@Override
 	public void init() {
@@ -197,6 +217,11 @@ public class WPOSActionPanel extends WPOSSubPanel
 		fieldProductName.setWidth("98%");
 		fieldProductName.setHeight("35px");
 		
+		onlyProduct = createProduct(posPanel.getWindowNo());
+		ZKUpdateUtil.setWidth(onlyProduct.getComponent(), "98%");
+		ZKUpdateUtil.setHeight(onlyProduct.getComponent().getTextbox(),"35px");
+		ZKUpdateUtil.setHeight(onlyProduct.getComponent().getButton(),"35px");
+		
 		Keylistener keyListener = new Keylistener();
 		
     	keyListener.setCtrlKeys("#f2#f3#f4#f9#f10@b@#left@#right^l@i@p");
@@ -207,6 +232,39 @@ public class WPOSActionPanel extends WPOSSubPanel
 		fieldProductName.setStyle("Font-size:medium; font-weight:bold");
 		fieldProductName.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
 		fieldProductName.addEventListener(this);
+		
+		onlyProduct.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
+//		onlyProduct.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
+		onlyProduct.addValueChangeListener(new ValueChangeListener() {
+
+			@Override
+			public void valueChange(ValueChangeEvent evt) {
+				if(evt.getNewValue()!=null){
+				
+					Integer prod_ID = (Integer) evt.getNewValue();
+//					MProduct product = new MProduct(ctx, prod_ID, null);
+					
+					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
+					MPOSKey key = new Query(ctx, MPOSKey.Table_Name, where, null)
+							.setOnlyActiveRecords(true)
+							.setClient_ID()
+							.setParameters(prod_ID, posPanel.getC_POSKeyLayout_ID())
+							.first();
+					
+					keyReturned(key);
+					((WSearchEditor)evt.getSource()).getComponent().focus();
+				}
+			}
+		});
+		
+		onlyProduct.getComponent().getTextbox().addFocusListener(new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event evt2) throws Exception {
+				((Textbox)evt2.getTarget()).select();
+				
+			}
+		});
 
 		row = rows.newRow();
 		row.setSpans("12");
@@ -226,9 +284,11 @@ public class WPOSActionPanel extends WPOSSubPanel
 	        row.appendChild(lookupProduct);
 			row.appendChild(fieldProductName);
 		} else {
+			row.appendChild(onlyProduct.getComponent());
+			onlyProduct.getComponent().setWidth("60%");
 			row.appendChild(fieldProductName);
 			fieldProductName.appendChild(keyListener);
-			fieldProductName.setWidth("100%");
+			fieldProductName.setWidth("40%");
 		}
 		enableButton();
 		actionProcessMenu = new WPOSActionMenu(posPanel);
@@ -244,12 +304,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 	private void openDocType() { 
 		WQueryDocType qt = new WQueryDocType(posPanel);
 		qt.setVisible(true);
+		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 		AEnv.showWindow(qt);
 	}
 	
 	private void openHistory() { 
 		WQueryOrderHistory qt = new WQueryOrderHistory(posPanel);
 		qt.setVisible(true);
+		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 		AEnv.showWindow(qt);
 		posPanel.reloadIndex(qt.getRecord_ID());
 	}
@@ -258,6 +320,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		WQueryBPartner qt = new WQueryBPartner(posPanel);
 		if(!posPanel.isBPartnerStandard())
 			qt.loadData();
+		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 		AEnv.showWindow(qt);
 		if (qt.getRecord_ID() > 0) {
 			if(!posPanel.hasOrder()) {
@@ -414,7 +477,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		InfoProductWindow infoProduct = new InfoProductWindow(
 				posPanel.getWindowNo(),
 				MProduct.Table_Name,
-				"p",
+				"M_Product_ID",
 				"",
 				true,
 				query,
@@ -453,8 +516,11 @@ public class WPOSActionPanel extends WPOSSubPanel
 
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) 
 			lookupProduct.focus();
-			else
+		else
 			fieldProductName.focus();
+		if(onlyProduct != null)
+			onlyProduct.getComponent().getTextbox().focus();
+		
 	}
 
 	/**************************************************************************
@@ -556,7 +622,21 @@ public class WPOSActionPanel extends WPOSSubPanel
 		//Check if order is completed, if so, print and open drawer, create an empty order and set cashGiven to zero
 		if(!posPanel.hasOrder()) {
 			FDialog.warn(posPanel.getWindowNo(), Msg.getMsg(ctx, "POS.MustCreateOrder"));
-		} else {
+		} 
+		else if(posPanel.hasOrder() && (posPanel.isPurchaseOrder() || posPanel.isStandardOrder()))
+		{
+			if(posPanel.isPurchaseOrder())
+				posPanel.getOrder().setIsSOTrx(false);
+				
+			posPanel.processOrder(posPanel.getOrder().get_TrxName(), false, false);
+			posPanel.showKeyboard();
+			posPanel.setOrder(posPanel.getOrder().get_ID());
+			posPanel.refreshPanel();
+			posPanel.refreshProductInfo(null);
+            posPanel.restoreTable();
+			return;
+		}
+		else {
 			posPanel.hideKeyboard();
 			posPanel.showCollectPayment();
 		}
@@ -569,19 +649,30 @@ public class WPOSActionPanel extends WPOSSubPanel
 	 * Otherwise, it must be done outside this class.
 	 */
 	private void deleteOrder() {
-		String errorMsg = null;
+//		String errorMsg = null;
+		errorMsg = null;
 		String askMsg = "POS.DeleteOrder";
 		if (posPanel.isCompleted()) {
 			askMsg = "POS.OrderIsAlreadyCompleted";
 		}
 		//	Show Ask
-		if (FDialog.ask(0, this , Msg.getMsg(ctx, Msg.getMsg(ctx, askMsg)))) {
-			//posPanel.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			//	Cancel Order
-			errorMsg = posPanel.cancelOrder();
-			//	Set Cursor to default
-			//posPanel.getFrame().setCursor(Cursor.getDefaultCursor());
-		}
+		FDialog.ask(0, this, Msg.getMsg(ctx, Msg.getMsg(ctx, askMsg)), new Callback<Boolean>() {
+
+			@Override
+			public void onCallback(Boolean result) {
+				errorMsg = posPanel.cancelOrder();
+				
+			}
+			
+		});
+		
+//		if (FDialog.ask(0, this , Msg.getMsg(ctx, Msg.getMsg(ctx, askMsg)))) {
+//			//posPanel.getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//			//	Cancel Order
+//			errorMsg = posPanel.cancelOrder();
+//			//	Set Cursor to default
+//			//posPanel.getFrame().setCursor(Cursor.getDefaultCursor());
+//		}
 		//	show if exists error
 		if(errorMsg != null)
 			FDialog.error(posPanel.getWindowNo(), Msg.parseTranslation(ctx, errorMsg));
@@ -740,6 +831,30 @@ public class WPOSActionPanel extends WPOSSubPanel
 	@Override
 	public void keyReturned(MPOSKey key) {
 
+		// processed order
+		if (posPanel.hasOrder()
+				&& posPanel.isCompleted()) {
+			//	Show Product Info
+			posPanel.refreshProductInfo(key);
+			return;
+		}
+		// Add line
+		try{
+      //  Issue 139
+		  posPanel.setAddQty(true);
+			posPanel.addOrUpdateLine(key.getM_Product_ID(), key.getQty());
+			posPanel.refreshPanel();
+			posPanel.changeViewPanel();
+//			posPanel.getMainFocus();
+
+		} catch (Exception exception) {
+			FDialog.error(posPanel.getWindowNo(), this, exception.getLocalizedMessage());
+		}
+		//	Show Product Info
+		posPanel.refreshProductInfo(key);
+		return;
+	
+
 	}
 	
 	public void updateProductPlaceholder(String name)
@@ -748,5 +863,29 @@ public class WPOSActionPanel extends WPOSSubPanel
 			lookupProduct.setText(name);
 		else
 			fieldProductName.setText(name);
+	}
+	
+	/**
+	 * @param windowNo
+	 * @return WSearchEditor
+	 */
+	private WSearchEditor createProduct(int windowNo) {
+		//int AD_Column_ID = 6862;    //  S_Resource_ID
+		int AD_Column_ID = MColumn.getColumn_ID(MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID);    //  M_Product_ID
+		try
+		{
+			Lookup lookup = MLookupFactory.get (Env.getCtx(), windowNo,
+					0, AD_Column_ID, DisplayType.Search);
+			return new WSearchEditor ("M_Product_ID", false, false, true, lookup);
+		}
+		catch (Exception e)
+		{
+			FDialog.error(posPanel.getWindowNo(), e.getLocalizedMessage());
+		}
+		return null;
+	}
+	
+	private WPOSActionPanel getContent(){
+		return this;
 	}
 }//	WPOSActionPanel

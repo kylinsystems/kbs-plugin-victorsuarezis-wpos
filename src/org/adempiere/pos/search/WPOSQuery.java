@@ -40,6 +40,7 @@ import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.WListbox;
 import org.adempiere.webui.component.Window;
+import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.EventListener;
@@ -270,7 +271,7 @@ public abstract class WPOSQuery extends Window implements POSQueryInterface, Mou
 	 */
 	protected Button createButtonAction(String action, KeyStroke accelerator) {
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setWidth("50px");
 		button.setHeight("50px");
 		button.addActionListener(this);

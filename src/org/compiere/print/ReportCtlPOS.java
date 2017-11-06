@@ -467,10 +467,52 @@ public class ReportCtlPOS
 		viewer.openViewer(re);
 	}
 
-	public static void startDocumentPrint(int order, MPrintFormat mPrintFormat,
-			int c_Order_ID, IProcessUI iProcessUI, int windowNo, boolean b,
+	public static void startDocumentPrint(int type, MPrintFormat mPrintFormat,
+			int record_ID, IProcessUI iProcessUI, int windowNo, boolean b,
 			Object object, ProcessInfo info) {
 		// TODO Auto-generated method stub
+//		ReportCtl.startDocumentPrint(ReportEngine.ORDER, mPrintFormat, c_Order_ID, iProcessUI, windowNo, true, mPrintFormat.getPrinterName());
+
+		ReportEngine re = ReportEngine.get (Env.getCtx(), type, record_ID);
+		if (re == null)
+		{
+			throw new AdempiereException("NoDocPrintFormat");
+		}
+		re.setWindowNo(windowNo);
+		if (mPrintFormat!=null) {
+			// Use custom print format if available
+			re.setPrintFormat(mPrintFormat);
+		}
+
+		if(re.getPrintFormat()!=null)
+		{
+			MPrintFormat format = re.getPrintFormat();
+
+			// We have a Jasper Print Format
+			// ==============================
+			if(format.getJasperProcess_ID() > 0)
+			{
+				ServerReportCtl.runJasperProcess(record_ID, re, true, mPrintFormat.getPrinterName());
+				if (mPrintFormat.getPrinterName()!=null) {
+					re.getPrintInfo().setPrinterName(mPrintFormat.getPrinterName());
+				}
+				re.print();
+				
+				if (true) {
+					ReportEngine.printConfirm(type, record_ID);
+				}
+			}
+//			else
+//			// Standard Print Format (Non-Jasper)
+//			// ==================================
+//			{
+//				createOutput(re, !IsDirectPrint, printerName);
+//				if (IsDirectPrint)
+//				{
+//					ReportEngine.printConfirm (type, Record_ID);
+//				}
+//			}
+		}
 		
 	}
 

@@ -9,15 +9,20 @@ Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
  org.adempiere.plugin.utils;bundle-version="3.1.0",
  org.adempiere.ui.zk;bundle-version="3.1.0",
  org.adempiere.ui;bundle-version="3.1.0",
- org.zkoss.zk.library,
- org.adempiere.pipo;bundle-version="3.1.0"
+ org.adempiere.pipo;bundle-version="3.1.0",
+ org.idempiere.zk.extra;bundle-version="1.0.0",
+ zcommon;bundle-version="8.0.1",
+ zel;bundle-version="8.0.1",
+ zhtml;bundle-version="8.0.1",
+ zjavassist;bundle-version="8.0.1",
+ zk;bundle-version="8.0.1",
+ zkbind;bundle-version="8.0.1",
+ zkplus;bundle-version="8.0.1",
+ zul;bundle-version="8.0.1",
+ zweb;bundle-version="8.0.1"
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Ing. Victor Suárez - victor.suarez.is@gmail.com
 Service-Component: OSGI-INF/FormFactoryWPOS.xml
 Import-Package: org.compiere.grid.ed,
- org.compiere.minigrid,
- org.zkoss.zhtml,
- org.zkoss.zk.ui,
- org.zkoss.zk.ui.event,
- org.zkoss.zul
+ org.compiere.minigrid
 Export-Package: net.miginfocom.swing

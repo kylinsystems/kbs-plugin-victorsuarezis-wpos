@@ -424,14 +424,14 @@ public class ProcessBuilder {
      * @param args
      */
     public static void main(String[] args) {
-        ProcessBuilder
-                .create(Env.getCtx())
-                .process(org.eevolution.process.BankTransfer.class)
-                .withParentProcess(null)
-                .withParameter("", "")
-                .withParameter("", "")
-                .withRecordId(MInvoice.Table_ID ,10001)
-                .withoutTransactionClose()
-                .execute();
+//        ProcessBuilder
+//                .create(Env.getCtx())
+//                .process(org.eevolution.process.BankTransfer.class)
+//                .withParentProcess(null)
+//                .withParameter("", "")
+//                .withParameter("", "")
+//                .withRecordId(MInvoice.Table_ID ,10001)
+//                .withoutTransactionClose()
+//                .execute();
     }
 }

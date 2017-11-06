@@ -25,6 +25,7 @@ import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.model.MPOSKey;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
@@ -78,7 +79,7 @@ public class WPOSInfoProduct extends WPOSSubPanel {
 	/** Grid Panel 			*/
 	private Grid 		infoProductLayout;
 	private Grid 		labelLayout;
-	private Panel 		buttonPanel;
+//	private Panel 		buttonPanel;
 	/**
 	 * 
 	 */
@@ -101,12 +102,12 @@ public class WPOSInfoProduct extends WPOSSubPanel {
 		
 		labelLayout = GridFactory.newGridLayout();
 		
-		buttonPanel = new Panel();
+//		buttonPanel = new Panel();
 
-		buttonPanel.appendChild(labelLayout);
+//		buttonPanel.appendChild(labelLayout);
 		parameterPanel.appendChild(groupPanel);
 		
-		buttonPanel.setStyle("border: none; width:99%;moz-box-shadow: 0 0 0px #888;-webkit-box-shadow: 0 0 0px #888;box-shadow: 0 0 0px #888;");
+//		buttonPanel.setStyle("border: none; width:99%;moz-box-shadow: 0 0 0px #888;-webkit-box-shadow: 0 0 0px #888;box-shadow: 0 0 0px #888;");
 		labelLayout.setStyle("border: none; width:100%;moz-box-shadow: 0 0 0px #888;-webkit-box-shadow: 0 0 0px #888;box-shadow: 0 0 0px #888;");
 		infoProductLayout.setStyle("border: none; width:100%; moz-box-shadow: 0 0 0px #888;-webkit-box-shadow: 0 0 0px #888;box-shadow: 0 0 0px #888;");
 		parameterPanel.setStyle("border: none; width:99%;");
@@ -118,10 +119,13 @@ public class WPOSInfoProduct extends WPOSSubPanel {
 		//	For Image
 		buttonImage = new Panel();
 		row.appendChild(buttonImage);
-		buttonImage.setWidth("138px");
-		buttonImage.setHeight("130px");
+//		buttonImage.setWidth("138px");
+//		buttonImage.setHeight("130px");
+		ZKUpdateUtil.setWidth(buttonImage, "300px");
+		ZKUpdateUtil.setHeight(buttonImage, "200px");
 		
-		row.appendChild(buttonPanel);
+//		row.appendChild(buttonPanel);
+		row.appendChild(labelLayout);
 		rows = labelLayout.newRows();
 		row = rows.newRow();
 		//	For Value
@@ -250,10 +254,11 @@ public class WPOSInfoProduct extends WPOSSubPanel {
 			Image bImg = new Image();
 			bImg.setContent(img);
 			bImg.setWidth("100%");
-			bImg.setHeight("100px");
+			bImg.setHeight("200px");
+			
 			nt.appendChild(bImg);
 		
-		buttonImage.setClass("z-button");
+//		buttonImage.setClass("z-button");
 		
 		mainLayout.appendChild(nt);
 		mainLayout.setStyle("background-color: transparent");
@@ -263,7 +268,7 @@ public class WPOSInfoProduct extends WPOSSubPanel {
 		buttonImage.invalidate();
 		infoProductLayout.invalidate();
 		labelLayout.invalidate();
-		buttonPanel.invalidate();
+//		buttonPanel.invalidate();
 		} else {
 			buttonImage.getChildren().clear();
 			buttonImage.invalidate();

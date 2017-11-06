@@ -35,7 +35,7 @@ public class WListItemRendererPOS extends WListItemRenderer {
 
 		tableColumn = new WTableColumn();
 		tableColumn.setHeaderValue(Util.cleanAmp(info.getColHeader()));
-		setColumnVisibility(tableColumn,info.getVisibility());
+		setColumnVisibility(tableColumn,info.isReadOnly());
 		m_tableColumns.add(tableColumn);
 
 		return;

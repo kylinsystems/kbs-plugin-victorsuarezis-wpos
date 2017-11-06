@@ -19,6 +19,8 @@ package org.adempiere.pos;
 
 
 import java.awt.Color;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 
 import org.adempiere.webui.component.Borderlayout;
@@ -33,6 +35,7 @@ import org.compiere.util.Env;
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Image;
@@ -43,7 +46,7 @@ import org.zkoss.zul.Image;
  * @author Raul Muñoz, rmunoz@erpcya.com, ERPCYA http://www.erpcya.com
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  */
-public class WPOSKeyPanel extends Panel implements EventListener {
+public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 	/**
 	 * 
 	 */
@@ -153,10 +156,11 @@ public class WPOSKeyPanel extends Panel implements EventListener {
 			Center nt = new Center();
 			South st = new South();
 			Borderlayout mainLayout = new Borderlayout();
+			AImage img = null;
 			if ( key.getAD_Image_ID() != 0 )
 			{
 				MImage m_mImage = MImage.get(Env.getCtx(), key.getAD_Image_ID());
-				AImage img = null;
+//				AImage img = null;
 				byte[] data = m_mImage.getData();
 				if (data != null && data.length > 0) {
 					try {
@@ -164,12 +168,39 @@ public class WPOSKeyPanel extends Panel implements EventListener {
 					} catch (Exception e) {		
 					}
 				}
+//				Image bImg = new Image();
+//				bImg.setContent(img);
+//				bImg.setWidth("66%");
+//				bImg.setHeight("80%");
+//				nt.appendChild(bImg);
+			}
+			else{
+				
+				if(key.getM_Product().getImageURL()!= null && key.getM_Product().getImageURL().trim().length()>0){
+	        		AImage imageFromURL = null;
+	        		URL url_img = null;
+	        		try {
+	        			System.setProperty("http.agent", "Chrome");
+	        			url_img = new URL(key.getM_Product().getImageURL());
+						imageFromURL = new AImage(url_img);
+						if(imageFromURL != null && imageFromURL.getByteData().length>0){
+							img = new AImage(null,imageFromURL.getByteData());
+						}
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	        	}
+			}
+			if(img!=null){
 				Image bImg = new Image();
 				bImg.setContent(img);
 				bImg.setWidth("66%");
 				bImg.setHeight("80%");
 				nt.appendChild(bImg);
 			}
+			
 			label.setStyle("word-wrap: break-word; white-space: pre-line;margin: 25px 0px 0px 0px; top:20px; font-size:10pt; font-weight: bold;color: #FFF;");
 			label.setHeight("100%");
 			button.setHeight("100px");
@@ -189,7 +220,7 @@ public class WPOSKeyPanel extends Panel implements EventListener {
 			button.appendChild(mainLayout);
 			
 			button.setId(""+key.getC_POSKey_ID());
-			button.addEventListener("onClick", this);
+			button.addEventListener(Events.ON_CLICK, this);
 			
 			int size = 1;
 			if ( key.getSpanX() > 1 )

@@ -25,6 +25,7 @@ import org.adempiere.webui.LayoutUtils;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Textbox;
+import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.zkoss.zhtml.Table;
@@ -122,7 +123,7 @@ public class POSNumberBox extends Div
 		btnColumn.setStyle("border: none; padding: 0px; margin: 0px;"+HEIGHT);
 		btnColumn.setSclass("editor-button");
 		btn = new Button();
-        btn.setImage("/images/Calculator10.png");
+        btn.setImage(ThemeManager.getThemeResource("images/Calculator10.png"));
 		btn.setTabindex(-1);
 		LayoutUtils.addSclass("editor-button", btn);
 		btnColumn.appendChild(btn);

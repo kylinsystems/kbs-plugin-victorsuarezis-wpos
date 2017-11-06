@@ -20,8 +20,11 @@ import org.compiere.model.MImage;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductPricingPOS;
 import org.compiere.util.Env;
+import org.zkoss.image.AImage;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 
 /**
  * Created by victor.perez@e-evolution.com , e-Evolution on 19/12/15.
@@ -56,7 +59,30 @@ public class ProductInfo {
         priceList = productPricing.getPriceList();
         priceLimit = productPricing.getPriceLimit();
         MImage image = getImage(imageId);
-        imageData = image != null ? image.getData() : null;
+//        imageData = image != null ? image.getData() : null;
+        if(image != null){
+        	imageData = image.getData();
+        }
+        else{
+        	if(product.getImageURL()!= null && product.getImageURL().trim().length()>0){
+        		AImage imageFromURL = null;
+        		URL url_img = null;
+        		try {
+        			System.setProperty("http.agent", "Chrome");
+        			url_img = new URL(product.getImageURL());
+					imageFromURL = new AImage(url_img);
+					if(imageFromURL != null && imageFromURL.getByteData().length>0){
+						imageData = imageFromURL.getByteData();
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+        
+        	
     }
 
 
@@ -82,11 +108,13 @@ public class ProductInfo {
 
     public MImage getImage(int imageId)
     {
+    	MImage image = null;
         //	Set Image
         if(imageId != 0) {
-            MImage image = MImage.get(Env.getCtx(), imageId);
+            image = MImage.get(Env.getCtx(), imageId);
             return image;
         }
+        
         return null;
     }
 }

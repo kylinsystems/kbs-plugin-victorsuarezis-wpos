@@ -24,6 +24,7 @@ import javax.swing.KeyStroke;
 import org.adempiere.webui.component.Borderlayout;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.session.SessionManager;
+import org.adempiere.webui.theme.ThemeManager;
 import org.idempiere.model.MPOS;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
@@ -90,7 +91,7 @@ public abstract class WPosSubPanel extends Borderlayout
 	protected Button createButtonAction (String action, KeyStroke accelerator)
 	{
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setTooltiptext(Msg.translate(p_ctx, action));
 		button.setWidth(WIDTH+"px");
 		button.setHeight(HEIGHT+"px");
@@ -106,7 +107,7 @@ public abstract class WPosSubPanel extends Borderlayout
 	protected Button createButtonAction (String action, int m_OSK_KeyLayout_ID)
 	{
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setTooltiptext(Msg.translate(p_ctx, action));
 		button.setId(m_OSK_KeyLayout_ID+"");
 		button.setWidth(WIDTH+"px");

@@ -25,6 +25,7 @@ import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.MBPartner;
@@ -99,8 +100,11 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		m_Format = DisplayType.getNumberFormat(DisplayType.Amount);
 		isKeyboard = false;
 		v_TotalsPanel = GridFactory.newGridLayout();
-		v_TotalsPanel.setHeight("100%");
-		v_TotalsPanel.setStyle("width:130%;height:100%");
+//		v_TotalsPanel.setHeight("100%");
+//		v_TotalsPanel.setStyle("width:130%;height:100%");
+		ZKUpdateUtil.setWidth(v_TotalsPanel, "99%");
+		ZKUpdateUtil.setHeight(v_TotalsPanel, "100%");
+		
 		v_OrderPanel = GridFactory.newGridLayout();
 		
 		v_OrderPanel.setStyle("border: none; width:130%; height:100%");
@@ -138,7 +142,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		v_GroupPanel.setStyle("Overflow:hidden;");
 		v_OrderPanel.setStyle("Overflow:hidden;");
 		v_TotalsGroup.appendChild(v_TotalsPanel);
-		v_TotalsGroup.setWidth("65%");
+		v_TotalsGroup.setWidth("85%");
 		
 		v_TitleBorder = new Caption(Msg.getMsg(Env.getCtx(), "Totals"));
 		Style style = new Style();
@@ -323,20 +327,20 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	@Override
 	public void onEvent(Event e) throws Exception {
 		//	Name
-		if(e.getTarget().equals(bPartnerName.getComponent(WPOSTextField.SECONDARY)) && e.getName().equals(Events.ON_FOCUS) && !isKeyboard){
-			isKeyboard = true;
-			if(!bPartnerName.showKeyboard()){
-				findBPartner();
-			}
-			if(posPanel.getKeyboard() == null){
-				bPartnerName.setValue(" ");
-				findBPartner();
-			}
-			bPartnerName.setFocus(true);
-		}
-		if(e.getTarget().equals(bPartnerName.getComponent(WPOSTextField.PRIMARY)) && e.getName().equals(Events.ON_FOCUS)){
-			isKeyboard = false;
-		}
+//		if(e.getTarget().equals(bPartnerName.getComponent(WPOSTextField.SECONDARY)) && e.getName().equals(Events.ON_FOCUS) && !isKeyboard){
+//			isKeyboard = true;
+//			if(!bPartnerName.showKeyboard()){
+//				findBPartner();
+//			}
+//			if(posPanel.getKeyboard() == null){
+//				bPartnerName.setValue(" ");
+//				findBPartner();
+//			}
+//			bPartnerName.setFocus(true);
+//		}
+//		if(e.getTarget().equals(bPartnerName.getComponent(WPOSTextField.PRIMARY)) && e.getName().equals(Events.ON_FOCUS)){
+//			isKeyboard = false;
+//		}
 	}
 	
 	/**

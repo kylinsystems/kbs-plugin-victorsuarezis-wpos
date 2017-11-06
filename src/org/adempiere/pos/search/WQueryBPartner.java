@@ -31,6 +31,7 @@ import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Textbox;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.minigrid.ColumnInfo;
 import org.compiere.minigrid.IDColumn;
 import org.compiere.model.MBPartnerInfo;
@@ -226,8 +227,10 @@ public class WQueryBPartner extends WPOSQuery {
 
 		center = new Center();
 		center.setStyle("border: none");
-		posTable.setWidth("100%");
-		posTable.setHeight("99%");
+		ZKUpdateUtil.setWidth(posTable, "100%");
+		ZKUpdateUtil.setHeight(posTable, "99%");
+//		posTable.setWidth("100%");
+//		posTable.setHeight("99%");
 		posTable.addActionListener(this);
 		center.appendChild(posTable);
 		mainLayout.appendChild(center);

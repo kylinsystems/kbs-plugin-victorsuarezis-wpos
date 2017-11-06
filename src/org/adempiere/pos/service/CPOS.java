@@ -33,6 +33,7 @@ import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.command.CommandManager;
 import org.adempiere.pos.util.POSTicketHandler;
+import org.adempiere.webui.window.FDialog;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_OrderLine;
 import org.compiere.model.MAllocationHdr;
@@ -404,6 +405,24 @@ public class CPOS {
 		}
 		//
 		return MOrder.DocSubTypeSO_RMA.equals(getDocSubTypeSO());
+	}
+	
+	/**
+	 * Validate if is Purchase Order
+	 * @return
+	 * @return boolean
+	 */
+	public boolean isPurchaseOrder() {
+		if(!hasOrder()) {
+			return false;
+		}
+		//
+		MDocType m_DocType = MDocType.get(getCtx(), currentOrder.getC_DocTypeTarget_ID());
+		if(m_DocType != null) {
+			return m_DocType.getName().equals(Msg.getMsg(getCtx(), "Purchase Order"));
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -2371,6 +2390,11 @@ public class CPOS {
 	public void printTicket() {
 		if (!hasOrder())
 			return;
+		else if(hasOrder() && !isCompleted())
+		{
+			FDialog.info(getWindowNo(), null, "No Order Completed");
+			return;
+		}
 		//	Print
 		POSTicketHandler ticketHandler = POSTicketHandler.getTicketHandler(this);
 		if(ticketHandler == null)

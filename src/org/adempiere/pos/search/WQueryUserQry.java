@@ -34,7 +34,6 @@ import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.minigrid.ColumnInfo;
 import org.compiere.minigrid.IDColumn;
-import org.compiere.model.MOrder;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
@@ -55,7 +54,7 @@ import org.zkoss.zul.Groupbox;
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
 
-public class WQueryDocType extends WPOSQuery implements POSQueryInterface
+public class WQueryUserQry extends WPOSQuery implements POSQueryInterface
 {
 	/**
 	 * 
@@ -64,30 +63,26 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 	/**
 	 * 	Constructor
 	 */
-	public WQueryDocType (WPOS posPanel)
+	public WQueryUserQry (WPOS posPanel)
 	{
 		super(posPanel);
 	}	//	PosQueryProduct
 
 
 	private WPOSTextField 	fieldName;
-	private WPOSTextField 	fieldDescription;
-
-	private boolean			isKeyboard;
-	/**	Internal Variables	*/
-	private int 			documentTypeId;
 	
+//	private boolean			isKeyboard;
+	
+	/**	Internal Variables	*/
+	private int 			userQueryId;
+		
 	static final private String NAME      		= "Name";
-	static final private String DOCUMENTNOSEQUENCE = "DocNoSequence_ID";
-	static final private String DESCRIPTION  	= "Description";
 	static final private String QUERY           = "Query";
 	
 	/**	Table Column Layout Info			*/
 	private static ColumnInfo[] columnInfos = new ColumnInfo[] {
-		new ColumnInfo(" ", "C_DocType_ID", IDColumn.class),
+		new ColumnInfo(" ", "AD_UserQuery_ID", IDColumn.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), NAME), NAME, String.class),
-		new ColumnInfo(Msg.translate(Env.getCtx(), DOCUMENTNOSEQUENCE), DOCUMENTNOSEQUENCE, String.class),
-		new ColumnInfo(Msg.translate(Env.getCtx(), DESCRIPTION), DESCRIPTION, String.class),
 	};
 
 	/**
@@ -95,7 +90,7 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 	 */
 	protected void init()
 	{
-		setTitle(Msg.translate(Env.getCtx(), "C_DocType_ID"));
+		setTitle(Msg.translate(Env.getCtx(), "AD_UserQuery_ID"));
 		Panel panel = new Panel();
 		setVisible(true);
 		Panel mainPanel = new Panel();
@@ -139,20 +134,10 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 		fieldName.addEventListener(this);
 		fieldName.setWidth("120px");
 		fieldName.setStyle(WPOS.FONTSIZESMALL);
-
-		Label labelDescription = new Label(Msg.translate(ctx, DESCRIPTION));
-		labelDescription.setStyle(WPOS.FONTSIZESMALL);
-		row.setHeight("60px");
-		row.appendChild(labelDescription.rightAlign());
-		fieldDescription = new WPOSTextField(null, posPanel.getKeyboard());
-		row.appendChild(fieldDescription);
-		fieldDescription.addEventListener(this);
-		fieldDescription.setWidth("120px");
-		fieldDescription.setStyle(WPOS.FONTSIZESMALL);
 		
 		//	Center
 		posTable = ListboxFactory.newDataTable();
-		posTable.prepareTable (columnInfos, "C_DocType",null, false, "C_DocType");
+		posTable.prepareTable (columnInfos, "AD_UserQuery",null, false, "AD_UserQuery");
 
 		enableButtons();
 		center = new Center();
@@ -183,34 +168,23 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 	 * 	Set/display Results
 	 *	@param results results
 	 */
-	public void setResults (Properties ctx, String name, String description)
+	public void setResults (Properties ctx, String name)
 	{
 		StringBuffer sql = new StringBuffer();
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		
 		try  {
-			sql.append(" SELECT dt.C_DocType_ID, dt.Name, sq.Name, (COALESCE(sq.Prefix, '') || sq.CurrentNext || COALESCE(sq.Suffix, '')) SeqNo")
-			.append(" FROM C_DocType dt")
-			.append(" LEFT JOIN AD_Sequence sq ON (sq.AD_Sequence_ID = dt.DocNoSequence_ID)")
-			.append(" WHERE dt.AD_Client_ID = ? AND dt.AD_Org_ID IN (0, ?)")
-			.append(" AND dt.isActive='Y'")
-			.append(" AND dt.DocBaseType='SOO'")
-			.append(" AND dt.DocSubTypeSO IN(?, ?, ?, ?, ?)")
-			.append(" OR (dt.AD_Client_ID = ? AND dt.isActive='Y' AND dt.DocBaseType = 'POO' AND dt.DocSubTypeSO IS NULL)")
-		    .append(" ORDER BY dt.Name");
+			sql.append(" SELECT AD_UserQuery_ID, Name")
+			.append(" FROM AD_UserQuery ")
+			.append(" WHERE AD_Client_ID = ? AND Name LIKE 'POS_%'")
+			.append(" AND isActive='Y'")
+		    .append(" ORDER BY Name");
 						
 			int i = 1;			
 			preparedStatement = DB.prepareStatement(sql.toString(), null);
 			//	POS
 			int clientID = Env.getAD_Client_ID(ctx);
-			preparedStatement.setInt(i++, clientID);
-			preparedStatement.setInt(i++, posPanel.getAD_Org_ID());
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_POS);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_OnCredit);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_Standard);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_Prepay);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_Warehouse);
 			preparedStatement.setInt(i++, clientID);
 			//	
 			resultSet = preparedStatement.executeQuery();
@@ -234,7 +208,6 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 	 */
 	protected void enableButtons()
 	{
-		documentTypeId = -1;
 		int row = posTable.getSelectedRow();
 		boolean enabled = row != -1;
 		if (enabled)
@@ -242,10 +215,10 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 			Integer ID = posTable.getSelectedRowKey();
 			if (ID != null)
 			{
-				documentTypeId = ID.intValue();
+				userQueryId = ID.intValue();
 			}
 		}
-		logger.info("ID=" + documentTypeId);
+		logger.info("ID=" + userQueryId);
 	}	//	enableButtons
 
 	/**
@@ -255,10 +228,10 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 	@Override
 	protected void close()
 	{
-		logger.info("C_DocType_ID=" + documentTypeId);
-		if (documentTypeId > 0)
+		logger.info("AD_UserQuery_ID=" + userQueryId);
+		if (userQueryId > 0)
 		{
-		posPanel.setC_DocType_ID(documentTypeId);
+		posPanel.setC_DocType_ID(userQueryId);
 		}
 			dispose();
 	}	//	close
@@ -266,28 +239,7 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 
 	@Override
 	public void onEvent(Event e) throws Exception {
-		if(e.getTarget().equals(fieldName.getComponent(WPOSTextField.SECONDARY)) && !isKeyboard) {
-			isKeyboard = true;
-			//	Get Keyboard Panel
-			fieldName.showKeyboard();
-			refresh();
-			fieldName.setFocus(true);
-
-		}
-		else if(e.getTarget().equals(fieldName.getComponent(WPOSTextField.PRIMARY))) {
-			 isKeyboard = false;
-		}
-		if(e.getTarget().equals(fieldDescription.getComponent(WPOSTextField.SECONDARY)) && !isKeyboard) {
-			isKeyboard = true;
-			//	Get Keyboard Panel
-			fieldDescription.showKeyboard();
-			refresh();
-			fieldDescription.setFocus(true);
-		}
-		else if(e.getTarget().equals(fieldDescription.getComponent(WPOSTextField.PRIMARY))) {
-			 isKeyboard = false;
-		}
-		else if(e.getTarget().getId().equals("Refresh")) {
+		if(e.getTarget().getId().equals("Refresh")) {
 			refresh();
 		}
 		else if (Events.ON_OK.equals(e.getName()) 
@@ -309,13 +261,13 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 	@Override
 	public void refresh() {
 		lockUI();
-		setResults(ctx, fieldName.getText(), fieldDescription.getText());
+		setResults(ctx, fieldName.getText());
 		unlockUI();
 	}
 
 	@Override
 	protected void select() {
-		documentTypeId = -1;
+		userQueryId = -1;
 		int row = posTable.getSelectedRow();
 		boolean enabled = row != -1;
 		if (enabled)
@@ -323,20 +275,20 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 			Integer ID = posTable.getSelectedRowKey();
 			if (ID != null)
 			{
-				documentTypeId = ID.intValue();
+				userQueryId = ID.intValue();
 			}
 		}
-		logger.info("ID=" + documentTypeId);
+		logger.info("ID=" + userQueryId);
 	}
 	@Override
 	protected void cancel() {
-		documentTypeId = -1;
+		userQueryId = -1;
 		dispose();
 	}
 	
 	@Override
 	public int getRecord_ID() {
-		return documentTypeId;
+		return userQueryId;
 	}
 	
 	@Override

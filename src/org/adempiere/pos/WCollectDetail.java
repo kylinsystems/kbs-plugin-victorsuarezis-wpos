@@ -33,6 +33,7 @@ import org.adempiere.webui.component.Datebox;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.ListboxPOS;
 import org.adempiere.webui.component.ListboxFactory;
 import org.adempiere.webui.component.Row;
@@ -154,7 +155,10 @@ public class WCollectDetail extends CollectDetail implements EventListener, POSP
 		bMinus.addActionListener(this);
 		row.setHeight("55px");
 		
-		fTenderType = (ListboxPOS) ListboxFactory.newDropdownListbox();
+//		fTenderType = (ListboxPOS) ListboxFactory.newDropdownListbox();
+		fTenderType = new ListboxPOS();
+		fTenderType.setMold("select");
+	
 		fTenderType.addActionListener(this);
 		int pos = 0;
 		// default to cash payment
@@ -240,7 +244,9 @@ public class WCollectDetail extends CollectDetail implements EventListener, POSP
 		ArrayList<Object> cards = cardlookup.getData(true, false, true, true, false);
 		
 		row = rows.newRow();
-		fCCardType = (ListboxPOS) ListboxFactory.newDropdownListbox();
+//		fCCardType = (ListboxPOS) ListboxFactory.newDropdownListbox();
+		fCCardType = new ListboxPOS();
+		fCCardType.setMold("select");
 		row.appendChild(fCCardType);
 		fCCardType.setStyle(HEIGHT+WIDTH+FONT_SIZE);
 		fCCardType.setValue(Msg.translate(p_ctx, "CreditCardType"));
@@ -269,7 +275,9 @@ public class WCollectDetail extends CollectDetail implements EventListener, POSP
 		fCCardName.addEventListener("onFocus", this);
 		
 		//	For Card Month
-		fCreditCardExpMM = (ListboxPOS) ListboxFactory.newDropdownListbox();
+//		fCreditCardExpMM = (ListboxPOS) ListboxFactory.newDropdownListbox();
+		fCreditCardExpMM = new ListboxPOS();
+		fCreditCardExpMM.setMold("select");
 		ValueNamePair[] data = getCCMonths();
 		for(ValueNamePair pp : data) {
 			fCreditCardExpMM.appendItem(String.valueOf(pp.getName()),pp.getID());
@@ -280,7 +288,9 @@ public class WCollectDetail extends CollectDetail implements EventListener, POSP
 		fCreditCardExpMM.setStyle(HEIGHT+"width:"+75+"px;"+FONT_SIZE);
 		
 		//	For Card Year
-		fCreditCardExpYY = (ListboxPOS) ListboxFactory.newDropdownListbox();
+//		fCreditCardExpYY = (ListboxPOS) ListboxFactory.newDropdownListbox();
+		fCreditCardExpYY = new ListboxPOS();
+		fCreditCardExpYY.setMold("select");
 		data = getCCYears();
 		for(ValueNamePair pp : data) {
 			fCreditCardExpYY.appendItem(String.valueOf(pp.getName()),pp.getID());
@@ -356,7 +366,9 @@ public class WCollectDetail extends CollectDetail implements EventListener, POSP
 		ArrayList<Object> types = lookup.getData(false, false, true, true, false);
 		
 		row = rows.newRow();
-		fCreditMemo = (ListboxPOS) ListboxFactory.newDropdownListbox();
+//		fCreditMemo = (ListboxPOS) ListboxFactory.newDropdownListbox();
+		fCreditMemo = new ListboxPOS();
+		fCreditMemo.setMold("select");
 		row.appendChild(fCreditMemo);
 		fCreditMemo.setStyle(HEIGHT+WIDTH+FONT_SIZE);
 		fCreditMemo.setValue(Msg.translate(p_ctx, "CreditMemoType"));

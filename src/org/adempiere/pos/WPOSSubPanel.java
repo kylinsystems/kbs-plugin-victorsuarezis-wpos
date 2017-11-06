@@ -22,6 +22,7 @@ import java.util.Properties;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.session.SessionManager;
+import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.EventListener;
@@ -84,7 +85,7 @@ public abstract class WPOSSubPanel extends Panel
 	protected Button createButtonAction (String action, String accelerator)
 	{
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setTooltiptext(accelerator+"-"+Msg.translate(ctx, action));
 		button.setWidth(WIDTH+"px");
 		button.setHeight(HEIGHT+"px");
@@ -102,7 +103,7 @@ public abstract class WPOSSubPanel extends Panel
 	protected Button createButtonAction (String action, int m_OSK_KeyLayout_ID)
 	{
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setTooltiptext(Msg.translate(ctx, action));
 		button.setId(m_OSK_KeyLayout_ID+"");
 		button.setWidth(WIDTH+"px");

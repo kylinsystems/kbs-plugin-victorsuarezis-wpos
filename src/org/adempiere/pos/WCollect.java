@@ -40,6 +40,7 @@ import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.session.SessionManager;
+import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.X_C_Payment;
@@ -333,7 +334,7 @@ public class WCollect extends Collect implements WPOSKeyListener, EventListener,
 	 */
 	protected Button createButtonAction (String action, KeyStroke accelerator)	{
 		Button button = new Button();
-		button.setImage("images/"+action+"24.png");
+		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
 		button.setTooltiptext(Msg.translate(p_ctx, action));
 		button.setWidth("55px");
 		button.setHeight("55px");

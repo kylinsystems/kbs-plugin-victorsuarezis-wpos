@@ -76,7 +76,7 @@ public class POSOrderLineTableHandle {
 	
 	/**	Table Column Layout Info	*/
 	private ColumnInfo[] columns = new ColumnInfo[] {
-		new ColumnInfo(" ", "C_OrderLine_ID", IDColumn.class,0,false,true,null,false), 
+		new ColumnInfo(" ", "C_OrderLine_ID", IDColumn.class,false,true,null), 
 		//new ColumnInfo("", "C_OrderLine_ID", DeleteColumn.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), PRODUCTNAME), PRODUCTNAME, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), "Qty"), QTYORDERED , BigDecimal.class),
@@ -91,7 +91,7 @@ public class POSOrderLineTableHandle {
 	/**	From Clause					*/
 	private final String sqlFrom = "POS_OrderLine_v";
 	/** Where Clause				*/
-	private final String sqlWhere = "C_Order_ID=?";
+	private String sqlWhere = "C_Order_ID=?";
 	/** The Query SQL				*/
 	private String sqlStatement;
 	/**	Table						*/
@@ -149,4 +149,14 @@ public class POSOrderLineTableHandle {
 		//	Return
 		return false;
 	}
+
+	public String getSqlWhere() {
+		return sqlWhere;
+	}
+
+	public void setSqlWhere(String sqlWhere) {
+		this.sqlWhere = sqlWhere;
+	}
+	
+	
 }

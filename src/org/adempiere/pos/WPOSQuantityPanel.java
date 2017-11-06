@@ -21,15 +21,20 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.pos.search.WQueryDocType;
+import org.adempiere.pos.search.WQueryUserQry;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.NumberBox;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.component.Window;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.MOrder;
 import org.compiere.util.DisplayType;
@@ -71,9 +76,16 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 	private Button 			buttonPlus;
 	private Button 			buttonMinus;
 	private Button 			buttonScales;
-	private POSNumberBox 	fieldQuantity;
-	private POSNumberBox 	fieldPrice;
-	private POSNumberBox	fieldDiscountPercentage;
+	private Button			buttonFilter;
+	//	private POSNumberBox 	fieldQuantity;
+	private NumberBox 	    fieldQuantity;
+	//	private POSNumberBox 	fieldPrice;
+	private NumberBox 	    fieldPrice;
+	//	private POSNumberBox	fieldDiscountPercentage;
+	private NumberBox 	    fieldDiscountPercentage;
+	
+	/**	Process Action 						*/
+	private WPOSFilterMenu actionFilterMenu;
 
 	private final String ACTION_UP       	= "Previous";
 	private final String ACTION_DOWN  		= "Next";
@@ -100,18 +112,18 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		buttonDelete.setTooltiptext("Ctrl+F3-"+Msg.translate(ctx, "DeleteLine"));
 		buttonDelete.addActionListener(this);
 		row.appendChild (buttonDelete);
-		
+
 		buttonPlus = createButtonAction("Plus", "Ctrl+1");
 		buttonPlus.setTooltiptext("Ctrl+0-"+Msg.translate(ctx, "add"));
 		row.appendChild(buttonPlus);
-		
+
 		buttonMinus = createButtonAction("Minus", "Ctrl+0");
 		row.appendChild(buttonMinus);
 
 		buttonUp = createButtonAction(ACTION_UP, "Alt+Up");
 		buttonUp.setTooltiptext("Alt+Up-"+Msg.translate(ctx, "Previous"));
 		row.appendChild (buttonUp);
-		
+
 		buttonDown = createButtonAction(ACTION_DOWN, "Alt+Down");
 		buttonDown.setTooltiptext("Alt+Down-"+Msg.translate(ctx, "Next"));
 		row.appendChild (buttonDown);
@@ -120,26 +132,35 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 			buttonScales = createButtonAction("Calculator", "Ctrl+W");
 			buttonScales.setTooltiptext("ALT+down-" + Msg.translate(ctx, "Calculator"));
 			row.appendChild(buttonScales);
-//			buttonScales.addActionListener(posPanel.getScalesListener());
+			//			buttonScales.addActionListener(posPanel.getScalesListener());
 		}
-		
+		buttonFilter = createButtonAction("Filter", null);
+		buttonFilter.setTooltiptext(Msg.translate(ctx, "Filter"));
+		row.appendChild (buttonFilter);
+
 		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
 		row.appendChild(qtyLabel);
 
-		fieldQuantity = new POSNumberBox(false);
-		
+		//		fieldQuantity = new POSNumberBox(false);
+		fieldQuantity = new NumberBox(true);
+
 		row.appendChild(fieldQuantity);
 		fieldQuantity.addEventListener(Events.ON_OK, this);
 		fieldQuantity.addEventListener(Events.ON_CHANGE, this);
-		fieldQuantity.setStyle("display: inline;width:65px;height:30px;Font-size:medium;");
+		//		fieldQuantity.setStyle("display: inline;width:65px;height:30px;Font-size:medium;");
+		ZKUpdateUtil.setWidth(fieldQuantity, "65px");
+		ZKUpdateUtil.setHeight(fieldQuantity.getDecimalbox(),"30px");
+		ZKUpdateUtil.setHeight(fieldQuantity.getButton(),"30px");
+		fieldQuantity.getDecimalbox().setStyle("display: inline;Font-size:medium;");
 
 		Label priceLabel = new Label(Msg.translate(Env.getCtx(), "PriceActual"));
 		row.appendChild(priceLabel);
-		
-		fieldPrice = new POSNumberBox(false);
-    DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount, AEnv.getLanguage(Env.getCtx()));
-    fieldPrice.getDecimalbox().setFormat(format.toPattern());
-    
+
+		//		fieldPrice = new POSNumberBox(false);
+		fieldPrice = new NumberBox(false);
+		DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount, AEnv.getLanguage(Env.getCtx()));
+		fieldPrice.getDecimalbox().setFormat(format.toPattern());
+
 		fieldPrice.setTooltiptext(Msg.translate(Env.getCtx(), "PriceActual"));
 		row.appendChild(fieldPrice);
 		if (!posPanel.isModifyPrice())
@@ -148,12 +169,17 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 			fieldPrice.addEventListener(Events.ON_OK, this);
 			fieldPrice.addEventListener(Events.ON_CHANGE, this);
 		}
-		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		
+		//		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
+		ZKUpdateUtil.setWidth(fieldPrice, "70px");
+		ZKUpdateUtil.setHeight(fieldPrice.getDecimalbox(),"30px");
+		ZKUpdateUtil.setHeight(fieldPrice.getButton(),"30px");
+		fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+
 		Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
 		row.appendChild(priceDiscount);
 
-		fieldDiscountPercentage = new POSNumberBox(false);
+		//		fieldDiscountPercentage = new POSNumberBox(false);
+		fieldDiscountPercentage = new NumberBox(false);
 		row.appendChild(fieldDiscountPercentage);
 		fieldDiscountPercentage.setTooltiptext(Msg.translate(Env.getCtx(), "Discount"));
 		if (!posPanel.isModifyPrice())
@@ -162,18 +188,24 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 			fieldDiscountPercentage.addEventListener(Events.ON_OK, this);
 			fieldDiscountPercentage.addEventListener(Events.ON_CHANGE, this);
 		}
-		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		
+		//		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
+		ZKUpdateUtil.setWidth(fieldDiscountPercentage, "70px");
+		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getDecimalbox(),"30px");
+		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getButton(),"30px");
+		fieldDiscountPercentage.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+
 		Keylistener keyListener = new Keylistener();
 		fieldPrice.appendChild(keyListener);
-    	keyListener.setCtrlKeys("@#up@#down^#f3^1^0");
-    	keyListener.addEventListener(Events.ON_CTRL_KEY, posPanel);
-    	keyListener.addEventListener(Events.ON_CTRL_KEY, this);
-    	keyListener.setAutoBlur(false);
-    	
+		keyListener.setCtrlKeys("@#up@#down^#f3^1^0");
+		keyListener.addEventListener(Events.ON_CTRL_KEY, posPanel);
+		keyListener.addEventListener(Events.ON_CTRL_KEY, this);
+		keyListener.setAutoBlur(false);
+		
+		actionFilterMenu = new WPOSFilterMenu(posPanel);
+
 		changeStatus(false);
 	}
-	
+
 	@Override
 	public void onEvent(Event e) throws Exception {
 		try {
@@ -233,44 +265,53 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 					return;
 				}
 			}
+
+			if (e.getTarget().equals(buttonFilter)){
+//				openFilter();
+				actionFilterMenu.getPopUp().setPage(buttonFilter.getPage());
+//				actionFilterMenu.getPopUp().setPage(this.getPage());
+                actionFilterMenu.getPopUp().open(buttonFilter);
+                return;
+			}
+
 			BigDecimal value = Env.ZERO;
 			if(Events.ON_OK.equals(e.getName()) || Events.ON_CHANGE.equals(e.getName())) {
-        
-			  value = fieldQuantity.getValue();
-        if(value == null)
-          return;
-        if(e.getTarget().equals(fieldQuantity.getDecimalbox())) {
-          if(Events.ON_OK.equals(e.getName())){
-            posPanel.setQty(value);
-          }
-          else if(posPanel.isAddQty() 
-              || Events.ON_CHANGE.equals(e.getName())){
-            //  Verify if it add or set
-            if(posPanel.isAddQty()) {
-              posPanel.setQtyAdded(value);
-            } else {
-              posPanel.setQty(value);
-            }
-          }
-          
-        }
-      
-        if (e.getTarget().equals(fieldPrice.getDecimalbox())) {
-          value = fieldPrice.getValue();
-          if(value == null)
-            return;
-          if(posPanel.isUserPinValid()) {
-            posPanel.setPrice(value);
-          }
-        }
-        else if ( e.getTarget().equals(fieldDiscountPercentage.getDecimalbox())) {
-          if(posPanel.isUserPinValid()) {
-            value = fieldDiscountPercentage.getValue();
-            if(value == null)
-              return;
-            posPanel.setDiscountPercentage(value);
-          }
-        }
+
+				value = fieldQuantity.getValue();
+				if(value == null)
+					return;
+				if(e.getTarget().equals(fieldQuantity.getDecimalbox())) {
+					if(Events.ON_OK.equals(e.getName())){
+						posPanel.setQty(value);
+					}
+					else if(posPanel.isAddQty() 
+							|| Events.ON_CHANGE.equals(e.getName())){
+						//  Verify if it add or set
+						if(posPanel.isAddQty()) {
+							posPanel.setQtyAdded(value);
+						} else {
+							posPanel.setQty(value);
+						}
+					}
+
+				}
+
+				if (e.getTarget().equals(fieldPrice.getDecimalbox())) {
+					value = fieldPrice.getValue();
+					if(value == null)
+						return;
+					if(posPanel.isUserPinValid()) {
+						posPanel.setPrice(value);
+					}
+				}
+				else if ( e.getTarget().equals(fieldDiscountPercentage.getDecimalbox())) {
+					if(posPanel.isUserPinValid()) {
+						value = fieldDiscountPercentage.getValue();
+						if(value == null)
+							return;
+						posPanel.setDiscountPercentage(value);
+					}
+				}
 			}
 
 			posPanel.updateLineTable();
@@ -281,7 +322,7 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 			FDialog.error(posPanel.getWindowNo(), this, exception.getLocalizedMessage());
 		}
 	}
-	
+
 	/**
 	 * Change Status 
 	 * @param status
@@ -296,16 +337,16 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		buttonDown.setEnabled(status);
 		buttonUp.setEnabled(status);
 	}
-	
+
 	@Override
 	public void refreshPanel() {
 		if(posPanel.hasLines()){
 			buttonDown.setEnabled(true);
 			buttonUp.setEnabled(true);
-			
+
 			// Only enable buttons if status==(drafted or in progress)
 			if(posPanel.getOrder().getDocStatus().compareToIgnoreCase(MOrder.STATUS_Drafted)==0 || 
-			   posPanel.getOrder().getDocStatus().compareToIgnoreCase(MOrder.STATUS_InProgress)==0 ){
+					posPanel.getOrder().getDocStatus().compareToIgnoreCase(MOrder.STATUS_InProgress)==0 ){
 				buttonDelete.setEnabled(true);
 				buttonPlus.setEnabled(true);
 				buttonMinus.setEnabled(true);
@@ -346,7 +387,7 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 
 	@Override
 	public void moveUp() {
-		
+
 	}
 
 	@Override
@@ -400,6 +441,16 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 	 */
 	public Panel getPanel(){
 		return parameterPanel;
+	}
+
+	/** 
+	 * Open window Filter 
+	 */
+	private void openFilter() { 
+		WQueryUserQry qt = new WQueryUserQry(posPanel);
+		qt.setVisible(true);
+		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
+		AEnv.showWindow(qt);
 	}
 
 }

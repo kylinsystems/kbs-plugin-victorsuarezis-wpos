@@ -111,6 +111,8 @@ public class WPOSActionMenu implements  POSQueryListener, EventListener{
             executeCommand(command);
         } else if (command.getCommand() == CommandManager.CLOSE_STATEMENT) {
             executeCommand(command);
+        } else if (command.getCommand() == CommandManager.COMPLETE_DOCUMENT) {
+            executeCommand(command);
         } else {
         	FDialog.info(pos.getWindowNo(), popupMenu, "DocProcessed", pos.getDocumentNo());
         }

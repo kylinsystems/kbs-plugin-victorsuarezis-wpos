@@ -28,6 +28,7 @@ import org.compiere.minigrid.DeleteColumn;
 import org.adempiere.webui.component.WListItemRenderer;
 import org.adempiere.webui.component.WListboxPOS;
 import org.adempiere.webui.exception.ApplicationException;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.minigrid.ColumnInfo;
 //import org.compiere.minigrid.ColumnInfoPOS;
 import org.compiere.minigrid.IDColumn;
@@ -53,7 +54,7 @@ public class WPOSTable extends WListboxPOS {
 		setWidth("100%");
 		setHeight("100%");
 		setFixedLayout(true);
-		setVflex(true);
+//		setVflex(true);
 	}
 	
 	/** Layout set in prepareTable and used in loadTable.    */
