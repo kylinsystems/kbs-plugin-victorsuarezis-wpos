@@ -347,6 +347,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 			posPanel.setOrder(orderId);
 
 		}
+		posPanel.refreshPanel();
 		dispose();
 	}	//	close
 
