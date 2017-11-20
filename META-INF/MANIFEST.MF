@@ -23,6 +23,9 @@ Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Ing. Victor Suárez - victor.suarez.is@gmail.com
 Service-Component: OSGI-INF/FormFactoryWPOS.xml
-Import-Package: org.compiere.grid.ed,
- org.compiere.minigrid
+Import-Package: it.cnet.idempiere.utilPDF.utility,
+ org.compiere.grid.ed,
+ org.compiere.minigrid,
+ org.libero.model,
+ org.libero.tables
 Export-Package: net.miginfocom.swing

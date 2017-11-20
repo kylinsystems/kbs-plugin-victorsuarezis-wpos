@@ -27,6 +27,8 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
+import it.cnet.idempiere.utilPDF.utility.PrinterUtil;
+
 /**
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * 		<a href="https://github.com/adempiere/adempiere/issues/672">
@@ -45,9 +47,11 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 	@Override
 	public void printTicket() {
 		try {
-			ProcessInfo info = new ProcessInfo(null, 0);
-			info.setTransactionName(getPOS().get_TrxName());
+			ProcessInfo info = null;
 			if(!getPOS().isInvoiced()) {
+				
+				info = new ProcessInfo ("", 0, getPOS().getOrder().Table_ID, getPOS().getC_Order_ID());
+				info.setTransactionName(getPOS().get_TrxName());
 				
 				MPrintFormat printformat = null;
 				if(getPOS().getOrder().isSOTrx()){
@@ -61,28 +65,39 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 					info.setAD_Process_ID(printformat.getJasperProcess_ID());
 				}
 				
-				ReportCtlPOS.startDocumentPrint(
-						ReportEngine.ORDER, 
-						printformat, 
-						getPOS().getC_Order_ID(), 
-						null, 
-						getPOS().getWindowNo(), 
-						false, 
-						null, 
-						info);
+//				ReportCtlPOS.startDocumentPrint(
+//						ReportEngine.ORDER, 
+//						printformat, 
+//						getPOS().getC_Order_ID(), 
+//						null, 
+//						getPOS().getWindowNo(), 
+//						false, 
+//						null, 
+//						info);
+			PrinterUtil printerUtil = new PrintDirect(info);
+			printerUtil.setDirectPrint(true);
+			printerUtil.print();
+				
+				
 			} else {
 				for (MInvoice invoice :  getPOS().getOrder().getInvoices()) {
+					info = new ProcessInfo ("", 0, invoice.Table_ID, invoice.getC_Invoice_ID());
+					info.setTransactionName(getPOS().get_TrxName());
+					
 					int LIT_POS_InvoicePrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_InvoicePrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));
 					MPrintFormat printformat = new MPrintFormat(Env.getCtx(), LIT_POS_InvoicePrintForm_ID, null);
-					ReportCtlPOS.startDocumentPrint(
-							ReportEngine.INVOICE, 
-							printformat, 
-							invoice.getC_Invoice_ID(), 
-							null, 
-							getPOS().getWindowNo(), 
-							false, 
-							null, 
-							info);
+//					ReportCtlPOS.startDocumentPrint(
+//							ReportEngine.INVOICE, 
+//							printformat, 
+//							invoice.getC_Invoice_ID(), 
+//							null, 
+//							getPOS().getWindowNo(), 
+//							false, 
+//							null, 
+//							info);
+					PrinterUtil printerUtil = new PrintDirect(info);
+					printerUtil.setDirectPrint(true);
+					printerUtil.print();
                 }
 			}
 		} catch (Exception e) {

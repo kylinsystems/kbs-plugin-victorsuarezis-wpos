@@ -152,14 +152,27 @@ public class CPOS {
 	 * @param salesRepId
 	 * @return true if found/set
 	 */
-	public void setPOS(int salesRepId) {
+	public void setPOS(int salesRepId, String typePos) {
 		//List<MPOS> poss = getPOSs(p_SalesRep_ID);
 		List<MPOS> poss = getPOSByOrganization(Env.getAD_Org_ID(getCtx()));
 		//
 		if (poss.size() == 0) {
 			throw new AdempierePOSException("@NoPOSForUser@");
-		} else if (poss.size() == 1) {
-			entityPOS = poss.get(0);
+		} 
+//		else if (poss.size() == 1) {
+//			entityPOS = poss.get(0);
+//		}
+		else {
+			
+			for (MPOS mpos : poss) {
+				
+				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos)){
+					entityPOS = mpos;
+					break;
+				}
+			}
+			
+			
 		}
 	}	//	setMPOS
 	

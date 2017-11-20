@@ -15,13 +15,14 @@
  * Contributor(s): Raul Muñoz www.erpcya.com					              *
  *****************************************************************************/
 
-package org.adempiere.pos;
+package org.adempiere.pos.posmovement;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.math.BigDecimal;
 
-import org.adempiere.pos.service.POSOrderLineTableHandle;
+import org.adempiere.pos.WPOSTable;
+import org.adempiere.pos.posmovement.service.POSInventoryLineTableHandle;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.webui.component.ListModelTable;
 import org.adempiere.webui.event.WTableModelEvent;
@@ -33,8 +34,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Style;
 import org.zkoss.zul.event.ListDataEvent;
 
 /**
@@ -46,29 +46,31 @@ import org.zkoss.zul.event.ListDataEvent;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListener, POSPanelInterface,FocusListener {
+public class WPOSInventoryLinePanel extends WPOSSubPanel_Move implements WTableModelListener, POSPanelInterface,FocusListener {
 	
+	
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -4023538043556457231L;
+	private static final long serialVersionUID = 4195629153770840111L;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param posPanel POS Panel
 	 */
-	public WPOSOrderLinePanel(WPOS posPanel) {
+	public WPOSInventoryLinePanel(WPOS_Move posPanel) {
 		super(posPanel);
 	}
-	/**	Current Order Line			*/
-	private int 					orderLineId = 0;
+	/**	Current Inventory Line			*/
+	private int 					inventoryLineId = 0;
 	/** The Table					*/
 	private WPOSTable 				posTable;
 	/** The Table					*/
-	public 	POSOrderLineTableHandle lineTableHandle;
+	public 	POSInventoryLineTableHandle lineTableHandle;
 	/**	Logger				*/
-	private static CLogger logger = CLogger.getCLogger(WPOSOrderLinePanel.class);
+	private static CLogger logger = CLogger.getCLogger(WPOSInventoryLinePanel.class);
 	
 	public boolean isFilter = false;
 
@@ -76,7 +78,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	protected void init() {
 		posTable = new WPOSTable();
 		//	
-		lineTableHandle = new POSOrderLineTableHandle(posTable);
+		lineTableHandle = new POSInventoryLineTableHandle(posTable);
 		lineTableHandle.prepareTable();
 
 		posTable.setColumnClass(4, BigDecimal.class, true);
@@ -87,23 +89,24 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		posTable.addActionListener(this);
 		posTable.addEventListener(Events.ON_CLICK, this);
 		posTable.getModel().addTableModelListener(this);
-		posTable.setClass("Table-OrderLine");
+		posTable.setClass("Table-InventoryLine");
 		posTable.setStyle("overflow-y: scroll; zoom:1.7;");
-		posTable.setColumnReadOnly(POSOrderLineTableHandle.POSITION_QTYORDERED, true);
+		posTable.setColumnReadOnly(POSInventoryLineTableHandle.POSITION_QTYINTERUSE, true);
+
 	}
 
 	@Override
 	public void refreshPanel() {
 	
-		if (!posPanel.hasOrder()) {
+		if (!posPanel.hasInventory()) {
 			posTable.loadTable(new PO[0]);
 		}
 		//	Load Data
-		lineTableHandle.loadTable(posPanel.getC_Order_ID());
+		lineTableHandle.loadTable(posPanel.getM_Inventory_ID());
 		//	
 		for (int i = 0; i < posTable.getRowCount(); i ++ ) {
 			IDColumn key = (IDColumn) posTable.getModel().getValueAt(i, 0);
-			if ( key != null && orderLineId > 0 && key.getRecord_ID() == orderLineId)
+			if ( key != null && inventoryLineId > 0 && key.getRecord_ID() == inventoryLineId)
 			{
 				posTable.setSelectedIndex(i);
 				posPanel.changeViewPanel();
@@ -113,7 +116,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 			// Select first row, if end of table and no row has been selected
 			if(i==posTable.getRowCount()-1)	 {
         //  Set Current Order Line
-        orderLineId = key.getRecord_ID();
+				inventoryLineId = key.getRecord_ID();
 				posTable.setSelectedIndex(0);
 				posPanel.changeViewPanel();
 				showProductInfo(0);
@@ -128,7 +131,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	 */
 	public void disableTable() {
 		posTable.setEnabled(false);
-		lineTableHandle.setEditable(false, false);
+		lineTableHandle.setEditable(false);
 		posTable.removeActionListener(this);
 		posTable.removeEventListener(Events.ON_CLICK, this);
 	}
@@ -138,7 +141,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	 */
 	public void enableTable() {
 		posTable.setEnabled(true);
-		lineTableHandle.setEditable(posPanel.isModifyPrice(), posPanel.isDrafted());
+		lineTableHandle.setEditable(posPanel.isDrafted());
 		posTable.addActionListener(this);
 		posTable.addEventListener(Events.ON_CLICK, this);
 	}
@@ -149,9 +152,9 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 //		if (action == null || action.length() == 0)
 //			return;
 		posTable.getModel().removeTableModelListener(this);
-		logger.info( "POSOrderLinePanel - actionPerformed: " + action);
+		logger.info( "POSInventoryLinePanel - actionPerformed: " + action);
 		
-		if(arg0.getName().equals(Events.ON_SELECT)) {
+		if(arg0.getName().equals(Events.ON_SELECT) || arg0.getName().equals(Events.ON_CLICK)) {
 			selectLine();
 		}
 		
@@ -170,9 +173,9 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	}
 	
 	public void selectLine(){
-		lineTableHandle.setEditable(posPanel.isModifyPrice(), posPanel.isDrafted());
+		lineTableHandle.setEditable(posPanel.isDrafted());
 		IDColumn key = (IDColumn) posTable.getModel().getValueAt(posTable.getSelectedRow(), 0);
-		orderLineId = key.getRecord_ID();
+		inventoryLineId = key.getRecord_ID();
 		showProductInfo(posTable.getSelectedRow());
 		posPanel.changeViewPanel();
 	}
@@ -199,8 +202,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 			return;
 		}*/
 		if (!isUpdate
-				|| (col != POSOrderLineTableHandle.POSITION_QTYORDERED
-						&& col != POSOrderLineTableHandle.POSITION_PRICE)) {
+				|| col != POSInventoryLineTableHandle.POSITION_QTYINTERUSE) {
 			return;
 		}
 		if (event.getModel().equals(posTable.getModel())){ //Add Minitable Source Condition
@@ -212,14 +214,10 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 				//	Validate Key
 				if (key != null) {
 					//	Set Current Order Line
-					orderLineId = key.getRecord_ID();
-					BigDecimal m_QtyOrdered       = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_QTYORDERED);
-					m_QtyOrdered = m_QtyOrdered.setScale(0);
-					BigDecimal m_Price            = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_PRICE);
-					BigDecimal discountPercentage = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_DISCOUNT);
-					posPanel.setQty(m_QtyOrdered);
-					posPanel.setPrice(m_Price);
-					posPanel.setDiscountPercentage(discountPercentage);
+					inventoryLineId = key.getRecord_ID();
+					BigDecimal m_Qty       = (BigDecimal) posTable.getValueAt(row, POSInventoryLineTableHandle.POSITION_QTYINTERUSE);
+					m_Qty = m_Qty.setScale(0);
+					posPanel.setQty(m_Qty);
 					updateLine();
 				}
 			}
@@ -233,9 +231,9 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 			posTable.getModel().removeTableModelListener(this);
 			//	Remove line
 			if(posPanel.getQty() != null && posPanel.getQty().signum() < 0) {
-				if (orderLineId > 0 && !posPanel.isAddQty())
+				if (inventoryLineId > 0 && !posPanel.isAddQty())
 				if(posPanel.isRequiredPIN() && posPanel.isUserPinValid()) {
-					posPanel.deleteLine(orderLineId);
+					posPanel.deleteLine(inventoryLineId);
 				}
 				if (row >= 0) {
 					((ListModelTable) posTable.getModel()).remove(row);
@@ -246,19 +244,11 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 				return;
 			}
 			
-			//	Get Order Line
+			//	Get Inventory Line
 			BigDecimal[] m_Summary = posPanel.updateLine(
-					orderLineId,
-					posPanel.getQty().add(posPanel.getQtyAdded()),
-					posPanel.getPriceLimit(),
-					posPanel.getPrice() ,
-					posPanel.getPriceList(),
-					posPanel.getDiscountPercentage());
-			//	Set Totals
-			if(m_Summary != null && row >= 0) {
-				posTable.setValueAt(m_Summary[0], row, POSOrderLineTableHandle.POSITION_LINENETAMT);
-				posTable.setValueAt(m_Summary[2], row, POSOrderLineTableHandle.POSITION_GRANDTOTAL);
-			}
+					inventoryLineId,
+					posPanel.getQty().add(posPanel.getQtyAdded()));
+			
 			posTable.getModel().addTableModelListener(this);
 			//	Only Refresh Header
 			posPanel.refreshHeader();
@@ -300,15 +290,15 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	 * @param p_M_Product_ID
 	 */
 	public void seekFromProduct(int p_M_Product_ID) {
-		int m_C_OrderLine_ID = getC_OrderLine_ID(p_M_Product_ID);
-		if(m_C_OrderLine_ID <= 0)
+		int m_M_InventoryLine_ID = getM_InventoryLine_ID(p_M_Product_ID);
+		if(m_M_InventoryLine_ID <= 0)
 			return;
 		//	
-		orderLineId = m_C_OrderLine_ID;
+		inventoryLineId = m_M_InventoryLine_ID;
 		//	Iterate
 		for (int i = 0; i < posTable.getRowCount(); i ++ ) {
 			IDColumn key = (IDColumn) posTable.getModel().getValueAt(i, 0);
-			if ( key != null && orderLineId > 0 && key.getRecord_ID() == orderLineId) {
+			if ( key != null && inventoryLineId > 0 && key.getRecord_ID() == inventoryLineId) {
 				posTable.setSelectedIndex(i);
 				selectLine();
 				break;
@@ -320,7 +310,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	 *	@param e
 	 */
 	public void focusGained (FocusEvent e) {
-		logger.info("POSOrderLinePanel - focusGained: " + e);
+		logger.info("POSInventoryLinePanel - focusGained: " + e);
 	}	//	focusGained
 		
 
@@ -344,21 +334,13 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	public void changeViewPanel() {
 		int row = posTable.getSelectedRow();
 		if (row != -1 &&  row < posTable.getRowCount()) {
-			//	Set Current Order Line
-			BigDecimal qtyOrdered = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_QTYORDERED);
-			BigDecimal price = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_PRICE);
-			BigDecimal discountPercentage = (BigDecimal) posTable.getValueAt(row, POSOrderLineTableHandle.POSITION_DISCOUNT);
+			//	Set Current Inventory Line
+			BigDecimal qty = (BigDecimal) posTable.getValueAt(row, POSInventoryLineTableHandle.POSITION_QTYINTERUSE);
 			
-			posPanel.setQty(qtyOrdered);
-			posPanel.setPrice(price);
-			posPanel.setDiscountPercentage(discountPercentage);
+			posPanel.setQty(qty);
 		}
 		else {
 			posPanel.setQty(Env.ZERO);
-			posPanel.setPrice(Env.ZERO);
-			posPanel.setPriceLimit(Env.ZERO);
-			posPanel.setPriceList(Env.ZERO);
-			posPanel.setDiscountPercentage(Env.ZERO);
 		}
 	}
 	
@@ -371,17 +353,13 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		Object data = posTable.getModel().getValueAt(row, 0);
 		if ( data != null )	{
 			Integer id = (Integer) ((IDColumn)data).getRecord_ID();
-			posPanel.setOrderLineId(id);
-      BigDecimal quantity = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_QTYORDERED);
-      BigDecimal price = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_PRICE);
-      BigDecimal discount = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_DISCOUNT);
+			posPanel.setInventoryLineId(id);
+      BigDecimal quantity = (BigDecimal) posTable.getModel().getValueAt(row, POSInventoryLineTableHandle.POSITION_QTYINTERUSE);
 
       //	Refresh
       posPanel.setQty(quantity);
-      posPanel.setPrice(price);
-      posPanel.setDiscountPercentage(discount);
       posPanel.changeViewPanel();
-      posPanel.refreshProductInfo(posPanel.getM_Product_ID(posPanel.getOrderLineId()));
+      posPanel.refreshProductInfo(posPanel.getM_Product_ID(posPanel.getInventoryLineId()));
 
 //			posPanel.refreshProductInfo(m_M_Product_ID);
 		
@@ -393,16 +371,16 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	 * @param p_M_Product_ID
 	 * @return
 	 */
-	private int getC_OrderLine_ID(int p_M_Product_ID) {
-		return DB.getSQLValue(null, "SELECT ol.C_OrderLine_ID "
-				+ "FROM C_OrderLine ol "
-				+ "WHERE ol.M_Product_ID = ? AND ol.C_Order_ID = ?", 
-				p_M_Product_ID, posPanel.getC_Order_ID());
+	private int getM_InventoryLine_ID(int p_M_Product_ID) {
+		return DB.getSQLValue(null, "SELECT il.M_InventoryLine_ID "
+				+ "FROM M_InventoryLine il "
+				+ "WHERE il.M_Product_ID = ? AND il.M_Inventory_ID = ?", 
+				p_M_Product_ID, posPanel.getM_Inventory_ID());
 	}
 	
-	public int getC_OrderLine_ID()
+	public int getM_InventoryLine_ID()
 	{
-		return orderLineId;
+		return inventoryLineId;
 	}
 	
 	public WPOSTable posTable(){

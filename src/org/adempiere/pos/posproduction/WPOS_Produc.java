@@ -15,7 +15,7 @@
  * Contributor(s): Raul Muñoz www.erpcya.com					              *
  *****************************************************************************/
 
-package org.adempiere.pos;
+package org.adempiere.pos.posproduction;
 
 import java.awt.KeyboardFocusManager;
 import java.math.BigDecimal;
@@ -23,7 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.pos.service.CPOS;
+import org.adempiere.pos.AdempierePOSException;
+import org.adempiere.pos.POSKeyboardFocusManager;
+import org.adempiere.pos.WPOSKeyboard;
+import org.adempiere.pos.WPOSScalesListener;
+import org.adempiere.pos.posmovement.service.CPOS_Move;
+import org.adempiere.pos.posproduction.service.CPOS_Produc;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.pos.service.POSScalesPanelInterface;
 import org.adempiere.pos.test.SideServer;
@@ -44,20 +49,20 @@ import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.panel.StatusBarPanel;
 import org.adempiere.webui.window.FDialog;
-import org.idempiere.model.MPOS;
 import org.compiere.model.MPOSKey;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.idempiere.model.MPOS;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.East;
-import org.zkoss.zul.South;
-import org.zkoss.zul.West;
 import org.zkoss.zul.Iframe;
+import org.zkoss.zul.South;
 import org.zkoss.zul.Timer;
+import org.zkoss.zul.West;
 
 /**
  *	Point of Sales Main Window. 
@@ -66,7 +71,7 @@ import org.zkoss.zul.Timer;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public class WPOS extends CPOS implements IFormController, EventListener, POSPanelInterface, POSScalesPanelInterface {
+public class WPOS_Produc extends CPOS_Produc implements IFormController, EventListener<Event>, POSPanelInterface, POSScalesPanelInterface {
 
 	/** Window No 							*/
 	private int 							windowNo 	 = 0 ;
@@ -88,7 +93,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	/** Is Correct User Pin			*/
 	private Boolean							isCorrectUserPin;
 	/** User Pin Listener 			*/
-	private WPOSUserPinListener 			userPinListener;
+	private WPOSUserPinListener_Produc		userPinListener;
 	/** Electronic Scales			*/
 	private WPOSScalesListener 				scalesListener;
 	/** Keyoard Focus Manager				*/
@@ -96,15 +101,15 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	/**	Key Boards							*/
 	private HashMap<Integer, WPOSKeyboard> 	keyboards 	 = new HashMap<Integer, WPOSKeyboard>();
 	/** Order Panel							*/
-	private WPOSActionPanel 				actionPanel;
+	private WPOSActionPanel_Produc			actionPanel;
 	/** Quantity panel **/
-	private WPOSQuantityPanel 				quantityPanel;
+	private WPOSQuantityPanel_Produc		quantityPanel;
 	/**	Info Product Panel	*/
-	private WPOSInfoProduct 				infoProductPanel;
+	private WPOSInfoProduct_Produc 			infoProductPanel;
 	/** Current Line		*/
-	private WPOSOrderLinePanel 				orderLinePanel;
+//	private WPOSProductionLinePanel			productionPanel;
 	/** Function Keys		*/
-	private WPOSDocumentPanel 				documentPanel;
+	private WPOSDocumentPanel_Produc		documentPanel;
 	/** Status Bar 							*/
 	private StatusBarPanel 					statusBar = new StatusBarPanel();
 
@@ -128,14 +133,13 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	/** Side Server for Printer 				*/
 	private static SideServer 				sideServer;
 	
-	private static final String TYPE_POS = "POS";
-	
+	private static final String TYPE_POS = "POI";
 	/**
 	 * 	Constructor - see init 
 	 */
-	public WPOS() {
+	public WPOS_Produc() {
 		//Setting Keyboard Manager
-		settingKeyboardFocusManager();
+//		settingKeyboardFocusManager();
 		init();
 	}	//	PosPanel
 
@@ -162,7 +166,12 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		isCorrectUserPin = null;
 		//
 		try {
-			dynInit();	
+			dynInit();
+			
+			if(hasProduction() && actionPanel!=null){
+				getMainFocus();
+				
+			}
 		} catch (AdempierePOSException exception) {
 			FDialog.error( getWindowNo() , frame, exception.getLocalizedMessage());
 			dispose();
@@ -184,18 +193,18 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 */
 	private boolean dynInit() { 
 		setMPOS();
-		userPinListener = new WPOSUserPinListener(this);
+		userPinListener = new WPOSUserPinListener_Produc(this);
 		//Delay 5 seconds by default
 		userPinTimer = new Timer((getPINEntryTimeout() + 5)  * 1000);
 		userPinTimer.addEventListener(Events.ON_TIMER, userPinListener);
 		userPinListener.setTimer(userPinTimer);
 		userPinTimer.setRunning(false);
 		Borderlayout mainLayout = new Borderlayout();	
-		actionPanel = new WPOSActionPanel(this);
-		documentPanel = new WPOSDocumentPanel(this);
-		orderLinePanel = new WPOSOrderLinePanel(this);
-		infoProductPanel = new WPOSInfoProduct(this);
-		quantityPanel = new WPOSQuantityPanel(this);
+		actionPanel = new WPOSActionPanel_Produc(this);
+		documentPanel = new WPOSDocumentPanel_Produc(this);
+//		productionPanel = new WPOSProductionLinePanel(this);
+		infoProductPanel = new WPOSInfoProduct_Produc(this);
+		quantityPanel = new WPOSQuantityPanel_Produc(this);
 		East east = new East();
 		Center center = new Center();
 		West westPanel = new West();
@@ -217,7 +226,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		this.actionPanel.appendChild(infoProductPanel.getPanel());
 		if(IsShowLineControl())
 			this.actionPanel.appendChild(quantityPanel.getPanel());
-		this.actionPanel.appendChild(orderLinePanel);
+//		this.actionPanel.appendChild(productionPanel);
 		
 		east.setSplittable(true);
 		east.setStyle("border: none; min-width:44%; width:44%");
@@ -298,7 +307,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		cancelButton.setWidth("45px");
 		cancelButton.setHeight("45px");
 		listTerminal.setHeight("45px");
-		listTerminal.setStyle("height:45px;"+WPOS.FONTSIZEMEDIUM);
+		listTerminal.setStyle("height:45px;"+WPOS_Produc.FONTSIZEMEDIUM);
 		row.setSpans("2");
 		row.appendChild(listTerminal);
 		row.setHeight("45px");
@@ -316,43 +325,43 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 			
 	}	//	setMPOS
 
-	/**	
-	 * Get Keyboard
-	 * @param keyLayoutId
-	 * @return
-	 */
-	public WPOSKeyboard getKeyboard(int keyLayoutId) {
-		if (keyLayoutId > 0 ){
-			WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
-			keyboards.put(keyLayoutId, keyboard);
-			keyboard.setWidth("750px");
-			keyboard.setHeight("350px");
-			return keyboard;
-		}
-		return null;
-	}
-	
-	/**
-	 * Get Keyboard with text field
-	 * @param keyLayoutId
-	 * @param field
-	 * @return
-	 */
-	public WPOSKeyboard getKeyboard(int keyLayoutId, WPOSTextField field) {
-		if (keyLayoutId > 0 ){
-			WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
-			keyboard.setPosTextField(field);
-			keyboards.put(keyLayoutId, keyboard);
-			return keyboard;
-		}
-		return null;
-	}
-	
-	public WPOSKeyboard getKeyboard(int keyLayoutId, Window wPosQuery, WPOSTextField field) {
-			WPOSKeyboard keyboard = new WPOSKeyboard(wPosQuery,this, keyLayoutId, field);
-			keyboards.put(keyLayoutId, keyboard);
-			return keyboard;
-	}
+//	/**	
+//	 * Get Keyboard
+//	 * @param keyLayoutId
+//	 * @return
+//	 */
+//	public WPOSKeyboard getKeyboard(int keyLayoutId) {
+//		if (keyLayoutId > 0 ){
+//			WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
+//			keyboards.put(keyLayoutId, keyboard);
+//			keyboard.setWidth("750px");
+//			keyboard.setHeight("350px");
+//			return keyboard;
+//		}
+//		return null;
+//	}
+//	
+//	/**
+//	 * Get Keyboard with text field
+//	 * @param keyLayoutId
+//	 * @param field
+//	 * @return
+//	 */
+//	public WPOSKeyboard getKeyboard(int keyLayoutId, WPOSTextField field) {
+//		if (keyLayoutId > 0 ){
+//			WPOSKeyboard keyboard = new WPOSKeyboard(this, keyLayoutId);
+//			keyboard.setPosTextField(field);
+//			keyboards.put(keyLayoutId, keyboard);
+//			return keyboard;
+//		}
+//		return null;
+//	}
+//	
+//	public WPOSKeyboard getKeyboard(int keyLayoutId, Window wPosQuery, WPOSTextField field) {
+//			WPOSKeyboard keyboard = new WPOSKeyboard(wPosQuery,this, keyLayoutId, field);
+//			keyboards.put(keyLayoutId, keyboard);
+//			return keyboard;
+//	}
 	/**
 	 * 	Dispose - Free Resources
 	 */
@@ -401,10 +410,10 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @return
 	 * @return POSKeyboard
 	 */
-	public WPOSKeyboard getKeyboard() {
-//		return getKeyboard(getOSKeyLayout_ID());
-		return getKeyboard(-1);
-	}
+//	public WPOSKeyboard getKeyboard() {
+////		return getKeyboard(getOSKeyLayout_ID());
+//		return getKeyboard(-1);
+//	}
 
 	@Override
 	public String validatePayment() {
@@ -414,15 +423,15 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	@Override
 	public void refreshPanel() {
 		//	Reload from DB
-		reloadOrder();
-		orderLinePanel.refreshPanel();
+		reloadProduction();
+//		productionPanel.refreshPanel();
 		actionPanel.refreshPanel();
 		documentPanel.refreshPanel();
-		if(!hasLines()) {
+//		if(!hasLines()) {
 			infoProductPanel.resetValues();
 			quantityPanel.resetPanel();
 			actionPanel.resetPanel();
-		}
+//		}
 	}
 
 	/**
@@ -431,7 +440,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @return void
 	 */
 	public void refreshProductInfo(MPOSKey key) {
-		infoProductPanel.refreshProduct(key , getQty() , getM_PriceList_ID() , getC_BPartner_ID());
+		infoProductPanel.refreshProduct(key , getQty());
 		//parameterPanel.invalidate();
 	}
 
@@ -441,7 +450,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @return void
 	 */
 	public void refreshProductInfo(int p_M_Product_ID) {
-		infoProductPanel.refreshProduct(p_M_Product_ID , getQty() , getM_PriceList_ID() , getC_BPartner_ID());
+		infoProductPanel.refreshProduct(p_M_Product_ID , getQty());
 		infoProductPanel.invalidate();
 	}
 
@@ -453,36 +462,28 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 */
 	public void addOrUpdateLine(int p_M_Product_ID, BigDecimal m_QtyOrdered) {
 		//	Create Order if not exists
-		if (!hasOrder()) {
-			newOrder();
+		if (!hasProduction()) {
+			newProduction(-1);
 		}
 		//	Show Product Info
 		refreshProductInfo(p_M_Product_ID);
 		//	
-		String lineError = addOrUpdate(p_M_Product_ID, m_QtyOrdered);
-		if (lineError != null) {
-			log.warning("POS Error " + lineError);
-			FDialog.error(0,
-					frame, Msg.parseTranslation(ctx, lineError));
-		}
-		//	Update Info
 		refreshPanel();
-		orderLinePanel.seekFromProduct(p_M_Product_ID);
+//		productionPanel.seekFromProduct(p_M_Product_ID);
 	}
 	
 	@Override
 	public void changeViewPanel() {
 		quantityPanel.changeViewPanel();
-		orderLinePanel.changeViewPanel();
-//		quantityPanel.refreshPanel();
+//		productionPanel.changeViewPanel();
 	}
 	
 	/**
 	 * New Order
 	 * @return void
 	 */
-	public void newOrder() {
-		newOrder(0);
+	public void newProduction(int temp) {
+		newProduction();
 		infoProductPanel.resetValues();
 		quantityPanel.resetPanel();
 		getMainFocus();
@@ -503,7 +504,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @return void
 	 */
 	public void refreshHeader() {
-		reloadOrder();
+		reloadProduction();
 		actionPanel.changeViewPanel();
 		documentPanel.refreshPanel();
 	}
@@ -513,7 +514,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @param p_M_Product_ID
 	 */
 	public void updateLineTable() {
-		orderLinePanel.updateLine();
+//		productionPanel.updateLine();
 	}
 
 	@Override
@@ -521,32 +522,14 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 
 	}
 
-	/**
-	 * Show Collect Payment Panel
-	 * @return void
-	 */
-	public void showCollectPayment()
-	{
-		documentPanel.getCollectPayment().showCollect();
-	}
-	
-	/**
-	 * Close Collect Payment Panel
-	 * @return void
-	 */
-	public void closeCollectPayment()
-	{
-		documentPanel.closeCollectPayment();
-	}
-
 	@Override
 	public void moveUp() {
-		orderLinePanel.moveUp();
+//		productionPanel.moveUp();
 	}
 
 	@Override
 	public void moveDown() {
-		orderLinePanel.moveDown();
+//		productionPanel.moveDown();
 	}
 
 	public StatusBarPanel getStatusBar()
@@ -560,16 +543,12 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		getStatusBar().setStatusLine(statusBarInfo);
 	}
 
-	public int getC_OrderLine_ID()
-	{
-		return orderLinePanel.getC_OrderLine_ID();
-	}
 	
 	/**
 	 * return User Pin Listener
 	 * @return
      */
-	public EventListener getUserPinListener()
+	public EventListener<Event> getUserPinListener()
 	{
 		return userPinListener;
 	}
@@ -626,7 +605,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 			return true;
 
 		if (isCorrectUserPin == null)
-			WPOSUserPinDialog.show(this);
+			WPOSUserPinDialog_Produc.show(this);
 
 		if (isCorrectUserPin == null || !isCorrectUserPin)
 			throw new AdempiereException("@Supervisor_ID@: @UserPin@ @IsInvalid@.");
@@ -636,12 +615,12 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 
 	public void showKeyboard()
 	{
-		documentPanel.getKeyboard().showPanel();
+		
 	}
 
 	public void hideKeyboard()
 	{
-		documentPanel.getKeyboard().hidePanel();
+		
 	}
 
 	public void disablePOSButtons()
@@ -649,16 +628,16 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		infoProductPanel.resetValues();
 		quantityPanel.resetPanel();
 		actionPanel.disableButtons();
-		orderLinePanel.disableTable();
+//		productionPanel.disableTable();
 	}
 	
 	public void restoreTable(){
-		orderLinePanel.enableTable();
+//		productionPanel.enableTable();
 	}
 	
-	public WPOSOrderLinePanel getOrdLinePanel(){
-		return orderLinePanel;
-	}
+//	public WPOSProductionLinePanel getProductionPanel(){
+//		return productionPanel;
+//	}
 	
 	public String getProductUOMSymbol()
 	{
