@@ -233,17 +233,8 @@ public class WPOSQuantityPanel_Produc extends WPOSSubPanel_Produc implements POS
 				if(value == null)
 					return;
 				if(e.getTarget().equals(fieldQuantity.getDecimalbox())) {
-					if(Events.ON_OK.equals(e.getName())){
+					if(Events.ON_OK.equals(e.getName()) || Events.ON_CHANGE.equals(e.getName())){
 						posPanel.setQty(value);
-					}
-					else if(posPanel.isAddQty() 
-							|| Events.ON_CHANGE.equals(e.getName())){
-						//  Verify if it add or set
-						if(posPanel.isAddQty()) {
-							posPanel.setQtyAdded(value);
-						} else {
-							posPanel.setQty(value);
-						}
 					}
 				}
 			}

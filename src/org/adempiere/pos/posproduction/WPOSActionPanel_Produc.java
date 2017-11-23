@@ -92,14 +92,14 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 
 
 	/**	Buttons Command		*/
-	private Button 			buttonNew;
+//	private Button 			buttonNew;
 //	private Button 			buttonPrint;
 	private Button 			buttonDocType;
 	private Button 			buttonProduct;
 	private Button 			buttonHistory;
 	private Button 			buttonBack;
 	private Button 			buttonNext;
-	private Button 			buttonComplete;
+//	private Button 			buttonComplete;
 	private Button 			buttonCancel;
 	private Button 			buttonLogout;
 
@@ -144,9 +144,9 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 		row.setHeight("55px");
 	
 		// NEW
-		buttonNew = createButtonAction(ACTION_NEW, "F2");
-		buttonNew.addActionListener(this);
-		row.appendChild(buttonNew);
+//		buttonNew = createButtonAction(ACTION_NEW, "F2");
+//		buttonNew.addActionListener(this);
+//		row.appendChild(buttonNew);
 
 //		// PRINT
 //		buttonPrint = createButtonAction(ACTION_PRINT, "F12");
@@ -177,11 +177,11 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 		buttonNext.setTooltiptext("Alt+Right"+Msg.translate(ctx, "Next"));
 		row.appendChild (buttonNext);
 		
-		// Complete
-		buttonComplete = createButtonAction(ACTION_OK, "F4");
-		buttonComplete.addActionListener(this);
-		row.appendChild(buttonComplete);
-		buttonComplete.setEnabled(false);
+//		// Complete
+//		buttonComplete = createButtonAction(ACTION_OK, "F4");
+//		buttonComplete.addActionListener(this);
+//		row.appendChild(buttonComplete);
+//		buttonComplete.setEnabled(false);
 
 		// Cancel
 		buttonCancel = createButtonAction (ACTION_CANCEL, "F3");
@@ -276,7 +276,7 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
                 KeyEvent keyEvent = (KeyEvent) e;
                 //F2 == 113
                 if (keyEvent.getKeyCode() == 113 ) {
-                    posPanel.newProduction(-1);
+//                    posPanel.newProduction(-1);
                 }
                 //F3 == 114
                 else if (keyEvent.getKeyCode() == 114 ) {
@@ -329,9 +329,9 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 //                    isKeyboard = false;
 //                }
 
-            if (e.getTarget().equals(buttonNew)){
-                posPanel.newProduction(-1);
-            }
+//            if (e.getTarget().equals(buttonNew)){
+//                posPanel.newProduction(-1);
+//            }
 //			if (e.getTarget().equals(buttonPrint)){
 //				posPanel.printTicket();
 //			}
@@ -343,14 +343,14 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 			else if (e.getTarget().equals(buttonProduct)) {
 				showWindowProduct("");
 			}
-            else if(e.getTarget().equals(buttonComplete)){
-//            	if(posPanel.isReturnMaterial()) {
-//					completeReturn();
-//				} else {
-            		completeProduction();
-//				}
-                return;
-            }
+//            else if(e.getTarget().equals(buttonComplete)){
+////            	if(posPanel.isReturnMaterial()) {
+////					completeReturn();
+////				} else {
+//            		completeProduction();
+////				}
+//                return;
+//            }
             else if (e.getTarget().equals(buttonBack)){
                 previousRecord();
             }
@@ -610,9 +610,9 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 			if(!posPanel.isVoided()
 					&& !posPanel.isCompleted()) {
 				//	For Credit Order
-				buttonComplete.setEnabled(true);
+//				buttonComplete.setEnabled(true);
 			} else {
-				buttonComplete.setEnabled(false);
+//				buttonComplete.setEnabled(false);
 			}
 			// For BusinessPartner and Document Type
 			if(posPanel.isDrafted() || posPanel.isInProgress()) {
@@ -622,22 +622,22 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 			} 
 			//	For Cancel Action
 			buttonCancel.setEnabled(!posPanel.isVoided());
-			buttonNew.setEnabled(true);
+//			buttonNew.setEnabled(true);
 			buttonHistory.setEnabled(true);
 		} else {
-			buttonNew.setEnabled(true);
+//			buttonNew.setEnabled(true);
 			buttonHistory.setEnabled(true);
 			//	For Next
 			buttonNext.setEnabled(!posPanel.isLastRecord() && posPanel.hasRecord());
 			//	For Back
 			buttonBack.setEnabled(!posPanel.isFirstRecord() && posPanel.hasRecord());
-			buttonComplete.setEnabled(false);
+//			buttonComplete.setEnabled(false);
 			//	For Cancel Action
 			buttonCancel.setEnabled(false);
 			// For BusinessPartner and Document Type
 			buttonDocType.setEnabled(false);
 		}
-		buttonNew.setEnabled(true);
+//		buttonNew.setEnabled(true);
 		buttonHistory.setEnabled(true);
 	}
 
@@ -646,10 +646,10 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 	 * @return void
 	 */
 	public void enableButton(){
-		buttonNew.setEnabled(true);
+//		buttonNew.setEnabled(true);
 		buttonCancel.setEnabled(false);
 		buttonHistory.setEnabled(true);
-		buttonComplete.setEnabled(false);
+//		buttonComplete.setEnabled(false);
 	}
 
 
@@ -693,11 +693,11 @@ public class WPOSActionPanel_Produc extends WPOSSubPanel_Produc
 	}	
 
 	public void disableButtons() {
-		buttonNew.setEnabled(false);
+//		buttonNew.setEnabled(false);
 	    buttonHistory.setEnabled(false);
 	    buttonNext.setEnabled(false);
 	    buttonBack.setEnabled(false);
-	    buttonComplete.setEnabled(false);
+//	    buttonComplete.setEnabled(false);
 	    buttonCancel.setEnabled(false);
 	    buttonDocType.setEnabled(false);
 	}

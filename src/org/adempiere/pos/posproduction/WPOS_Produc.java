@@ -423,15 +423,16 @@ public class WPOS_Produc extends CPOS_Produc implements IFormController, EventLi
 	@Override
 	public void refreshPanel() {
 		//	Reload from DB
-		reloadProduction();
+//		reloadProduction();
 //		productionPanel.refreshPanel();
 		actionPanel.refreshPanel();
 		documentPanel.refreshPanel();
-//		if(!hasLines()) {
-			infoProductPanel.resetValues();
-			quantityPanel.resetPanel();
-			actionPanel.resetPanel();
-//		}
+		documentPanel.setPrimaryFocus();
+
+//		infoProductPanel.resetValues();
+//		quantityPanel.resetPanel();
+//		actionPanel.resetPanel();
+
 	}
 
 	/**
@@ -462,7 +463,7 @@ public class WPOS_Produc extends CPOS_Produc implements IFormController, EventLi
 	 */
 	public void addOrUpdateLine(int p_M_Product_ID, BigDecimal m_QtyOrdered) {
 		//	Create Order if not exists
-		if (!hasProduction()) {
+		if (!hasProduction() && getProduction()==null) {
 			newProduction(-1);
 		}
 		//	Show Product Info
@@ -507,6 +508,7 @@ public class WPOS_Produc extends CPOS_Produc implements IFormController, EventLi
 		reloadProduction();
 		actionPanel.changeViewPanel();
 		documentPanel.refreshPanel();
+		documentPanel.setPrimaryFocus();
 	}
 	
 	/**
@@ -670,6 +672,8 @@ public class WPOS_Produc extends CPOS_Produc implements IFormController, EventLi
 	 */
 	public void setQty(BigDecimal qty) {
 		quantityPanel.setQuantity(qty);
+		if(getProduction()!=null)
+			getProduction().setMovementQty(qty);
 		super.setQty(qty);
 	}
 	

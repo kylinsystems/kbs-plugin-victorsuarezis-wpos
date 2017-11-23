@@ -352,6 +352,10 @@ public class CPOS_Produc {
 		return currentProduction;
 	}
 	
+	public void resetProduction(){
+		currentProduction = null;
+	}
+	
 	/**
 	 * Has Production
 	 * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
@@ -477,7 +481,7 @@ public class CPOS_Produc {
 		//	Create Production
 		createProduction(docTypeId);
 		//	
-		reloadProduction();
+//		reloadProduction();
 	}	//	newProduction
 	
 	/**
@@ -522,7 +526,7 @@ public class CPOS_Produc {
 		} else {
 			currentProduction.setC_DocType_ID(MDocType.getDocType(MDocType.DOCBASETYPE_ManufacturingCostCollector));
 		}
-		currentProduction.saveEx();
+//		currentProduction.saveEx();
 		//	Add if is new
 		if(productionId < 0) {
 			//	Add To List
@@ -897,8 +901,8 @@ public class CPOS_Produc {
 	 * @return String
 	 */
 	public String getDocumentTypeName() {
-		if(hasProduction()) {
-			MDocType m_DocType = MDocType.get(getCtx(), currentProduction.getC_DocType_ID());
+		if(hasProduction() || currentProduction !=null) {
+			MDocType m_DocType = MDocType.get(getCtx(), currentProduction.getC_DocTypeTarget_ID());
 			if(m_DocType != null) {
 				return m_DocType.getName();
 			}
@@ -912,7 +916,7 @@ public class CPOS_Produc {
 	 * @return
 	 */
 	public Timestamp getMovementDate() {
-		if(hasProduction()) {
+		if(hasProduction() || currentProduction !=null) {
 			return currentProduction.getMovementDate();
 		}
 		//	Default

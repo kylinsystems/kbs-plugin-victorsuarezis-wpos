@@ -14,13 +14,17 @@
 
 package org.adempiere.pos.posproduction;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 
 import org.adempiere.model.MInventory_lit;
+import org.adempiere.model.MPPCostCollector_lit;
 import org.adempiere.pos.POSKeyListener;
 import org.adempiere.pos.WPOSKeyPanel;
 import org.adempiere.pos.WPOSScalesPanel;
 import org.adempiere.pos.service.POSPanelInterface;
+import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
@@ -44,12 +48,18 @@ import org.compiere.model.MResource;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.libero.model.MPPCostCollector;
 import org.libero.model.MPPOrder;
+import org.libero.model.MPPOrderNode;
+import org.libero.model.RoutingService;
+import org.libero.model.RoutingServiceFactory;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Style;
@@ -105,6 +115,12 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 	private WSearchEditor onlyDocType;
 	private WSearchEditor onlyProduct;
 	private WSearchEditor onlyWarehouse;
+	private WSearchEditor onlyManufOrderActivity;
+	
+	private Button 		buttonComplete;
+	private Button      buttonStart;
+	
+	private MPPOrderNode m_node;
 	
 	@Override
 	public void init(){
@@ -147,8 +163,15 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 			@Override
 			public void valueChange(ValueChangeEvent evt) {
 				if(evt.getNewValue()!=null){
+					//
+					posPanel.resetProduction();
+					refreshPanel();
+					//
 					Integer ppOrder_ID = (Integer) evt.getNewValue();
 					if(ppOrder_ID>0){
+						if(posPanel.getProduction()==null)
+							posPanel.newProduction();
+						
 						MPPOrder pp_order = new MPPOrder(Env.getCtx(), ppOrder_ID, null);
 						posPanel.getProduction().setPP_Order_ID(pp_order.getPP_Order_ID());
 						posPanel.getProduction().setPP_Order_Workflow_ID(pp_order.getMPPOrderWorkflow().get_ID());
@@ -167,6 +190,17 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 						posPanel.getProduction().setC_UOM_ID(pp_order.getC_UOM_ID());
 						posPanel.getProduction().setM_AttributeSetInstance_ID(pp_order.getM_AttributeSetInstance_ID());
 						posPanel.getProduction().setMovementQty(pp_order.getQtyOrdered());
+						posPanel.setQty(pp_order.getQtyOrdered());
+						posPanel.getProduction().setC_DocTypeTarget_ID(pp_order.getC_DocTypeTarget_ID());
+						onlyDocType.setValue(pp_order.getC_DocTypeTarget_ID());
+						posPanel.getProduction().setCostCollectorType(MPPCostCollector.COSTCOLLECTORTYPE_ActivityControl);
+						Timestamp now = new Timestamp(System.currentTimeMillis());
+						posPanel.getProduction().setMovementDate(now);
+						posPanel.getProduction().setDateAcct(now);
+						
+						setDataProduct((int) onlyProduct.getValue());
+						
+						refreshPanel();
 						
 					}
 				}
@@ -345,6 +379,46 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 		row = new Row();
 		rows.appendChild(row);
 		rows.setHeight("100%");
+		onlyManufOrderActivity = createField(posPanel.getWindowNo(), "PP_Cost_Collector", "PP_Order_Node_ID");
+		ZKUpdateUtil.setWidth(onlyManufOrderActivity.getComponent(), "98%");
+		ZKUpdateUtil.setHeight(onlyManufOrderActivity.getComponent().getTextbox(),"35px");
+		ZKUpdateUtil.setHeight(onlyManufOrderActivity.getComponent().getButton(),"35px");
+		Label f_lb_ManOrdActivity = new Label (Msg.translate(Env.getCtx(), "PP_Order_Node_ID") + ":");
+		f_lb_ManOrdActivity.setStyle(WPOS_Produc.FONTSIZEMEDIUM);
+		row.appendChild(f_lb_ManOrdActivity);
+		row.appendChild(onlyManufOrderActivity.getComponent());
+		onlyManufOrderActivity.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
+		onlyManufOrderActivity.addValueChangeListener(new ValueChangeListener() {
+
+			@Override
+			public void valueChange(ValueChangeEvent evt) {
+				if(evt.getNewValue()!=null && posPanel.getProduction()!=null){
+					int ppOrdNodeID = (int) evt.getNewValue();
+					posPanel.getProduction().setPP_Order_Node_ID(ppOrdNodeID);
+					
+					if(m_node == null || m_node.get_ID() != ppOrdNodeID)
+						m_node = new MPPOrderNode(ctx, ppOrdNodeID, null); 
+					
+					posPanel.getProduction().setS_Resource_ID(m_node.getS_Resource_ID());
+					onlyResource.setValue(m_node.getS_Resource_ID());
+					posPanel.getProduction().setIsSubcontracting(m_node.isSubcontracting());
+					posPanel.getProduction().setMovementQty(m_node.getQtyDelivered());
+					if(m_node.getQtyDelivered().intValue()>0)
+						posPanel.setQty(m_node.getQtyDelivered());
+					
+					RoutingService routingService = RoutingServiceFactory.get().getRoutingService(ctx);
+					BigDecimal durationReal = routingService.estimateWorkingTime(posPanel.getProduction());
+					posPanel.getProduction().setDurationReal(durationReal);
+					
+				}
+				
+			}
+			
+		});
+		
+		row = new Row();
+		rows.appendChild(row);
+		rows.setHeight("100%");
 		onlyProduct = createField(posPanel.getWindowNo(), MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID);
 		ZKUpdateUtil.setWidth(onlyProduct.getComponent(), "98%");
 		ZKUpdateUtil.setHeight(onlyProduct.getComponent().getTextbox(),"35px");
@@ -359,9 +433,9 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 			@Override
 			public void valueChange(ValueChangeEvent evt) {
 				if(evt.getNewValue()!=null){
-				
+
+					setDataProduct((Integer) evt.getNewValue());
 //					Integer prod_ID = (Integer) evt.getNewValue();
-//					
 //					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
 //					MPOSKey key = new Query(ctx, MPOSKey.Table_Name, where, null)
 //							.setOnlyActiveRecords(true)
@@ -410,6 +484,18 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 			
 		});
 		
+		// Start and Complete
+		row = new Row();
+		rows.appendChild(row);
+		rows.setHeight("100%");
+		buttonStart = createButtonAction("wfNext", "");
+		buttonStart.addActionListener(this);
+		row.appendChild(buttonStart);
+		buttonStart.setEnabled(true);
+		buttonComplete = createButtonAction("Ok", "");
+		buttonComplete.addActionListener(this);
+		row.appendChild(buttonComplete);
+		buttonComplete.setEnabled(true);
 		
 		
 		refreshPanel();
@@ -461,19 +547,42 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 //		if(e.getTarget().equals(bPartnerName.getComponent(WPOSTextField.PRIMARY)) && e.getName().equals(Events.ON_FOCUS)){
 //			isKeyboard = false;
 //		}
+		if(e.getTarget().equals(buttonStart)){
+			if(posPanel.getProduction()!=null){
+				posPanel.getProduction().saveEx();
+				DB.commit(false, posPanel.getProduction().get_TrxName());
+				FDialog.info(posPanel.getWindowNo(), posPanel.getForm(), 
+						"Activity Control Report created! DocNo: "+posPanel.getProduction().getDocumentNo());
+				
+				refreshPanel();
+			}
+		}
+		else if(e.getTarget().equals(buttonComplete)){
+			completeProduction();
+			FDialog.info(posPanel.getWindowNo(), posPanel.getForm(), 
+					"Activity Control Report __DocNo: "+posPanel.getProduction().getDocumentNo()+" completed!");
+			refreshPanel();
+		}
 	}
 	
 	@Override
 	public void refreshPanel() {
 		log.fine("RefreshPanel");
-		if (!posPanel.hasProduction()) {
+		if (!posPanel.hasProduction() && posPanel.getProduction()==null) {
 			//	Document Info
-			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals"));
+			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Info"));
 			salesRep.setText(posPanel.getSalesRepName());
 			documentType.setText(Msg.getMsg(posPanel.getCtx(), "Order"));
 			documentNo.setText(Msg.getMsg(posPanel.getCtx(), "New"));
 			documentStatus.setText("");
 			documentDate.setText("");
+			
+			onlyPPOrder.setValue(0);          
+			onlyResource.setValue(0);         
+			onlyDocType.setValue(0);          
+			onlyProduct.setValue(0);          
+			onlyWarehouse.setValue(0);        
+			onlyManufOrderActivity.setValue(0);
 		} else {
 			//	Set Values
 			//	Document Info
@@ -481,13 +590,13 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 			salesRep.setText(posPanel.getSalesRepName());
 			documentType.setText(posPanel.getDocumentTypeName());
 			documentNo.setText(posPanel.getDocumentNo());
-			documentStatus.setText(MRefList.getListName(Env.getCtx(), MInventory_lit.AD_REFERENCE_ID, posPanel.getProduction().getDocStatus()));
+			documentStatus.setText(MRefList.getListName(Env.getCtx(), 131, posPanel.getProduction().getDocStatus()));
 			documentDate.setText(posPanel.getDateOrderedForView());
 		}
 		//	Repaint
-		v_TotalsPanel.invalidate();
-		v_OrderPanel.invalidate();
-		v_GroupPanel.invalidate();
+//		v_TotalsPanel.invalidate();
+//		v_OrderPanel.invalidate();
+//		v_GroupPanel.invalidate();
 	}
 
 
@@ -533,6 +642,44 @@ public class WPOSDocumentPanel_Produc extends WPOSSubPanel_Produc implements POS
 			FDialog.error(posPanel.getWindowNo(), e.getLocalizedMessage());
 		}
 		return null;
+	}
+
+	private void setDataProduct(int p_mProductID){
+//		Integer prod_ID = p_mProductID;
+		MPOSKey key = new MPOSKey(Env.getCtx(), 0, null);
+		key.setM_Product_ID(p_mProductID);
+		key.setQty(BigDecimal.ONE);
+		keyReturned(key);
+	}
+	/**
+	 * Execute order payment
+	 * If order is not processed, process it first.
+	 * If it is successful, proceed to pay and print ticket
+	 */
+	private void completeProduction() {
+		//Check if order is completed, if so, print and open drawer, create an empty order and set cashGiven to zero
+		if(!posPanel.hasProduction()) {
+			FDialog.warn(posPanel.getWindowNo(), Msg.getMsg(ctx, "POS.MustCreateOrder"));
+		} 
+		else if(posPanel.hasProduction())
+		{
+				
+			posPanel.processProduction(posPanel.getProduction().get_TrxName());
+			posPanel.showKeyboard();
+			posPanel.setProduction(posPanel.getProduction().get_ID());
+			posPanel.refreshPanel();
+			posPanel.refreshProductInfo(null);
+            posPanel.restoreTable();
+			return;
+		}
+		else {
+			posPanel.hideKeyboard();
+			
+		}
+	}
+	
+	public void setPrimaryFocus(){
+		onlyPPOrder.getComponent().getTextbox().focus();
 	}
 
 }
