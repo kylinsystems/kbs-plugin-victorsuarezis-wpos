@@ -24,6 +24,10 @@ Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Ing. Victor Suárez - victor.suarez.is@gmail.com
 Service-Component: OSGI-INF/FormFactoryWPOS.xml
 Import-Package: it.cnet.idempiere.utilPDF.utility,
+ it.cnet.impl.editorNatIDNumber.editor,
+ it.cnet.impl.editorNatIDNumber.editor_2,
+ it.cnet.impl.editorNatIDNumber.model,
+ it.cnet.impl.editorNatIDNumber.vies_client,
  org.compiere.grid.ed,
  org.compiere.minigrid,
  org.libero.model,
