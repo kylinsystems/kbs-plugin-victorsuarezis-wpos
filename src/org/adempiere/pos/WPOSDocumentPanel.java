@@ -14,28 +14,42 @@
 
 package org.adempiere.pos;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 
 import org.adempiere.model.MBPartnerInfoPOS;
 import org.adempiere.pos.search.WQueryBPartner;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.webui.apps.AEnv;
+import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.event.ActionEvent;
+import org.adempiere.webui.event.ActionListener;
+import org.adempiere.webui.event.DialogEvents;
+import org.adempiere.webui.event.ValueChangeEvent;
+import org.adempiere.webui.grid.WQuickEntryPOS;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.I_C_Order;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MBPartnerInfo;
 import org.compiere.model.MPOSKey;
+import org.compiere.model.MUser;
+import org.compiere.model.MValRule;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
+import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Groupbox;
@@ -63,7 +77,8 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	
 	/** Fields               */
 	private WPOSTextField	bPartnerName;
-	private Label 			salesRep;
+	//private Label 			salesRep;
+	private Listbox			salesRep;
 	private Label	 		totalLines;
 	private Label	 		taxAmount;
 	private Label	 		grandTotal;
@@ -71,7 +86,10 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	private Label 			documentNo;
 	private Label 			documentStatus;
 	private Label 			documentDate;
+	private Label           documentDatePromised;
 	private boolean			isKeyboard;
+	
+	private Button          btnAddInfo;
 
 	/**	Format				*/
 	private DecimalFormat	m_Format;
@@ -132,10 +150,16 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		bPartnerName.setWidth("97%");
 		bPartnerName.addEventListener(this);
 		
+		btnAddInfo = new Button(" INFO ");
+		btnAddInfo.setHeight("35px");
+		btnAddInfo.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
+		btnAddInfo.addActionListener(this);
+		
 		row = rows.newRow();
-		row.setSpans("2");
+//		row.setSpans("2");
 		row.setHeight("10px");
 		row.appendChild(bPartnerName);
+		row.appendChild(btnAddInfo);
 		
 		
 		v_GroupPanel.appendChild(rows);
@@ -209,9 +233,30 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		f_lb_SalesRep.setStyle(WPOS.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_SalesRep.rightAlign());
 		
-		salesRep = new Label(posPanel.getSalesRepName());
+		KeyNamePair[] listUserSaleRep = null;
+		String sqlUserActive = "";
+		if(posPanel.getM_POS()!=null && posPanel.getM_POS().getAD_Val_Rule_ID()>0){
+			MValRule valRule = MValRule.get(ctx, posPanel.getM_POS().getAD_Val_Rule_ID());
+			sqlUserActive = "SELECT AD_USER_ID, Name FROM AD_USER WHERE "+valRule.getCode();
+		}
+		else
+			sqlUserActive = "SELECT AD_USER_ID, Name FROM AD_USER WHERE AD_CLIENT_ID="+Env.getAD_Client_ID(Env.getCtx())+" AND ISACTIVE='Y' ORDER BY Name";
+
+		listUserSaleRep = DB.getKeyNamePairs(sqlUserActive, true);
+		salesRep = new Listbox(listUserSaleRep);
+		salesRep.setMold("select");
+		
+		if(posPanel.getSalesRep_ID()>0){
+			int key = posPanel.getSalesRep_ID();
+			String name = MUser.getNameOfUser(posPanel.getSalesRep_ID());
+			KeyNamePair pp = new KeyNamePair(key, name);
+			salesRep.setSelectedKeyNamePair(pp);
+		}
+		
+//		salesRep = new Label(posPanel.getSalesRepName());
 		salesRep.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
-		row.appendChild(salesRep.rightAlign());
+		salesRep.setWidth("99%");
+		row.appendChild(salesRep);
 		
 		
 		row = rows.newRow();
@@ -228,6 +273,36 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		documentDate = new Label();
 		documentDate.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
 		row.appendChild(documentDate.rightAlign());
+		
+		row = rows.newRow();
+		row.setHeight("10px");
+
+		Label lDocumentDatePromised = new Label (Msg.translate(Env.getCtx(), I_C_Order.COLUMNNAME_DatePromised) + ":");
+		lDocumentDatePromised.setStyle(WPOS.FONTSIZEMEDIUM);
+		row.appendChild(lDocumentDatePromised);
+		
+		documentDatePromised = new Label();
+		documentDatePromised.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold; cursor: pointer; background: linear-gradient(to bottom, #f8ffe8 24%,#e3f5ab 69%,#b7df2d 92%);");
+		documentDatePromised.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event event) throws Exception {
+				if(posPanel.hasOrder()){
+					Timestamp datePromised = posPanel.getDatePromised();
+					LocalDateTime dd = datePromised.toLocalDateTime().plusDays(1);
+					datePromised = Timestamp.valueOf(dd);
+					posPanel.getOrder().setDatePromised(datePromised);
+					
+					posPanel.getOrder().saveEx();
+					
+					posPanel.refreshHeader();
+					
+					
+				}
+				
+			}
+		});
+		row.appendChild(documentDatePromised.rightAlign());
 		
 		row = rows.newRow();
 		row.setHeight("10px");
@@ -311,7 +386,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		try{
       //  Issue 139
 		  posPanel.setAddQty(true);
-			posPanel.addOrUpdateLine(key.getM_Product_ID(), key.getQty());
+			posPanel.addOrUpdateLine(key.getM_Product_ID(), key.getQty(), posPanel.getOrder().isSOTrx());
 			posPanel.refreshPanel();
 			posPanel.changeViewPanel();
 			posPanel.getMainFocus();
@@ -326,6 +401,22 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	
 	@Override
 	public void onEvent(Event e) throws Exception {
+		if(e.getTarget()==btnAddInfo){
+			
+			WQuickEntryPOS qE = new WQuickEntryPOS(posPanel, 0);
+			qE.loadRecord(posPanel.getC_Order_ID());
+			qE.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
+				@Override
+				public void onEvent(Event event) throws Exception {
+					posPanel.refreshHeader();
+				}
+			});
+			qE.setVisible(true);
+			AEnv.showWindow(qE);
+		}
+		
+		
+		
 		//	Name
 //		if(e.getTarget().equals(bPartnerName.getComponent(WPOSTextField.SECONDARY)) && e.getName().equals(Events.ON_FOCUS) && !isKeyboard){
 //			isKeyboard = true;
@@ -403,11 +494,12 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		if (!posPanel.hasOrder()) {
 			//	Document Info
 			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals"));
-			salesRep.setText(posPanel.getSalesRepName());
+			salesRep.setSelectedKeyNamePair(new KeyNamePair(posPanel.getSalesRep_ID(), posPanel.getSalesRepName()));
 			documentType.setText(Msg.getMsg(posPanel.getCtx(), "Order"));
 			documentNo.setText(Msg.getMsg(posPanel.getCtx(), "New"));
 			documentStatus.setText("");
 			documentDate.setText("");
+			documentDatePromised.setText("");
 			totalLines.setText(posPanel.getNumberFormat().format(Env.ZERO));
 			grandTotal.setText(posPanel.getNumberFormat().format(Env.ZERO));
 			taxAmount.setText(posPanel.getNumberFormat().format(Env.ZERO));
@@ -417,11 +509,12 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 			//	Document Info
 			String currencyISOCode = posPanel.getCurSymbol();
 			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals") + " (" +currencyISOCode + ")");
-			salesRep.setText(posPanel.getSalesRepName());
+			salesRep.setSelectedKeyNamePair(new KeyNamePair(posPanel.getSalesRep_ID(), posPanel.getSalesRepName()));
 			documentType.setText(posPanel.getDocumentTypeName());
 			documentNo.setText(posPanel.getDocumentNo());
 			documentStatus.setText(posPanel.getOrder().getDocStatusName());
 			documentDate.setText(posPanel.getDateOrderedForView());
+			documentDatePromised.setText(posPanel.getDatePromisedForView());
 			totalLines.setText(posPanel.getTotaLinesForView());
 			grandTotal.setText(posPanel.getGrandTotalForView());
 			taxAmount.setText(posPanel.getTaxAmtForView());
@@ -510,5 +603,22 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	{
 		return keyboardPanel;
 	}
+
+//	@Override
+//	public void actionPerformed(ActionEvent event) {
+//		if((Button)event.getSource()==btnAddInfo){
+//			
+//			WQuickEntryPOS qE = new WQuickEntryPOS(posPanel);
+//			qE.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
+//				@Override
+//				public void onEvent(Event event) throws Exception {
+//					
+//				}
+//			});
+//			qE.setVisible(true);
+//			AEnv.showWindow(qE);
+//		}
+//		
+//	}
 
 }

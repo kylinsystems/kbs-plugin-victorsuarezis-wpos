@@ -15,34 +15,46 @@
  * ****************************************************************************/
 package org.adempiere.pos;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.model.MBrowse;
-import org.adempiere.pos.command.Command;
-import org.adempiere.pos.command.CommandManager;
-import org.adempiere.pos.command.CommandReceiver;
 //import org.adempiere.pos.search.QueryBPartner;
 import org.adempiere.pos.search.WPOSQuery;
 import org.adempiere.pos.search.WQueryBPartner;
 import org.adempiere.pos.service.POSQueryInterface;
 import org.adempiere.pos.service.POSQueryListener;
-import org.adempiere.webui.apps.AEnv;
-import org.adempiere.webui.apps.BusyDialog;
-import org.adempiere.webui.panel.CustomForm;
+import org.adempiere.webui.ISupportMask;
+import org.adempiere.webui.LayoutUtils;
+import org.adempiere.webui.adwindow.ToolbarProcessButton;
+import org.adempiere.webui.apps.ProcessModalDialog;
+import org.adempiere.webui.event.ActionEvent;
+import org.adempiere.webui.event.ActionListener;
+import org.adempiere.webui.event.DialogEvents;
 import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.window.FDialog;
-import org.compiere.model.MBPartner;
+import org.compiere.model.MOrder;
+import org.compiere.model.MPInstance;
+import org.compiere.model.MProcess;
+import org.compiere.model.MRole;
+import org.compiere.model.MTable;
+import org.compiere.model.MToolBarButton;
+import org.compiere.model.MToolBarButtonRestrict;
+import org.compiere.model.X_AD_ToolBarButton;
 import org.compiere.process.ProcessInfo;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
-import org.eevolution.form.WBrowser;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
+
+//import jpiere.plugin.simpleinputwindow.window.SimpleInputWindowProcessModelDialog;
 
 /**
  * Class that execute business logic from POS
@@ -52,28 +64,84 @@ import org.zkoss.zul.Menupopup;
  * 		<a href="https://github.com/adempiere/adempiere/issues/670">
  * 		@see FR [ 670 ] Standard process for return material on POS</a>
  */
-public class WPOSActionMenu implements  POSQueryListener, EventListener{
+public class WPOSActionMenu implements  POSQueryListener, EventListener<Event>,ActionListener{
 
     private WPOS pos;
     private WPOSQuery queryPartner;
     private Menupopup popupMenu;
-    private CommandManager commandManager;
-    private Command currentCommand;
 	public static final String EVENT_ATTRIBUTE = "EVENT";
+	
+	private int tabID = 0; 
 
     public WPOSActionMenu(WPOS pos)
     {
         this.pos = pos;
         this.popupMenu =  new Menupopup();
         this.popupMenu.setStyle("background: #E8E3E3 repeat-y scroll 0 0 !important;");
-        commandManager =  new CommandManager();
-        for (Map.Entry<String, CommandReceiver> reeceivers: commandManager.getCommandReceivers().entrySet()) {
-            CommandReceiver commandReceiver = reeceivers.getValue();
-            addMenuItem(commandReceiver.getEvent());
-        }
+        
+       initActionMenu_();
 
     }
+	
+	public void initActionMenu_(){
+		
+		tabID = pos.getQuickAD_Tab_ID();
+		
+		
+//		boolean isPO_order = pos.isPurchaseOrder();
+//        MTable table = MTable.get(Env.getCtx(), MOrder.Table_Name);
+//        tabID = 0;
+//        if(isPO_order)
+//        	tabID = DB.getSQLValue(null, "SELECT AD_Tab_ID FROM AD_Tab WHERE AD_Window_ID= ?  AND TabLevel =0", table.getPO_Window_ID());
+//        else
+//        	tabID = DB.getSQLValue(null, "SELECT AD_Tab_ID FROM AD_Tab WHERE AD_Window_ID= ?  AND TabLevel =0",table.getAD_Window_ID());
+        
+        loadToolbarButtons();
+        
+	}
+    
+    private ArrayList<ToolbarProcessButton> toolbarProcessButtons = null;
 
+    public ArrayList<ToolbarProcessButton> getToolbarProcessButtons() {
+		return toolbarProcessButtons;
+	}
+
+	private void loadToolbarButtons() {
+    	//get extra toolbar process buttons
+    	if(tabID>0){
+    		if(toolbarProcessButtons!=null && !toolbarProcessButtons.isEmpty())
+    			toolbarProcessButtons.clear();
+    		else if(toolbarProcessButtons == null)
+    			toolbarProcessButtons = new ArrayList<ToolbarProcessButton>();
+
+
+
+    		MToolBarButton[] mToolbarButtons = MToolBarButton.getProcessButtonOfTab(tabID, null);
+    		for(MToolBarButton mToolbarButton : mToolbarButtons) {
+    			Boolean access = MRole.getDefault().getProcessAccess(mToolbarButton.getAD_Process_ID());
+    			if (access != null && access.booleanValue()) {
+    				ToolbarProcessButton toolbarProcessButton = new ToolbarProcessButton(mToolbarButton, null, this, pos.getWindowNo());
+    				toolbarProcessButtons.add(toolbarProcessButton);
+    			}
+    		}
+
+    		if (toolbarProcessButtons.size() > 0) {
+    			int ids[] = MToolBarButtonRestrict.getProcessButtonOfTab(Env.getCtx(), Env.getAD_Role_ID(Env.getCtx()), tabID, null);
+    			if (ids != null && ids.length > 0) {
+    				for(int id : ids) {
+    					X_AD_ToolBarButton tbt = new X_AD_ToolBarButton(Env.getCtx(), id, null);
+    					for(ToolbarProcessButton btn : toolbarProcessButtons) {
+    						if (tbt.getComponentName().equals(btn.getColumnName())) {
+    							toolbarProcessButtons.remove(btn);
+    							break;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    }
+    
     private void addMenuItem(String optionName)
     {
         Menuitem menuItem =  new Menuitem(optionName, null);
@@ -86,176 +154,8 @@ public class WPOSActionMenu implements  POSQueryListener, EventListener{
     public void onEvent(Event actionEvent) throws Exception {
         try {
         //popupMenu.setVisible(false);
-        currentCommand = commandManager.getCommand((String)actionEvent.getTarget().getAttribute(EVENT_ATTRIBUTE));
-        beforeExecutionCommand(currentCommand);
         } catch (AdempiereException exception) {
             FDialog.error(pos.getWindowNo(), pos.getForm() , exception.getLocalizedMessage());
-        }
-    }
-
-    private void beforeExecutionCommand(Command command) throws AdempierePOSException
-    {
-        if (command.getCommand() == CommandManager.GENERATE_IMMEDIATE_INVOICE) {
-            if (pos.isCompleted()) {
-                queryPartner = new WQueryBPartner(pos);
-                AEnv.showWindow(queryPartner);
-                queryPartner.addOptionListener(this);
-                queryPartner.showView();
-            }
-        } else if (command.getCommand() == CommandManager.GENERATE_REVERSE_SALES) {
-            if (pos.isCompleted())
-                executeCommand(command);
-        } else if (command.getCommand() == CommandManager.GENERATE_RETURN) {
-            executeCommand(command);
-        } else if (command.getCommand() == CommandManager.GENERATE_WITHDRAWAL) {
-            executeCommand(command);
-        } else if (command.getCommand() == CommandManager.CLOSE_STATEMENT) {
-            executeCommand(command);
-        } else if (command.getCommand() == CommandManager.COMPLETE_DOCUMENT) {
-            executeCommand(command);
-        } else {
-        	FDialog.info(pos.getWindowNo(), popupMenu, "DocProcessed", pos.getDocumentNo());
-        }
-    }
-
-    private void afterExecutionCommand(Command command) {
-    	
-    }
-
-    private void executeCommand(Command command)
-    {
-        BusyDialog waiting = new BusyDialog();
-        try {
-            CommandReceiver receiver = commandManager.getCommandReceivers(command.getEvent());
-            if (command.getCommand() == CommandManager.GENERATE_IMMEDIATE_INVOICE
-                    && pos.getC_Order_ID() > 0
-                    && pos.isCompleted()
-                    && !pos.isVoided()) {
-                receiver.setCtx(pos.getCtx());
-                receiver.setPartnerId(queryPartner.getRecord_ID());
-                receiver.setOrderId(pos.getC_Order_ID());
-                receiver.setPOSId(pos.getC_POS_ID());
-                receiver.setBankAccountId(pos.getC_BankAccount_ID());
-                MBPartner partner = MBPartner.get(pos.getCtx(), receiver.getPartnerId());
-                Optional<String> taxId = Optional.ofNullable(partner.getTaxID());
-                String processMessage = receiver.getName()
-                        + " @DisplayDocumentInfo@ : " + pos.getDocumentNo()
-                        + " @To@ @C_BPartner_ID@ : " + partner.getName()
-                        + " @TaxID@ : " + taxId.orElse("");
-                if (FDialog.ask(pos.getWindowNo(), popupMenu, "StartProcess?", Msg.parseTranslation(pos.getCtx(), processMessage))) {
-                    waiting.setPage(pos.v_Panel.getPage());
-                    waiting.doHighlighted();
-                    command.execute(receiver);
-                    ProcessInfo processInfo = receiver.getProcessInfo();
-                    waiting.dispose();
-                    if (processInfo!= null && processInfo.isError()) {
-                        showError(processInfo);
-                    } else {
-                        afterExecutionCommand(command);
-                        showOkMessage(processInfo);
-                        if(processInfo != null)
-                        	pos.setOrder(processInfo.getRecord_ID());
-                        pos.refreshHeader();
-                        //	Print Ticket
-                        pos.printTicket();
-                    }
-                }
-            }
-            //Reverse The Sales Transaction
-            else if (command.getCommand() == CommandManager.GENERATE_REVERSE_SALES
-                    && pos.getC_Order_ID() > 0
-                    && !pos.isReturnMaterial()
-                    && !pos.isVoided()
-                    && !pos.isClosed()) {
-                receiver.setCtx(pos.getCtx());
-                receiver.setOrderId(pos.getC_Order_ID());
-                receiver.setPOSId(pos.getC_POS_ID());
-                receiver.setPartnerId(pos.getC_BPartner_ID());
-                receiver.setBankAccountId(pos.getC_BankAccount_ID());
-                String processMessage = receiver.getName()
-                        + " @order.no@ : " + pos.getDocumentNo()
-                        + " @To@ @C_BPartner_ID@ : " + pos.getBPName();
-
-                if (FDialog.ask(pos.getWindowNo(), popupMenu, "StartProcess?", Msg.parseTranslation(pos.getCtx(), processMessage))) {
-                    waiting.setPage(pos.v_Panel.getPage());
-                    waiting.doHighlighted();
-                    command.execute(receiver);
-                    ProcessInfo processInfo = receiver.getProcessInfo();
-                    waiting.dispose();
-                    if (processInfo != null && processInfo.isError()) {
-                        showError(processInfo);
-                    }
-                    else
-                    {
-                        afterExecutionCommand(command);
-                        showOkMessage(processInfo);
-                    }
-                    pos.printTicket();
-                }
-            }
-            //Return product
-            else if (command.getCommand() == CommandManager.GENERATE_RETURN 
-            		&& pos.getC_Order_ID() > 0 
-            		&& !pos.isReturnMaterial() 
-            		&& pos.isCompleted()) {
-                receiver.setCtx(pos.getCtx());
-                receiver.setOrderId(pos.getC_Order_ID());
-                receiver.setPOSId(pos.getC_POS_ID());
-                receiver.setPartnerId(pos.getC_BPartner_ID());
-                receiver.setBankAccountId(pos.getC_BankAccount_ID());
-                String processMessage = receiver.getName()
-                        + " @DisplayDocumentInfo@ : " + pos.getDocumentNo()
-                        + " @To@ @C_BPartner_ID@ : " + pos.getBPName();
-
-                if (FDialog.ask(pos.getWindowNo(), popupMenu, "StartProcess?", Msg.parseTranslation(pos.getCtx(), processMessage))) {
-                    waiting.setPage(pos.v_Panel.getPage());
-                    waiting.doHighlighted();
-                    command.execute(receiver);
-                    ProcessInfo processInfo = receiver.getProcessInfo();
-                    waiting.dispose();
-                    if (processInfo != null && processInfo.isError()) {
-                        showError(processInfo);
-                    }
-                    else
-                    {
-                        afterExecutionCommand(command);
-                        showOkMessage(processInfo);
-                        //execute out transaction
-                        if (processInfo != null 
-                        		&& processInfo.getRecord_ID() > 0) {
-                            pos.setOrder(processInfo.getRecord_ID());
-                            pos.refreshHeader();
-                        }
-                    }
-                }
-            } else if (command.getCommand() == CommandManager.GENERATE_WITHDRAWAL) {
-                Env.setContext(pos.getCtx(), pos.getWindowNo(), "C_POS_ID", pos.getC_POS_ID());
-                MBrowse browse = new MBrowse(Env.getCtx(), 50056, null);
-                WBrowser browser = new WBrowser(true, pos.getWindowNo(), "", browse, "", true, "", true);
-                CustomForm ff = browser.getForm();
-                ff.setAttribute(org.adempiere.webui.component.Window.MODE_KEY, org.adempiere.webui.component.Window.MODE_EMBEDDED);
-                ff.setAttribute(org.adempiere.webui.component.Window.INSERT_POSITION_KEY, org.adempiere.webui.component.Window.INSERT_NEXT);
-                ff.setTitle(browse.getTitle());
-                SessionManager.getAppDesktop().showWindow(ff);
-            } else if (command.getCommand() == CommandManager.CLOSE_STATEMENT) {
-                Env.setContext(pos.getCtx(), pos.getWindowNo(), "C_POS_ID", pos.getC_POS_ID());
-                MBrowse browse = new MBrowse(Env.getCtx(), 50057, null);
-                WBrowser browser = new WBrowser(true, pos.getWindowNo(), "", browse, "", true, "" , true);
-                CustomForm ff = browser.getForm();
-                ff.setAttribute(org.adempiere.webui.component.Window.MODE_KEY, org.adempiere.webui.component.Window.MODE_EMBEDDED);
-                ff.setAttribute(org.adempiere.webui.component.Window.INSERT_POSITION_KEY, org.adempiere.webui.component.Window.INSERT_NEXT);
-                ff.setTitle(browse.getTitle());
-                SessionManager.getAppDesktop().showWindow(ff);
-            }
-        }
-        catch (Exception exception)
-        {
-            waiting.dispose();
-            FDialog.error(pos.getWindowNo(), pos.getForm(), exception.getLocalizedMessage());
-        }
-        finally {
-            waiting.dispose();
-            waiting = null;
         }
     }
 
@@ -270,7 +170,7 @@ public class WPOSActionMenu implements  POSQueryListener, EventListener{
             return;
         //	For Ticket
         if(query instanceof WQueryBPartner) {
-            executeCommand(currentCommand);
+            
         }
     }
 
@@ -294,4 +194,61 @@ public class WPOSActionMenu implements  POSQueryListener, EventListener{
         String okMessage = Msg.parseTranslation(pos.getCtx() , " @AD_Process_ID@ "+ processInfo.getTitle() +" @Summary@ : " + summary.orElse("") + " @ProcessOK@ : " + logs.orElse(""));
         FDialog.info(pos.getWindowNo(), popupMenu ,"ProcessOK", okMessage);
     }
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		ToolbarProcessButton button = (ToolbarProcessButton)event.getSource();
+
+		ProcessInfo pInfo = prepareProcess(button.getProcess_ID());
+		
+		Collection<KeyNamePair> m_viewIDMap = new ArrayList <KeyNamePair>();
+		m_viewIDMap.add(new KeyNamePair(pos.getC_Order_ID(),""));
+		
+		DB.createT_SelectionNew(pInfo.getAD_PInstance_ID() , m_viewIDMap, null);
+
+
+		ProcessModalDialog dialog = new ProcessModalDialog(pos.getWindowNo(),pInfo, false);
+
+		//Mask
+		Object window = SessionManager.getAppDesktop().findWindow(pos.getWindowNo());
+		final ISupportMask parent = LayoutUtils.showWindowWithMask(dialog, (Component)window, LayoutUtils.OVERLAP_PARENT);
+		dialog.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
+			@Override
+			public void onEvent(Event event) throws Exception {
+				parent.hideMask();
+			}
+		});
+
+		if (dialog.isValid())
+		{
+			//dialog.setWidth("500px");
+			dialog.setBorder("normal");
+			pos.getForm().getParent().appendChild(dialog);
+			//showBusyMask(dialog);
+			LayoutUtils.openOverlappedWindow(pos.getForm().getParent(), dialog, "middle_center");
+			dialog.focus();
+		}
+		else
+		{
+			//onRefresh(true, false);
+		}
+		
+	}
+	
+	protected ProcessInfo prepareProcess (int processId){
+		 final MProcess m_process = MProcess.get(Env.getCtx(), processId);
+		 final ProcessInfo m_pi = new ProcessInfo(m_process.getName(), processId);
+		 m_pi.setAD_User_ID(Env.getAD_User_ID(Env.getCtx()));
+		 m_pi.setAD_Client_ID(Env.getAD_Client_ID(Env.getCtx()));
+		 m_pi.setRecord_ID(pos.getC_Order_ID());
+
+		 MPInstance instance = new MPInstance(Env.getCtx(), processId, 0);
+		 instance.saveEx();
+		 final int pInstanceID = instance.getAD_PInstance_ID();
+		 // Execute Process
+		 m_pi.setAD_PInstance_ID(pInstanceID);
+		 m_pi.setAD_InfoWindow_ID(0);
+
+		 return m_pi;
+	 }
 }

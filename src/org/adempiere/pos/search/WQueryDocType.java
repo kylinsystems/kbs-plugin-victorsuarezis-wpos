@@ -197,6 +197,7 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 			.append(" AND dt.isActive='Y'")
 			.append(" AND dt.DocBaseType='SOO'")
 			.append(" AND dt.DocSubTypeSO IN(?, ?, ?, ?, ?)")
+			.append(" AND dt.IsSOTrx="+((posPanel.isSOTrx_Win_POS())?"'Y'":"'N'") )
 			.append(" OR (dt.AD_Client_ID = ? AND dt.isActive='Y' AND dt.DocBaseType = 'POO' AND dt.DocSubTypeSO IS NULL)")
 		    .append(" ORDER BY dt.Name");
 						
@@ -259,6 +260,8 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 		if (documentTypeId > 0)
 		{
 		posPanel.setC_DocType_ID(documentTypeId);
+		posPanel.getActionPanel().resetActionMenu();
+		
 		}
 			dispose();
 	}	//	close

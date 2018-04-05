@@ -19,24 +19,19 @@ package org.idempiere.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.compiere.model.I_Persistent;
-import org.compiere.model.MTable;
-import org.compiere.model.PO;
-import org.compiere.model.POInfo;
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
-import org.idempiere.model.I_C_POS;
 
 /** Generated Model for C_POS
  *  @author iDempiere (generated) 
- *  @version Release 3.1 - $Id$ */
+ *  @version Release 5.1 - $Id$ */
 public class X_C_POS extends PO implements I_C_POS, I_Persistent 
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20170506L;
+	private static final long serialVersionUID = 20180405L;
 
     /** Standard Constructor */
     public X_C_POS (Properties ctx, int C_POS_ID, String trxName)
@@ -110,6 +105,118 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 		return ii.intValue();
 	}
 
+	public org.compiere.model.I_AD_Tab getAD_Tab() throws RuntimeException
+    {
+		return (org.compiere.model.I_AD_Tab)MTable.get(getCtx(), org.compiere.model.I_AD_Tab.Table_Name)
+			.getPO(getAD_Tab_ID(), get_TrxName());	}
+
+	/** Set Tab.
+		@param AD_Tab_ID 
+		Tab within a Window
+	  */
+	public void setAD_Tab_ID (int AD_Tab_ID)
+	{
+		if (AD_Tab_ID < 1) 
+			set_Value (COLUMNNAME_AD_Tab_ID, null);
+		else 
+			set_Value (COLUMNNAME_AD_Tab_ID, Integer.valueOf(AD_Tab_ID));
+	}
+
+	/** Get Tab.
+		@return Tab within a Window
+	  */
+	public int getAD_Tab_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_Tab_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_AD_User getAD_User() throws RuntimeException
+    {
+		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_Name)
+			.getPO(getAD_User_ID(), get_TrxName());	}
+
+	/** Set User/Contact.
+		@param AD_User_ID 
+		User within the system - Internal or Business Partner Contact
+	  */
+	public void setAD_User_ID (int AD_User_ID)
+	{
+		if (AD_User_ID < 1) 
+			set_Value (COLUMNNAME_AD_User_ID, null);
+		else 
+			set_Value (COLUMNNAME_AD_User_ID, Integer.valueOf(AD_User_ID));
+	}
+
+	/** Get User/Contact.
+		@return User within the system - Internal or Business Partner Contact
+	  */
+	public int getAD_User_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_User_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_AD_Val_Rule getAD_Val_Rule() throws RuntimeException
+    {
+		return (org.compiere.model.I_AD_Val_Rule)MTable.get(getCtx(), org.compiere.model.I_AD_Val_Rule.Table_Name)
+			.getPO(getAD_Val_Rule_ID(), get_TrxName());	}
+
+	/** Set Dynamic Validation.
+		@param AD_Val_Rule_ID 
+		Dynamic Validation Rule
+	  */
+	public void setAD_Val_Rule_ID (int AD_Val_Rule_ID)
+	{
+		if (AD_Val_Rule_ID < 1) 
+			set_Value (COLUMNNAME_AD_Val_Rule_ID, null);
+		else 
+			set_Value (COLUMNNAME_AD_Val_Rule_ID, Integer.valueOf(AD_Val_Rule_ID));
+	}
+
+	/** Get Dynamic Validation.
+		@return Dynamic Validation Rule
+	  */
+	public int getAD_Val_Rule_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_Val_Rule_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_AD_Window getAD_Window() throws RuntimeException
+    {
+		return (org.compiere.model.I_AD_Window)MTable.get(getCtx(), org.compiere.model.I_AD_Window.Table_Name)
+			.getPO(getAD_Window_ID(), get_TrxName());	}
+
+	/** Set Window.
+		@param AD_Window_ID 
+		Data entry or display window
+	  */
+	public void setAD_Window_ID (int AD_Window_ID)
+	{
+		if (AD_Window_ID < 1) 
+			set_Value (COLUMNNAME_AD_Window_ID, null);
+		else 
+			set_Value (COLUMNNAME_AD_Window_ID, Integer.valueOf(AD_Window_ID));
+	}
+
+	/** Get Window.
+		@return Data entry or display window
+	  */
+	public int getAD_Window_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_Window_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Auto Logout Delay.
 		@param AutoLogoutDelay 
 		Automatically logout if terminal inactive for this period
@@ -125,6 +232,48 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 	public int getAutoLogoutDelay () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_AutoLogoutDelay);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set CashDrawer.
+		@param CashDrawer CashDrawer	  */
+	public void setCashDrawer (String CashDrawer)
+	{
+		set_Value (COLUMNNAME_CashDrawer, CashDrawer);
+	}
+
+	/** Get CashDrawer.
+		@return CashDrawer	  */
+	public String getCashDrawer () 
+	{
+		return (String)get_Value(COLUMNNAME_CashDrawer);
+	}
+
+	public org.compiere.model.I_C_BankAccount getCashTransferBankAccount() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_BankAccount)MTable.get(getCtx(), org.compiere.model.I_C_BankAccount.Table_Name)
+			.getPO(getCashTransferBankAccount_ID(), get_TrxName());	}
+
+	/** Set Transfer Cash trx to.
+		@param CashTransferBankAccount_ID 
+		Bank Account on which to transfer all Cash transactions
+	  */
+	public void setCashTransferBankAccount_ID (int CashTransferBankAccount_ID)
+	{
+		if (CashTransferBankAccount_ID < 1) 
+			set_Value (COLUMNNAME_CashTransferBankAccount_ID, null);
+		else 
+			set_Value (COLUMNNAME_CashTransferBankAccount_ID, Integer.valueOf(CashTransferBankAccount_ID));
+	}
+
+	/** Get Transfer Cash trx to.
+		@return Bank Account on which to transfer all Cash transactions
+	  */
+	public int getCashTransferBankAccount_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_CashTransferBankAccount_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -265,20 +414,6 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set C_POS_UU.
-		@param C_POS_UU C_POS_UU	  */
-	public void setC_POS_UU (String C_POS_UU)
-	{
-		set_Value (COLUMNNAME_C_POS_UU, C_POS_UU);
-	}
-
-	/** Get C_POS_UU.
-		@return C_POS_UU	  */
-	public String getC_POS_UU () 
-	{
-		return (String)get_Value(COLUMNNAME_C_POS_UU);
-	}
-
 	public org.compiere.model.I_C_POSKeyLayout getC_POSKeyLayout() throws RuntimeException
     {
 		return (org.compiere.model.I_C_POSKeyLayout)MTable.get(getCtx(), org.compiere.model.I_C_POSKeyLayout.Table_Name)
@@ -307,46 +442,18 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set CashDrawer.
-		@param CashDrawer CashDrawer	  */
-	public void setCashDrawer (String CashDrawer)
+	/** Set C_POS_UU.
+		@param C_POS_UU C_POS_UU	  */
+	public void setC_POS_UU (String C_POS_UU)
 	{
-		set_Value (COLUMNNAME_CashDrawer, CashDrawer);
+		set_Value (COLUMNNAME_C_POS_UU, C_POS_UU);
 	}
 
-	/** Get CashDrawer.
-		@return CashDrawer	  */
-	public String getCashDrawer () 
+	/** Get C_POS_UU.
+		@return C_POS_UU	  */
+	public String getC_POS_UU () 
 	{
-		return (String)get_Value(COLUMNNAME_CashDrawer);
-	}
-
-	public org.compiere.model.I_C_BankAccount getCashTransferBankAccount() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_BankAccount)MTable.get(getCtx(), org.compiere.model.I_C_BankAccount.Table_Name)
-			.getPO(getCashTransferBankAccount_ID(), get_TrxName());	}
-
-	/** Set Transfer Cash trx to.
-		@param CashTransferBankAccount_ID 
-		Bank Account on which to transfer all Cash transactions
-	  */
-	public void setCashTransferBankAccount_ID (int CashTransferBankAccount_ID)
-	{
-		if (CashTransferBankAccount_ID < 1) 
-			set_Value (COLUMNNAME_CashTransferBankAccount_ID, null);
-		else 
-			set_Value (COLUMNNAME_CashTransferBankAccount_ID, Integer.valueOf(CashTransferBankAccount_ID));
-	}
-
-	/** Get Transfer Cash trx to.
-		@return Bank Account on which to transfer all Cash transactions
-	  */
-	public int getCashTransferBankAccount_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_CashTransferBankAccount_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
+		return (String)get_Value(COLUMNNAME_C_POS_UU);
 	}
 
 	/** DeliveryRule AD_Reference_ID=151 */
@@ -442,6 +549,8 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 	public static final String INVOICERULE_CustomerScheduleAfterDelivery = "S";
 	/** Immediate = I */
 	public static final String INVOICERULE_Immediate = "I";
+	/** Customer Schedule After Delivery (Ship. Date) = M */
+	public static final String INVOICERULE_CustomerScheduleAfterDeliveryShipDate = "M";
 	/** Set Invoice Rule.
 		@param InvoiceRule 
 		Frequency and method of invoicing 
@@ -529,6 +638,44 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 		return false;
 	}
 
+	/** Point of Sales = POS */
+	public static final String LIT_POSTYPE_PointOfSales = "POS";
+	/** Point of Production = POP */
+	public static final String LIT_POSTYPE_PointOfProduction = "POP";
+	/** Point of Inventory = POI */
+	public static final String LIT_POSTYPE_PointOfInventory = "POI";
+	/** Set POS Type.
+		@param LIT_POSType POS Type	  */
+	public void setLIT_POSType (String LIT_POSType)
+	{
+
+		set_Value (COLUMNNAME_LIT_POSType, LIT_POSType);
+	}
+
+	/** Get POS Type.
+		@return POS Type	  */
+	public String getLIT_POSType () 
+	{
+		return (String)get_Value(COLUMNNAME_LIT_POSType);
+	}
+
+	/** Set Measure Request Code.
+		@param MeasureRequestCode 
+		String for  taking measurement from Device Electronic Scales
+	  */
+	public void setMeasureRequestCode (String MeasureRequestCode)
+	{
+		set_Value (COLUMNNAME_MeasureRequestCode, MeasureRequestCode);
+	}
+
+	/** Get Measure Request Code.
+		@return String for  taking measurement from Device Electronic Scales
+	  */
+	public String getMeasureRequestCode () 
+	{
+		return (String)get_Value(COLUMNNAME_MeasureRequestCode);
+	}
+
 	public org.compiere.model.I_M_PriceList getM_PriceList() throws RuntimeException
     {
 		return (org.compiere.model.I_M_PriceList)MTable.get(getCtx(), org.compiere.model.I_M_PriceList.Table_Name)
@@ -583,23 +730,6 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
-	}
-
-	/** Set Measure Request Code.
-		@param MeasureRequestCode 
-		String for  taking measurement from Device Electronic Scales
-	  */
-	public void setMeasureRequestCode (String MeasureRequestCode)
-	{
-		set_Value (COLUMNNAME_MeasureRequestCode, MeasureRequestCode);
-	}
-
-	/** Get Measure Request Code.
-		@return String for  taking measurement from Device Electronic Scales
-	  */
-	public String getMeasureRequestCode () 
-	{
-		return (String)get_Value(COLUMNNAME_MeasureRequestCode);
 	}
 
 	/** Set Name.

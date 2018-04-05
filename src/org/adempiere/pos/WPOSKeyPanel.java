@@ -120,7 +120,7 @@ public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 		}
 		if (keyLayout.get_ID() == 0)
 			return null;
-		MPOSKey[] keys = keyLayout.getKeys(false);
+		MPOSKey[] keys = keyLayout.getKeys(true);
 		
 		HashMap<Integer, MPOSKey> map = new HashMap<Integer, MPOSKey>(keys.length);
 
@@ -267,7 +267,7 @@ public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 		  
 		if (keyLayout.get_ID() == 0)
 			return null;
-		MPOSKey[] keys = keyLayout.getKeys(false);
+		MPOSKey[] keys = keyLayout.getKeys(true);
 		
 		//	Content
 		for (MPOSKey key :  keys)

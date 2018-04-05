@@ -18,13 +18,14 @@ package org.idempiere.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-
+import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for C_POS
  *  @author iDempiere (generated) 
- *  @version Release 3.1
+ *  @version Release 5.1
  */
+@SuppressWarnings("all")
 public interface I_C_POS 
 {
 
@@ -78,6 +79,66 @@ public interface I_C_POS
 
 	public org.compiere.model.I_AD_Sequence getAD_Sequence() throws RuntimeException;
 
+    /** Column name AD_Tab_ID */
+    public static final String COLUMNNAME_AD_Tab_ID = "AD_Tab_ID";
+
+	/** Set Tab.
+	  * Tab within a Window
+	  */
+	public void setAD_Tab_ID (int AD_Tab_ID);
+
+	/** Get Tab.
+	  * Tab within a Window
+	  */
+	public int getAD_Tab_ID();
+
+	public org.compiere.model.I_AD_Tab getAD_Tab() throws RuntimeException;
+
+    /** Column name AD_User_ID */
+    public static final String COLUMNNAME_AD_User_ID = "AD_User_ID";
+
+	/** Set User/Contact.
+	  * User within the system - Internal or Business Partner Contact
+	  */
+	public void setAD_User_ID (int AD_User_ID);
+
+	/** Get User/Contact.
+	  * User within the system - Internal or Business Partner Contact
+	  */
+	public int getAD_User_ID();
+
+	public org.compiere.model.I_AD_User getAD_User() throws RuntimeException;
+
+    /** Column name AD_Val_Rule_ID */
+    public static final String COLUMNNAME_AD_Val_Rule_ID = "AD_Val_Rule_ID";
+
+	/** Set Dynamic Validation.
+	  * Dynamic Validation Rule
+	  */
+	public void setAD_Val_Rule_ID (int AD_Val_Rule_ID);
+
+	/** Get Dynamic Validation.
+	  * Dynamic Validation Rule
+	  */
+	public int getAD_Val_Rule_ID();
+
+	public org.compiere.model.I_AD_Val_Rule getAD_Val_Rule() throws RuntimeException;
+
+    /** Column name AD_Window_ID */
+    public static final String COLUMNNAME_AD_Window_ID = "AD_Window_ID";
+
+	/** Set Window.
+	  * Data entry or display window
+	  */
+	public void setAD_Window_ID (int AD_Window_ID);
+
+	/** Get Window.
+	  * Data entry or display window
+	  */
+	public int getAD_Window_ID();
+
+	public org.compiere.model.I_AD_Window getAD_Window() throws RuntimeException;
+
     /** Column name AutoLogoutDelay */
     public static final String COLUMNNAME_AutoLogoutDelay = "AutoLogoutDelay";
 
@@ -90,6 +151,30 @@ public interface I_C_POS
 	  * Automatically logout if terminal inactive for this period
 	  */
 	public int getAutoLogoutDelay();
+
+    /** Column name CashDrawer */
+    public static final String COLUMNNAME_CashDrawer = "CashDrawer";
+
+	/** Set CashDrawer	  */
+	public void setCashDrawer (String CashDrawer);
+
+	/** Get CashDrawer	  */
+	public String getCashDrawer();
+
+    /** Column name CashTransferBankAccount_ID */
+    public static final String COLUMNNAME_CashTransferBankAccount_ID = "CashTransferBankAccount_ID";
+
+	/** Set Transfer Cash trx to.
+	  * Bank Account on which to transfer all Cash transactions
+	  */
+	public void setCashTransferBankAccount_ID (int CashTransferBankAccount_ID);
+
+	/** Get Transfer Cash trx to.
+	  * Bank Account on which to transfer all Cash transactions
+	  */
+	public int getCashTransferBankAccount_ID();
+
+	public org.compiere.model.I_C_BankAccount getCashTransferBankAccount() throws RuntimeException;
 
     /** Column name C_BankAccount_ID */
     public static final String COLUMNNAME_C_BankAccount_ID = "C_BankAccount_ID";
@@ -164,15 +249,6 @@ public interface I_C_POS
 	  */
 	public int getC_POS_ID();
 
-    /** Column name C_POS_UU */
-    public static final String COLUMNNAME_C_POS_UU = "C_POS_UU";
-
-	/** Set C_POS_UU	  */
-	public void setC_POS_UU (String C_POS_UU);
-
-	/** Get C_POS_UU	  */
-	public String getC_POS_UU();
-
     /** Column name C_POSKeyLayout_ID */
     public static final String COLUMNNAME_C_POSKeyLayout_ID = "C_POSKeyLayout_ID";
 
@@ -188,29 +264,14 @@ public interface I_C_POS
 
 	public org.compiere.model.I_C_POSKeyLayout getC_POSKeyLayout() throws RuntimeException;
 
-    /** Column name CashDrawer */
-    public static final String COLUMNNAME_CashDrawer = "CashDrawer";
+    /** Column name C_POS_UU */
+    public static final String COLUMNNAME_C_POS_UU = "C_POS_UU";
 
-	/** Set CashDrawer	  */
-	public void setCashDrawer (String CashDrawer);
+	/** Set C_POS_UU	  */
+	public void setC_POS_UU (String C_POS_UU);
 
-	/** Get CashDrawer	  */
-	public String getCashDrawer();
-
-    /** Column name CashTransferBankAccount_ID */
-    public static final String COLUMNNAME_CashTransferBankAccount_ID = "CashTransferBankAccount_ID";
-
-	/** Set Transfer Cash trx to.
-	  * Bank Account on which to transfer all Cash transactions
-	  */
-	public void setCashTransferBankAccount_ID (int CashTransferBankAccount_ID);
-
-	/** Get Transfer Cash trx to.
-	  * Bank Account on which to transfer all Cash transactions
-	  */
-	public int getCashTransferBankAccount_ID();
-
-	public org.compiere.model.I_C_BankAccount getCashTransferBankAccount() throws RuntimeException;
+	/** Get C_POS_UU	  */
+	public String getC_POS_UU();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -341,6 +402,28 @@ public interface I_C_POS
 	  */
 	public boolean isPOSRequiredPIN();
 
+    /** Column name LIT_POSType */
+    public static final String COLUMNNAME_LIT_POSType = "LIT_POSType";
+
+	/** Set POS Type	  */
+	public void setLIT_POSType (String LIT_POSType);
+
+	/** Get POS Type	  */
+	public String getLIT_POSType();
+
+    /** Column name MeasureRequestCode */
+    public static final String COLUMNNAME_MeasureRequestCode = "MeasureRequestCode";
+
+	/** Set Measure Request Code.
+	  * String for  taking measurement from Device Electronic Scales
+	  */
+	public void setMeasureRequestCode (String MeasureRequestCode);
+
+	/** Get Measure Request Code.
+	  * String for  taking measurement from Device Electronic Scales
+	  */
+	public String getMeasureRequestCode();
+
     /** Column name M_PriceList_ID */
     public static final String COLUMNNAME_M_PriceList_ID = "M_PriceList_ID";
 
@@ -370,19 +453,6 @@ public interface I_C_POS
 	public int getM_Warehouse_ID();
 
 	public org.compiere.model.I_M_Warehouse getM_Warehouse() throws RuntimeException;
-
-    /** Column name MeasureRequestCode */
-    public static final String COLUMNNAME_MeasureRequestCode = "MeasureRequestCode";
-
-	/** Set Measure Request Code.
-	  * String for  taking measurement from Device Electronic Scales
-	  */
-	public void setMeasureRequestCode (String MeasureRequestCode);
-
-	/** Get Measure Request Code.
-	  * String for  taking measurement from Device Electronic Scales
-	  */
-	public String getMeasureRequestCode();
 
     /** Column name Name */
     public static final String COLUMNNAME_Name = "Name";

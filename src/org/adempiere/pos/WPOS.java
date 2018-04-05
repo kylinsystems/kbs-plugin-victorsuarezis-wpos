@@ -27,6 +27,7 @@ import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.pos.service.POSScalesPanelInterface;
 import org.adempiere.pos.test.SideServer;
+import org.adempiere.webui.adwindow.ADWindow;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Borderlayout;
 import org.adempiere.webui.component.Button;
@@ -38,17 +39,20 @@ import org.adempiere.webui.component.ListboxFactory;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.component.Tabpanel;
 import org.adempiere.webui.component.Window;
 import org.adempiere.webui.panel.ADForm;
 import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.panel.StatusBarPanel;
+import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.window.FDialog;
 import org.idempiere.model.MPOS;
 import org.compiere.model.MPOSKey;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -159,6 +163,9 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	public void init () {
 		log.info("init - SalesRep_ID=" + Env.getAD_User_ID(getCtx()));
 		windowNo = form.getWindowNo();
+		
+		setNameFormPOS(form.getFormName());
+		
 		isCorrectUserPin = null;
 		//
 		try {
@@ -250,8 +257,8 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 *	@return true if found/set
 	 */
 	private void setMPOS() {
-		int salesRep_ID = Env.getAD_User_ID(getCtx());
-		setPOS(salesRep_ID, TYPE_POS);
+		int user_ID = Env.getAD_User_ID(getCtx());
+		setPOS(user_ID, TYPE_POS);
 		if(getM_POS() != null) {
 			validLocator();
 			return;
@@ -451,7 +458,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	 * @param m_QtyOrdered
 	 * @return void
 	 */
-	public void addOrUpdateLine(int p_M_Product_ID, BigDecimal m_QtyOrdered) {
+	public void addOrUpdateLine(int p_M_Product_ID, BigDecimal m_QtyOrdered, boolean isSOTrx) {
 		//	Create Order if not exists
 		if (!hasOrder()) {
 			newOrder();
@@ -459,7 +466,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		//	Show Product Info
 		refreshProductInfo(p_M_Product_ID);
 		//	
-		String lineError = addOrUpdate(p_M_Product_ID, m_QtyOrdered);
+		String lineError = addOrUpdate(p_M_Product_ID, m_QtyOrdered, isSOTrx);
 		if (lineError != null) {
 			log.warning("POS Error " + lineError);
 			FDialog.error(0,
@@ -658,6 +665,10 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	
 	public WPOSOrderLinePanel getOrdLinePanel(){
 		return orderLinePanel;
+	}
+	
+	public WPOSActionPanel getActionPanel(){
+		return actionPanel;
 	}
 	
 	public String getProductUOMSymbol()

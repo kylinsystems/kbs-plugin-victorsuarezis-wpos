@@ -17,6 +17,9 @@
 
 package org.adempiere.pos;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,11 @@ import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.pos.service.POSQueryInterface;
 import org.adempiere.pos.service.POSQueryListener;
 import org.adempiere.util.Callback;
+import org.adempiere.webui.AdempiereWebUI;
+import org.adempiere.webui.LayoutUtils;
+import org.adempiere.webui.adwindow.ADTabpanel;
+import org.adempiere.webui.adwindow.ProcessButtonPopup;
+import org.adempiere.webui.adwindow.ToolbarProcessButton;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
@@ -56,6 +64,7 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MResource;
 import org.compiere.model.Query;
 import org.compiere.util.CLogger;
+import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
@@ -131,6 +140,8 @@ public class WPOSActionPanel extends WPOSSubPanel
 	private final String ACTION_LOGOUT      = "Logout";
 	
 	private String errorMsg = null;
+	
+	private boolean evtChangeStop = false;
 	
 	@Override
 	public void init() {
@@ -240,20 +251,42 @@ public class WPOSActionPanel extends WPOSSubPanel
 			@Override
 			public void valueChange(ValueChangeEvent evt) {
 				if(evt.getNewValue()!=null){
+					//Entra per due volte nell'evento; bypassare la 2a volta....
+					if(evtChangeStop){
+						evtChangeStop = false;
+						return;
+					}
+					else 
+						evtChangeStop = true;// per prossimo richiamo dell'evento
+					//
 				
 					Integer prod_ID = (Integer) evt.getNewValue();
 //					MProduct product = new MProduct(ctx, prod_ID, null);
 					
-					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
-					MPOSKey key = new Query(ctx, MPOSKey.Table_Name, where, null)
-							.setOnlyActiveRecords(true)
-							.setClient_ID()
-							.setParameters(prod_ID, posPanel.getC_POSKeyLayout_ID())
-							.first();
+					MPOSKey key = null;
 					
-					keyReturned(key);
-//					((WSearchEditor)evt.getSource()).getComponent().focus();
-					((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
+					try {
+						ResultSet rs =DB.prepareStatement(("SELECT * FROM LIT_C_POSKey_v WHERE M_Product_ID="+prod_ID), null).executeQuery();
+						if(rs!=null){
+							rs.next();
+							key = new MPOSKey(ctx, rs, null);
+							keyReturned(key);
+							((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
+//					MPOSKey key = new Query(ctx, MPOSKey.Table_Name, where, null)
+//							.setOnlyActiveRecords(true)
+//							.setClient_ID()
+//							.setParameters(prod_ID, posPanel.getC_POSKeyLayout_ID())
+//							.first();
+//					
+//					keyReturned(key);
+////					//((WSearchEditor)evt.getSource()).getComponent().focus();
+//					((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
 				}
 			}
 		});
@@ -442,8 +475,32 @@ public class WPOSActionPanel extends WPOSSubPanel
             }
             else if(e.getTarget().equals(buttonProcess)){
                 if(posPanel.isUserPinValid()) {
-                    actionProcessMenu.getPopUp().setPage(this.getPage());
-                    actionProcessMenu.getPopUp().open(buttonProcess);
+//                    actionProcessMenu.getPopUp().setPage(this.getPage());
+//                    actionProcessMenu.getPopUp().open(buttonProcess);
+                	
+        			ProcessButtonPopup popup = new ProcessButtonPopup();
+        			popup.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "processButtonPopup");
+
+        			List<org.zkoss.zul.Button> buttonList = new ArrayList<org.zkoss.zul.Button>();
+        			for(ToolbarProcessButton processButton : actionProcessMenu.getToolbarProcessButtons()) {
+        				if (processButton.getButton().isVisible()) {
+        					buttonList.add(processButton.getButton());
+        				}
+        			}
+
+        			popup.render(buttonList);
+
+        			popup.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "processButtonPopup");
+        			if (popup.getChildren().size() > 0) {
+        				popup.setPage(this.getPage());
+        				popup.open(buttonProcess, "after_start");
+        			}
+
+        			return;
+
+        		//
+
+        		
                 }
                 return;
             }
@@ -561,7 +618,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 				Integer productId = (Integer) columns.get().elementAt(0);
 				String productName = (String) columns.get().elementAt(2);
 				posPanel.setAddQty(true);
-				posPanel.addOrUpdateLine(productId, editQty? Env.ZERO: Env.ONE);
+				posPanel.addOrUpdateLine(productId, editQty? Env.ZERO: Env.ONE, posPanel.getOrder().isSOTrx());
 //				fieldProductName.setText(productName);
 				onlyProduct.getComponent().getTextbox().setText(productName);
 			}
@@ -752,6 +809,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		buttonNew.setEnabled(true);
 		buttonHistory.setEnabled(true);
 		buttonProcess.setEnabled(true);
+		actionProcessMenu.initActionMenu_();
 	}
 
 	/**
@@ -852,7 +910,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		try{
       //  Issue 139
 		  posPanel.setAddQty(true);
-			posPanel.addOrUpdateLine(key.getM_Product_ID(), key.getQty());
+			posPanel.addOrUpdateLine(key.getM_Product_ID(), key.getQty(), posPanel.getOrder().isSOTrx());
 			posPanel.refreshPanel();
 			posPanel.changeViewPanel();
 //			posPanel.getMainFocus();
@@ -886,7 +944,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		{
 			Lookup lookup = MLookupFactory.get (Env.getCtx(), windowNo,
 					0, AD_Column_ID, DisplayType.Search);
-			return new WSearchEditor ("M_Product_ID", false, false, true, lookup);
+			return new WSearchEditor ("M_Product_ID", false, false, false, lookup);
 		}
 		catch (Exception e)
 		{
@@ -897,5 +955,9 @@ public class WPOSActionPanel extends WPOSSubPanel
 	
 	private WPOSActionPanel getContent(){
 		return this;
+	}
+	
+	public void resetActionMenu(){
+		actionProcessMenu.initActionMenu_();
 	}
 }//	WPOSActionPanel

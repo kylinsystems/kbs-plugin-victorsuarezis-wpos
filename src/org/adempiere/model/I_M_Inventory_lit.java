@@ -191,7 +191,7 @@ public interface I_M_Inventory_lit
 	  */
 	public int getC_POS_ID();
 
-	public org.compiere.model.I_C_POS getC_POS() throws RuntimeException;
+	public org.idempiere.model.I_C_POS getC_POS() throws RuntimeException;
 
     /** Column name C_Project_ID */
     public static final String COLUMNNAME_C_Project_ID = "C_Project_ID";

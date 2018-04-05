@@ -36,6 +36,8 @@ import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Window;
+import org.adempiere.webui.event.DialogEvents;
+import org.adempiere.webui.grid.WQuickEntryPOS;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.MOrder;
@@ -44,6 +46,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkforge.keylistener.Keylistener;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
 
@@ -79,6 +82,7 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 	private Button 			buttonMinus;
 	private Button 			buttonScales;
 	private Button			buttonFilter;
+	private Button          btnAddInfo;
 	//	private POSNumberBox 	fieldQuantity;
 	private NumberBox 	    fieldQuantity;
 	//	private POSNumberBox 	fieldPrice;
@@ -139,6 +143,13 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		buttonFilter = createButtonAction("Filter", null);
 		buttonFilter.setTooltiptext(Msg.translate(ctx, "Filter"));
 		row.appendChild (buttonFilter);
+		
+		btnAddInfo = new Button("INFO");
+		btnAddInfo.setHeight("45px");
+		btnAddInfo.setWidth("60px");
+		btnAddInfo.setStyle("Font-size:1.1em; font-weight:bold");
+		btnAddInfo.addActionListener(this);
+		row.appendChild (btnAddInfo);
 
 		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
 		row.appendChild(qtyLabel);
@@ -276,6 +287,19 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
                 actionFilterMenu.getPopUp().open(buttonFilter);
 				actionFilterMenu.getPopUp().open(Double.valueOf(point.getX()).intValue()-140,Double.valueOf(point.getY()).intValue()-190);
                 return;
+			}
+			else if(e.getTarget().equals(btnAddInfo)){
+				WQuickEntryPOS qE = new WQuickEntryPOS(posPanel, 1);
+				qE.loadRecord(posPanel.getC_OrderLine_ID());
+				qE.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
+					@Override
+					public void onEvent(Event event) throws Exception {
+						posPanel.refreshHeader();
+					}
+				});
+				qE.setVisible(true);
+				AEnv.showWindow(qE);
+			
 			}
 
 			BigDecimal value = Env.ZERO;

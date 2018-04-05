@@ -65,6 +65,7 @@ import org.compiere.model.MSequence;
 import org.compiere.model.MTax;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
+import org.compiere.model.MWindow;
 import org.compiere.model.Query;
 import org.compiere.model.X_C_Order;
 import org.compiere.process.DocAction;
@@ -147,12 +148,14 @@ public class CPOS {
 	/**	Window No				*/
 	private int 							windowNo;
 	
+	private String             p_nameOfForm;
+	
 	/**
 	 * 	Set MPOS
 	 * @param salesRepId
 	 * @return true if found/set
 	 */
-	public void setPOS(int salesRepId, String typePos) {
+	public void setPOS(int userId, String typePos) {
 		//List<MPOS> poss = getPOSs(p_SalesRep_ID);
 		List<MPOS> poss = getPOSByOrganization(Env.getAD_Org_ID(getCtx()));
 		//
@@ -166,12 +169,14 @@ public class CPOS {
 			
 			for (MPOS mpos : poss) {
 				
-				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos)){
+				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos) && mpos.getAD_User_ID()==userId){
 					entityPOS = mpos;
 					break;
 				}
 			}
 			
+			if(entityPOS == null)
+				throw new AdempierePOSException("@NoPOSForUser@");
 			
 		}
 	}	//	setMPOS
@@ -432,7 +437,7 @@ public class CPOS {
 		//
 		MDocType m_DocType = MDocType.get(getCtx(), currentOrder.getC_DocTypeTarget_ID());
 		if(m_DocType != null) {
-			return m_DocType.getName().equals(Msg.getMsg(getCtx(), "Purchase Order"));
+			return !m_DocType.isSOTrx();
 		}
 		
 		return false;
@@ -703,7 +708,10 @@ public class CPOS {
 	 * @return
      */
 	public boolean isEnableProductLookup() {
-		return entityPOS.isEnableProductLookup();
+		if(entityPOS!=null)
+			return entityPOS.isEnableProductLookup();
+		else
+			return false;
 	}
 
 	/**
@@ -744,6 +752,11 @@ public class CPOS {
 		if (value != null) {
 			currentOrder.setDocumentNo(value);
 		}
+		//isSOTrx
+		MDocType m_doctype = new MDocType(getCtx(), docTypeTargetId, null);
+		if(m_doctype!=null)
+			currentOrder.setIsSOTrx(m_doctype.isSOTrx());
+		
 		currentOrder.saveEx();
 	}
 	
@@ -760,12 +773,16 @@ public class CPOS {
 			currentOrder = new MOrder(Env.getCtx(), orderId, null);
 			currentOrder.setDateOrdered(getToday());
 			currentOrder.setDateAcct(getToday());
-			currentOrder.setDatePromised(getToday());
+			//currentOrder.setDatePromised(getToday());
 		} else {
 			currentOrder = new MOrder(Env.getCtx(), 0, null);
 		}
 		currentOrder.setAD_Org_ID(entityPOS.getAD_Org_ID());
-		currentOrder.setIsSOTrx(true);
+		//isSOTrx
+		MDocType m_doctype = new MDocType(getCtx(), docTypeTargetId, null);
+		if(m_doctype!=null)
+			currentOrder.setIsSOTrx(m_doctype.isSOTrx());
+		//
 		if (entityPOS.getM_PriceList_ID() > 0)
 			currentOrder.setM_PriceList_ID(entityPOS.getM_PriceList_ID());
 		if (entityPOS.getDeliveryRule() != null)
@@ -1052,14 +1069,14 @@ public class CPOS {
 	 * @param qtyOrdered
      * @return
      */
-	public String addOrUpdate(int productId, BigDecimal qtyOrdered) {
+	public String addOrUpdate(int productId, BigDecimal qtyOrdered, boolean isSOTrx) {
 		String errorMessage = null;
 		try {
 			MProduct product = MProduct.get(ctx, productId);
 			if (product == null)
 				return "@No@ @InfoProduct@";
 
-			MProductPricing productPricing = new MProductPricingPOS(productId, getC_BPartner_ID() , qtyOrdered , true , null);
+			MProductPricing productPricing = new MProductPricingPOS(productId, getC_BPartner_ID() , qtyOrdered , isSOTrx , null);
 			productPricing.setM_PriceList_ID(getM_PriceList_ID());
 			productPricing.calculatePrice();
 			//	Validate if exists a order
@@ -1164,7 +1181,7 @@ public class CPOS {
 	public void listOrder() {
 		String sql = new String("SELECT o.C_Order_ID "
 					+ "FROM C_Order o "
-					+ "WHERE o.IsSOTrx='Y' "
+					+ "WHERE o.IsSOTrx="+((isSOTrx_Win_POS())?"'Y'":"'N'") +" "
 					+ "AND o.Processed = 'N' "
 					+ "AND o.AD_Client_ID = ? "
 					+ "AND o.C_POS_ID = ? "
@@ -1828,6 +1845,18 @@ public class CPOS {
 	}
 	
 	/**
+	 * Get Date promised
+	 * @return
+	 */
+	public Timestamp getDatePromised() {
+		if(hasOrder()) {
+			return currentOrder.getDatePromised();
+		}
+		//	Default
+		return null;
+	}
+	
+	/**
 	 * Get Currency Symbol
 	 * @return
 	 * @return String
@@ -1997,7 +2026,11 @@ public class CPOS {
 	 * @return boolean
 	 */
 	public boolean isModifyPrice() {
+		if(entityPOS != null) {
 		return entityPOS.isModifyPrice();
+		}
+		else
+			return false;
 	}
 	
 	/**
@@ -2485,6 +2518,14 @@ public class CPOS {
 	}
 	
 	/**
+	 * Get Date Promised for view
+	 * @return
+	 */
+	public String getDatePromisedForView() {
+		return getDateFormat().format(getDatePromised());
+	}
+	
+	/**
 	 * Get Class name for ticket handler
 	 * @return
 	 */
@@ -2497,5 +2538,26 @@ public class CPOS {
 			return null;
 		//	Default
 		return currentOrder.get_TrxName();
+	}
+	
+	public void setNameFormPOS(String name){
+		p_nameOfForm = name;
+	}
+	
+	public int getQuickAD_Window_ID(){
+		return entityPOS.getAD_Window_ID();
+	}
+	
+	public int getQuickAD_Tab_ID(){
+		return entityPOS.getAD_Tab_ID();
+	}
+	
+	public boolean isSOTrx_Win_POS(){
+		if(getQuickAD_Window_ID()>0){
+			int adWin_ID = getQuickAD_Window_ID(); 
+			MWindow win_for_POS = new MWindow(Env.getCtx(), adWin_ID, null);
+			return win_for_POS.isSOTrx();
+		}
+		return false;
 	}
 }
