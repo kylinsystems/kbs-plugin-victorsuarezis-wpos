@@ -33,15 +33,21 @@ import org.adempiere.webui.component.Datebox;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.ListItem;
+import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.ListboxFactory;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
+import org.adempiere.webui.component.WListboxPOS;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.minigrid.ColumnInfo;
 import org.compiere.minigrid.IDColumn;
+import org.compiere.model.MUser;
+import org.compiere.model.MValRule;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -71,6 +77,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 	}	//	PosQueryProduct
 
 	/** Fields 				*/
+	private Listbox         fieldUser;
 	private WPOSTextField 	fieldDocumentNo;
 	private WPOSTextField 	fieldBPartner;
 	private Datebox 		fieldDateTo;
@@ -85,6 +92,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 	
 	static final private String DOCUMENTNO      = "DocumentNo";
 	static final private String DOCTYPE         = "C_DocType_ID";  // Just display of column name. The actual doctype will be target doctype
+	static final private String NAME            = "SalesRep_ID";
 	static final private String BPARTNERID      = "C_BPartner_ID";
 	static final private String GRANDTOTAL      = "GrandTotal";
 	static final private String OPENAMT         = "OpenAmt";
@@ -95,6 +103,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 	static final private String DATEORDEREDFROM = "From";
 	static final private String DATEORDEREDTO   = "To";
 	static final private String DATEORDERED     = "DateOrdered";
+	static final private String DATEPROMISED    = "DatePromised";
 	static final private String QUERY           = "Query";
 	
 	/**	Table Column Layout Info			*/
@@ -102,8 +111,10 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 		new ColumnInfo(" ", "C_Order_ID", IDColumn.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), DOCUMENTNO), DOCUMENTNO, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), DOCTYPE), DOCTYPE, String.class),
+		new ColumnInfo(Msg.translate(Env.getCtx(), NAME), NAME, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), BPARTNERID), BPARTNERID, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), DATEORDERED), DATEORDERED, Date.class),
+		new ColumnInfo(Msg.translate(Env.getCtx(), DATEPROMISED), DATEPROMISED, Date.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), GRANDTOTAL), GRANDTOTAL, BigDecimal.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), OPENAMT), OPENAMT, BigDecimal.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), PAID), PAID, Boolean.class), 
@@ -149,6 +160,41 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 		Rows rows = null;
 		Row row = null;
 		rows = productLayout.newRows();
+		row = rows.newRow();
+		
+		Label labelUser = new Label(Msg.translate(ctx, NAME));
+		labelUser.setStyle(WPOS.FONTSIZESMALL);
+		row.setHeight("20px");
+		row.appendChild(labelUser.rightAlign());
+		
+		//////
+		KeyNamePair[] listUserSaleRep = null;
+		String sqlUserActive = "";
+		if(posPanel.getM_POS()!=null && posPanel.getM_POS().getAD_Val_Rule_ID()>0){
+			MValRule valRule = MValRule.get(ctx, posPanel.getM_POS().getAD_Val_Rule_ID());
+			sqlUserActive = "SELECT AD_USER_ID, Name FROM AD_USER WHERE "+valRule.getCode();
+		}
+		else
+			sqlUserActive = "SELECT AD_USER_ID, Name FROM AD_USER WHERE AD_CLIENT_ID="+Env.getAD_Client_ID(Env.getCtx())+" AND ISACTIVE='Y' ORDER BY Name";
+
+		listUserSaleRep = DB.getKeyNamePairs(sqlUserActive, true);
+		fieldUser = new Listbox(listUserSaleRep);
+		fieldUser.setMold("select");
+		
+		if(posPanel.getSalesRep_ID()>0){
+			int key = posPanel.getSalesRep_ID();
+			String name = MUser.getNameOfUser(posPanel.getSalesRep_ID());
+			KeyNamePair pp = new KeyNamePair(key, name);
+			fieldUser.setSelectedKeyNamePair(pp);
+		}
+		///--
+		
+		row.appendChild(fieldUser);
+		
+		fieldUser.addActionListener(this);
+		fieldUser.setWidth("120px");
+		fieldUser.setStyle(WPOS.FONTSIZESMALL);
+		
 		row = rows.newRow();
 		
 		Label labelDocumentNo = new Label(Msg.translate(ctx, DOCUMENTNO));
@@ -242,16 +288,19 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 
 	/**
 	 * 	Set/display Results
+	 * @param object 
 	 *	@param results results
 	 */
-	public void setResults (Properties ctx, boolean processed, String doc, Date dateFrom, Date dateTo, String bPartner, boolean aDate)
+	public void setResults (Properties ctx, boolean processed, String doc, Date dateFrom, Date dateTo, String bPartner, boolean aDate, ListItem valueSaleRep)
 	{
+		
 		StringBuffer sql = new StringBuffer();
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try  {
-			sql.append(" SELECT o.C_Order_ID, o.DocumentNo, dt.Name AS C_DocType_ID ,")
-				.append(" b.Name, TRUNC(o.dateordered,'DD') as dateordered, o.GrandTotal, ")
+			sql.append(" SELECT o.C_Order_ID, o.DocumentNo, au.Name, dt.Name AS C_DocType_ID ,")
+				.append(" b.Name, TRUNC(o.dateordered,'DD') as dateordered, ")
+				.append(" TRUNC(o.datepromised,'DD') as datepromised, o.GrandTotal, ")
 				// priority for open amounts: invoices, allocations, order
 				.append(" COALESCE(SUM(invoiceopen(i.C_Invoice_ID, 0)), COALESCE(o.GrandTotal - SUM(al.amount),0)) AS InvoiceOpen, ")
 			    .append(" COALESCE(i.IsPaid, CASE WHEN o.GrandTotal - SUM(al.amount) = 0 THEN 'Y' ELSE 'N' END) IsPaid, ")
@@ -267,9 +316,11 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 			
 			sql.append(" LEFT JOIN C_invoice        i ON (i.C_Order_ID = o.C_Order_ID)")
 				.append(" LEFT JOIN C_AllocationLine al ON (o.C_Order_ID = al.C_Order_ID)")
+				.append(" LEFT JOIN AD_User au ON (au.AD_User_ID = o.SalesRep_ID)")
 				.append(" WHERE  o.DocStatus <> 'VO'")
 				.append(" AND o.C_POS_ID = ?")
-				.append(" AND o.Processed= ?");
+				.append(" AND o.Processed= ?")
+				.append(" AND o.isSoTrx="+((posPanel.isSOTrx_Win_POS())?"'Y'":"'N'"));
 			if (doc != null && !doc.equalsIgnoreCase(""))
 				sql.append(" AND (o.DocumentNo LIKE '%" + doc + "%' OR  i.DocumentNo LIKE '%" + doc + "%')");
 			if ( dateFrom != null && aDate) {
@@ -280,8 +331,13 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 			}
 			if (bPartner != null && !bPartner.equalsIgnoreCase(""))
 				sql.append(" AND (UPPER(b.name) LIKE '%" + bPartner + "%' OR UPPER(b.value) LIKE '%" + bPartner + "%' )");
+			//
+			if(valueSaleRep!=null && valueSaleRep.getValue()!=null && ((Integer)valueSaleRep.getValue())>0){
+				sql.append(" AND o.SalesRep_ID = "+((Integer)valueSaleRep.getValue()));
+			}
+				
 			//	Group By
-			sql.append(" GROUP BY o.C_Order_ID, o.DocumentNo, dt.Name , b.Name, o.GrandTotal, o.Processed, i.IsPaid ");
+			sql.append(" GROUP BY o.C_Order_ID, o.DocumentNo, au.Name, dt.Name , b.Name, o.GrandTotal, o.Processed, i.IsPaid ");
 			sql.append(" ORDER BY o.Updated");
 			int i = 1;			
 			preparedStatement = DB.prepareStatement(sql.toString(), null);
@@ -434,7 +490,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 			dateFrom = null;
 		}
 		setResults(ctx, fieldProcessed.isSelected(), fieldDocumentNo.getText(), dateFrom, dateTo, 
-					fieldBPartner.getText().toUpperCase(), fieldAllowDate.isSelected());
+					fieldBPartner.getText().toUpperCase(), fieldAllowDate.isSelected(), fieldUser.getSelectedItem());
 		unlockUI();
 	}
 

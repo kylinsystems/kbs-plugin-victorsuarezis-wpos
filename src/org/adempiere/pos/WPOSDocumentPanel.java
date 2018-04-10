@@ -26,6 +26,7 @@ import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.ListItem;
 import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
@@ -140,14 +141,14 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		v_TotalsGroup = new Groupbox();
 		v_InfOrderGroup = new Groupbox();
 		v_InfOrderGroup.appendChild(v_OrderPanel);
-		v_InfOrderGroup.setWidth("85%");
+		v_InfOrderGroup.setWidth("99%");
 		row.appendChild(v_InfOrderGroup);
 		row.appendChild(v_TotalsGroup);
 		// BP
 		bPartnerName = new WPOSTextField(Msg.translate(Env.getCtx(), "IsCustomer"), posPanel.getKeyboard());
 		bPartnerName.setHeight("35px");
 		bPartnerName.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
-		bPartnerName.setWidth("97%");
+		bPartnerName.setWidth("100%");
 		bPartnerName.addEventListener(this);
 		
 		btnAddInfo = new Button(" INFO ");
@@ -209,7 +210,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		row.setWidth("100%");
 		Label f_lb_DocumentType = new Label (Msg.translate(Env.getCtx(), I_C_Order.COLUMNNAME_C_DocType_ID) + ":");
 		f_lb_DocumentType.setStyle(WPOS.FONTSIZEMEDIUM);
-		row.appendChild(f_lb_DocumentType.rightAlign());
+		row.appendChild(f_lb_DocumentType);
 		
 		documentType = new Label();
 		documentType.setClass("label-description");
@@ -221,7 +222,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		
 		Label f_lb_DocumentStatus = new Label (Msg.translate(Env.getCtx(), I_C_Order.COLUMNNAME_DocStatus) + ":");
 		f_lb_DocumentStatus.setStyle(WPOS.FONTSIZEMEDIUM);
-		row.appendChild(f_lb_DocumentStatus.rightAlign());
+		row.appendChild(f_lb_DocumentStatus);
 		documentStatus= new Label();
 		documentStatus.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
 		row.appendChild(documentStatus.rightAlign());
@@ -231,7 +232,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		
 		Label f_lb_SalesRep = new Label (Msg.translate(Env.getCtx(), I_C_Order.COLUMNNAME_SalesRep_ID) + ":");
 		f_lb_SalesRep.setStyle(WPOS.FONTSIZEMEDIUM);
-		row.appendChild(f_lb_SalesRep.rightAlign());
+		row.appendChild(f_lb_SalesRep);
 		
 		KeyNamePair[] listUserSaleRep = null;
 		String sqlUserActive = "";
@@ -256,6 +257,23 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 //		salesRep = new Label(posPanel.getSalesRepName());
 		salesRep.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
 		salesRep.setWidth("99%");
+		salesRep.addActionListener(new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event event) throws Exception {
+				if(posPanel.hasOrder()){
+					ListItem item = ((Listbox)event.getTarget()).getSelectedItem();
+					if(item != null && item.getValue()!=null){
+						Integer salesR_ID = (Integer)item.getValue();
+						posPanel.getOrder().setSalesRep_ID(salesR_ID);
+						posPanel.getOrder().saveEx();
+						
+						posPanel.refreshHeader();
+					}
+				}
+				
+			}
+		});
 		row.appendChild(salesRep);
 		
 		
@@ -340,11 +358,13 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		// Center Panel
 		Grid layout = GridFactory.newGridLayout();
 
-		org.adempiere.webui.component.Panel centerPanel = new org.adempiere.webui.component.Panel();
-		appendChild(centerPanel);
-		centerPanel.setStyle("overflow:auto; height:75%");
-		centerPanel.appendChild(layout);
-		layout.setWidth("100%");
+//		org.adempiere.webui.component.Panel centerPanel = new org.adempiere.webui.component.Panel();
+//		appendChild(centerPanel);
+//		centerPanel.setStyle("overflow:auto; height:75%");
+//		centerPanel.appendChild(layout);
+		ZKUpdateUtil.setVflex(layout, "3");
+		appendChild(layout);
+		layout.setWidth("99%");
 		layout.setStyle("");
 		
 		rows = layout.newRows();

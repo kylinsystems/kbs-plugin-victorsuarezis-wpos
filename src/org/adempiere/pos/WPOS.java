@@ -46,6 +46,7 @@ import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.panel.StatusBarPanel;
 import org.adempiere.webui.session.SessionManager;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.idempiere.model.MPOS;
 import org.compiere.model.MPOSKey;
@@ -200,7 +201,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		Borderlayout mainLayout = new Borderlayout();	
 		actionPanel = new WPOSActionPanel(this);
 		documentPanel = new WPOSDocumentPanel(this);
-		orderLinePanel = new WPOSOrderLinePanel(this);
+		orderLinePanel = new WPOSOrderLinePanel(this, showPanelDescProduct());
 		infoProductPanel = new WPOSInfoProduct(this);
 		quantityPanel = new WPOSQuantityPanel(this);
 		East east = new East();
@@ -221,9 +222,12 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 
 		westPanel.appendChild(this.actionPanel);
 		east.appendChild(documentPanel);
-		this.actionPanel.appendChild(infoProductPanel.getPanel());
-		if(IsShowLineControl())
+		if(showPanelDescProduct())
+			this.actionPanel.appendChild(infoProductPanel.getPanel());
+		if(IsShowLineControl()){
+			ZKUpdateUtil.setHflex(quantityPanel, "2");
 			this.actionPanel.appendChild(quantityPanel.getPanel());
+		}
 		this.actionPanel.appendChild(orderLinePanel);
 		
 		east.setSplittable(true);
@@ -241,7 +245,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		mainLayout.setWidth("100%");
 		mainLayout.setHeight("100%");
 		mainLayout.appendChild(east);
-		mainLayout.appendChild(southPanel);
+//		mainLayout.appendChild(southPanel);
 		form.appendChild(mainLayout);
 		//	Seek to last
 		if(hasRecord()){

@@ -20,9 +20,12 @@ package org.adempiere.pos;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.adempiere.pos.service.POSOrderLineTableHandle;
 import org.adempiere.pos.service.POSPanelInterface;
+import org.adempiere.webui.component.ListHeader;
 import org.adempiere.webui.component.ListModelTable;
 import org.adempiere.webui.event.WTableModelEvent;
 import org.adempiere.webui.event.WTableModelListener;
@@ -58,8 +61,9 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	 * 
 	 * @param posPanel POS Panel
 	 */
-	public WPOSOrderLinePanel(WPOS posPanel) {
+	public WPOSOrderLinePanel(WPOS posPanel, boolean showPanelDescProd) {
 		super(posPanel);
+		this.showPanelProd = showPanelDescProd;
 	}
 	/**	Current Order Line			*/
 	private int 					orderLineId = 0;
@@ -71,6 +75,8 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	private static CLogger logger = CLogger.getCLogger(WPOSOrderLinePanel.class);
 	
 	public boolean isFilter = false;
+	
+	public boolean showPanelProd = false;
 
 	@Override
 	protected void init() {
@@ -83,13 +89,22 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		appendChild(posTable);
 		posTable.repaint();
 		posTable.setWidth("99%");
-		posTable.setHeight("47%");
+		if(showPanelProd)
+			posTable.setHeight("47%");
+		else
+			posTable.setHeight("65%");
 		posTable.addActionListener(this);
 		posTable.addEventListener(Events.ON_CLICK, this);
 		posTable.getModel().addTableModelListener(this);
 		posTable.setClass("Table-OrderLine");
-		posTable.setStyle("overflow-y: scroll; zoom:1.7;");
+		posTable.setStyle("overflow-y: scroll; zoom:1.4;");
 		posTable.setColumnReadOnly(POSOrderLineTableHandle.POSITION_QTYORDERED, true);
+		
+		List<ListHeader> lisss = posTable.getListHead().getChildren();
+		for (ListHeader listHeader : lisss) {
+			listHeader.setStyle("zoom: 0.8");
+		}
+		
 	}
 
 	@Override
@@ -119,6 +134,7 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 				showProductInfo(0);
 			}
 		}
+		
 		
 		return;
 	}
@@ -268,12 +284,15 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	}
 	
 	public void moveDown() {
-		if((posTable.getRowCount()-1) > posTable.getSelectedRow() && posTable.getRowCount() != 0){
-			if((posTable.getRowCount()-1)>posTable.getSelectedRow()+4)
-				posTable.setSelectedIndex(posTable.getSelectedRow()+4);
-			else
-				posTable.setSelectedIndex(0);
-		}else
+//		if((posTable.getRowCount()-1) > posTable.getSelectedRow() && posTable.getRowCount() != 0){
+//			if((posTable.getRowCount()-1)>posTable.getSelectedRow()+4)
+//				posTable.setSelectedIndex(posTable.getSelectedRow()+4);
+//			else
+//				posTable.setSelectedIndex(0);
+//		}else
+		if((posTable.getRowCount()-1) > posTable.getSelectedRow() && posTable.getRowCount() != 0)
+				posTable.setSelectedIndex(posTable.getSelectedRow()+1);
+		else
 			posTable.setSelectedIndex(0);
 		selectLine();
 		posPanel.changeViewPanel();
@@ -282,12 +301,15 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 	}
 	
 	public void moveUp() {
-		if((posTable.getRowCount()-1) >= posTable.getSelectedRow() && posTable.getSelectedRow() != 0){
-			if((posTable.getRowCount()-1) >= posTable.getSelectedRow()-4 && posTable.getSelectedRow()-4>=0)
-				posTable.setSelectedIndex(posTable.getSelectedRow()-4);
-			else 
-				posTable.setSelectedIndex(posTable.getRowCount()-1);
-		}else
+//		if((posTable.getRowCount()-1) >= posTable.getSelectedRow() && posTable.getSelectedRow() != 0){
+//			if((posTable.getRowCount()-1) >= posTable.getSelectedRow()-4 && posTable.getSelectedRow()-4>=0)
+//				posTable.setSelectedIndex(posTable.getSelectedRow()-4);
+//			else 
+//				posTable.setSelectedIndex(posTable.getRowCount()-1);
+//		}else
+		if((posTable.getRowCount()-1) >= posTable.getSelectedRow() && posTable.getSelectedRow() != 0)
+			posTable.setSelectedIndex(posTable.getSelectedRow()-1);
+		else	
 			posTable.setSelectedIndex(posTable.getRowCount()-1);
 		selectLine();		
 		posPanel.changeViewPanel();

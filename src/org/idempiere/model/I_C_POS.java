@@ -402,6 +402,15 @@ public interface I_C_POS
 	  */
 	public boolean isPOSRequiredPIN();
 
+    /** Column name LIT_isShowWindowProduct */
+    public static final String COLUMNNAME_LIT_isShowWindowProduct = "LIT_isShowWindowProduct";
+
+	/** Set Show Window Product	  */
+	public void setLIT_isShowWindowProduct (boolean LIT_isShowWindowProduct);
+
+	/** Get Show Window Product	  */
+	public boolean isLIT_isShowWindowProduct();
+
     /** Column name LIT_POSType */
     public static final String COLUMNNAME_LIT_POSType = "LIT_POSType";
 
@@ -535,8 +544,6 @@ public interface I_C_POS
 	  * Sales Representative or Company Agent
 	  */
 	public int getSalesRep_ID();
-
-	public org.compiere.model.I_AD_User getSalesRep() throws RuntimeException;
 
     /** Column name TicketClassName */
     public static final String COLUMNNAME_TicketClassName = "TicketClassName";

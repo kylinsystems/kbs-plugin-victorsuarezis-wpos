@@ -114,6 +114,7 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		rows = LayoutButton.newRows();
 		row = rows.newRow();
 		row.setHeight("55px");
+		ZKUpdateUtil.setHflex(row, "2");
 		buttonDelete = createButtonAction("Cancel", "Ctrl+F3");
 		buttonDelete.setTooltiptext("Ctrl+F3-"+Msg.translate(ctx, "DeleteLine"));
 		buttonDelete.addActionListener(this);
@@ -146,8 +147,8 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		
 		btnAddInfo = new Button("INFO");
 		btnAddInfo.setHeight("45px");
-		btnAddInfo.setWidth("60px");
-		btnAddInfo.setStyle("Font-size:1.1em; font-weight:bold");
+		btnAddInfo.setWidth("55px");
+		btnAddInfo.setStyle("Font-size:1.0em; font-weight:bold");
 		btnAddInfo.addActionListener(this);
 		row.appendChild (btnAddInfo);
 
@@ -281,11 +282,11 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 
 			if (e.getTarget().equals(buttonFilter)){
 //				openFilter();
-				Point point = MouseInfo.getPointerInfo().getLocation();
+//				Point point = MouseInfo.getPointerInfo().getLocation();
 				actionFilterMenu.getPopUp().setPage(buttonFilter.getPage());
 //				actionFilterMenu.getPopUp().setPage(this.getPage());
-                actionFilterMenu.getPopUp().open(buttonFilter);
-				actionFilterMenu.getPopUp().open(Double.valueOf(point.getX()).intValue()-140,Double.valueOf(point.getY()).intValue()-190);
+                actionFilterMenu.getPopUp().open(buttonFilter, "after_start");
+//				actionFilterMenu.getPopUp().open(Double.valueOf(point.getX()).intValue()-140,Double.valueOf(point.getY()).intValue()-190);
                 return;
 			}
 			else if(e.getTarget().equals(btnAddInfo)){
@@ -359,8 +360,8 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		fieldQuantity.setEnabled(true);
 		fieldPrice.setEnabled(true);
 		fieldDiscountPercentage.setEnabled(true);
-		buttonDelete.setEnabled(status);
-		buttonPlus.setEnabled(status);
+		buttonDelete.setEnabled(true);
+		buttonPlus.setEnabled(true);
 		buttonMinus.setEnabled(status);
 		buttonDown.setEnabled(status);
 		buttonUp.setEnabled(status);

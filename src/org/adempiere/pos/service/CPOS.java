@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -654,12 +655,22 @@ public class CPOS {
 	 * @return String
 	 */
 	public String getSalesRepName() {
-		MUser salesRep = MUser.get(ctx);
-		if(salesRep == null) {
-			return null;
+		MUser salesRep = null;
+		if(hasOrder())
+			return MUser.getNameOfUser(getSalesRep_ID());
+		else{
+			if(entityPOS.getSalesRep_ID()>0)
+				return MUser.getNameOfUser(entityPOS.getSalesRep_ID());
+			else{
+			
+				salesRep = MUser.get(ctx); 
+				if(salesRep == null) {
+					return null;
+				}
+				//	Default Return
+				return salesRep.getName();
+			}
 		}
-		//	Default Return
-		return salesRep.getName();
 	}
 	
 	/**
@@ -669,6 +680,9 @@ public class CPOS {
 	 * @return int
 	 */
 	public int getSalesRep_ID() {
+		if(hasOrder()){
+			return currentOrder.getSalesRep_ID();
+		}
 		return entityPOS.getSalesRep_ID();
 	}
 	
@@ -776,6 +790,10 @@ public class CPOS {
 			//currentOrder.setDatePromised(getToday());
 		} else {
 			currentOrder = new MOrder(Env.getCtx(), 0, null);
+			Timestamp datePromised = currentOrder.getDatePromised();
+			LocalDateTime dd = datePromised.toLocalDateTime().plusDays(1);
+			datePromised = Timestamp.valueOf(dd);
+			currentOrder.setDatePromised(datePromised);
 		}
 		currentOrder.setAD_Org_ID(entityPOS.getAD_Org_ID());
 		//isSOTrx
@@ -2559,5 +2577,9 @@ public class CPOS {
 			return win_for_POS.isSOTrx();
 		}
 		return false;
+	}
+	
+	public boolean showPanelDescProduct(){
+		return entityPOS.isLIT_isShowWindowProduct();
 	}
 }

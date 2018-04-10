@@ -31,7 +31,7 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20180405L;
+	private static final long serialVersionUID = 20180406L;
 
     /** Standard Constructor */
     public X_C_POS (Properties ctx, int C_POS_ID, String trxName)
@@ -638,6 +638,27 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 		return false;
 	}
 
+	/** Set Show Window Product.
+		@param LIT_isShowWindowProduct Show Window Product	  */
+	public void setLIT_isShowWindowProduct (boolean LIT_isShowWindowProduct)
+	{
+		set_Value (COLUMNNAME_LIT_isShowWindowProduct, Boolean.valueOf(LIT_isShowWindowProduct));
+	}
+
+	/** Get Show Window Product.
+		@return Show Window Product	  */
+	public boolean isLIT_isShowWindowProduct () 
+	{
+		Object oo = get_Value(COLUMNNAME_LIT_isShowWindowProduct);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Point of Sales = POS */
 	public static final String LIT_POSTYPE_PointOfSales = "POS";
 	/** Point of Production = POP */
@@ -849,11 +870,6 @@ public class X_C_POS extends PO implements I_C_POS, I_Persistent
 	{
 		return (String)get_Value(COLUMNNAME_PrinterName);
 	}
-
-	public org.compiere.model.I_AD_User getSalesRep() throws RuntimeException
-    {
-		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_Name)
-			.getPO(getSalesRep_ID(), get_TrxName());	}
 
 	/** Set Sales Representative.
 		@param SalesRep_ID 

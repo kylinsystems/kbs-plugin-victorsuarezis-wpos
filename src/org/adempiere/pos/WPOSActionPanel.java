@@ -728,7 +728,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			@Override
 			public void onCallback(Boolean result) {
 				errorMsg = posPanel.cancelOrder();
-				
+				posPanel.refreshPanel();
 			}
 			
 		});
