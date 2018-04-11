@@ -164,6 +164,7 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	public void init () {
 		log.info("init - SalesRep_ID=" + Env.getAD_User_ID(getCtx()));
 		windowNo = form.getWindowNo();
+		setWindowNo(windowNo);
 		
 		setNameFormPOS(form.getFormName());
 		

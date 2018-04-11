@@ -773,7 +773,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			//	For Collect
 			if(posPanel.hasLines()
 					&& !posPanel.isPaid()
-					&& !posPanel.isVoided()) {
+					&& !posPanel.isVoided() && posPanel.getOrder()!=null && posPanel.getOrder().isSOTrx()) {
 				//	For Credit Order
 				buttonCollect.setEnabled(true);
 			} else {

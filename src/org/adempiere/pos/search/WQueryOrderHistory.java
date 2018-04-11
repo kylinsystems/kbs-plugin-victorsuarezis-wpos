@@ -92,6 +92,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 	
 	static final private String DOCUMENTNO      = "DocumentNo";
 	static final private String DOCTYPE         = "C_DocType_ID";  // Just display of column name. The actual doctype will be target doctype
+	static final private String DOCSTATUS       = "DocStatus";
 	static final private String NAME            = "SalesRep_ID";
 	static final private String BPARTNERID      = "C_BPartner_ID";
 	static final private String GRANDTOTAL      = "GrandTotal";
@@ -111,6 +112,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 		new ColumnInfo(" ", "C_Order_ID", IDColumn.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), DOCUMENTNO), DOCUMENTNO, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), DOCTYPE), DOCTYPE, String.class),
+		new ColumnInfo(Msg.translate(Env.getCtx(), DOCSTATUS), DOCSTATUS, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), NAME), NAME, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), BPARTNERID), BPARTNERID, String.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), DATEORDERED), DATEORDERED, Date.class),
@@ -298,7 +300,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 		try  {
-			sql.append(" SELECT o.C_Order_ID, o.DocumentNo, au.Name, dt.Name AS C_DocType_ID ,")
+			sql.append(" SELECT o.C_Order_ID, o.DocumentNo, dt.Name AS C_DocType_ID, refTrl.Name AS DocStatus, au.Name,")
 				.append(" b.Name, TRUNC(o.dateordered,'DD') as dateordered, ")
 				.append(" TRUNC(o.datepromised,'DD') as datepromised, o.GrandTotal, ")
 				// priority for open amounts: invoices, allocations, order
@@ -313,7 +315,12 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 				sql.append(" INNER JOIN C_DocType      dt ON (o.C_DocTypeTarget_ID = dt.C_DocType_ID)");
 			else
 				sql.append(" INNER JOIN C_DocType_trl  dt ON (o.C_DocTypeTarget_ID = dt.C_DocType_ID AND dt.AD_LANGUAGE = '" + Env.getAD_Language(ctx) + "')");
-			
+			if(Env.isBaseLanguage(Env.getAD_Language(ctx), "AD_Ref_List"))
+				sql.append(" INNER JOIN AD_Ref_List ref ON (o.DocStatus = ref.Value AND ref.AD_Reference_ID=131)");
+			else
+				sql.append(" INNER JOIN AD_Ref_List ref ON (o.DocStatus = ref.Value AND ref.AD_Reference_ID=131)");
+				sql.append(" INNER JOIN AD_Ref_List_Trl refTrl ON (ref.AD_Ref_List_ID = refTrl.AD_Ref_List_ID AND refTrl.AD_LANGUAGE = '" + Env.getAD_Language(ctx) + "')");
+
 			sql.append(" LEFT JOIN C_invoice        i ON (i.C_Order_ID = o.C_Order_ID)")
 				.append(" LEFT JOIN C_AllocationLine al ON (o.C_Order_ID = al.C_Order_ID)")
 				.append(" LEFT JOIN AD_User au ON (au.AD_User_ID = o.SalesRep_ID)")
@@ -337,7 +344,7 @@ public class WQueryOrderHistory extends WPOSQuery implements POSQueryInterface
 			}
 				
 			//	Group By
-			sql.append(" GROUP BY o.C_Order_ID, o.DocumentNo, au.Name, dt.Name , b.Name, o.GrandTotal, o.Processed, i.IsPaid ");
+			sql.append(" GROUP BY o.C_Order_ID, o.DocumentNo, au.Name, dt.Name , refTrl.Name, b.Name, o.GrandTotal, o.Processed, i.IsPaid ");
 			sql.append(" ORDER BY o.Updated");
 			int i = 1;			
 			preparedStatement = DB.prepareStatement(sql.toString(), null);

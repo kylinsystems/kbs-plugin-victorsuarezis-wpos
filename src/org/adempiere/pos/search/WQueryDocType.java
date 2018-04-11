@@ -195,24 +195,17 @@ public class WQueryDocType extends WPOSQuery implements POSQueryInterface
 			.append(" LEFT JOIN AD_Sequence sq ON (sq.AD_Sequence_ID = dt.DocNoSequence_ID)")
 			.append(" WHERE dt.AD_Client_ID = ? AND dt.AD_Org_ID IN (0, ?)")
 			.append(" AND dt.isActive='Y'")
-			.append(" AND dt.DocBaseType='SOO'")
-			.append(" AND dt.DocSubTypeSO IN(?, ?, ?, ?, ?)")
+			.append(" AND dt.DocBaseType IN ('SOO', 'POO')")
+			.append(" AND COALESCE(dt.DocSubTypeSO,' ')<>'RM'")
 			.append(" AND dt.IsSOTrx="+((posPanel.isSOTrx_Win_POS())?"'Y'":"'N'") )
-			.append(" OR (dt.AD_Client_ID = ? AND dt.isActive='Y' AND dt.DocBaseType = 'POO' AND dt.DocSubTypeSO IS NULL)")
 		    .append(" ORDER BY dt.Name");
-						
+			
 			int i = 1;			
 			preparedStatement = DB.prepareStatement(sql.toString(), null);
 			//	POS
 			int clientID = Env.getAD_Client_ID(ctx);
 			preparedStatement.setInt(i++, clientID);
 			preparedStatement.setInt(i++, posPanel.getAD_Org_ID());
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_POS);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_OnCredit);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_Standard);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_Prepay);
-			preparedStatement.setString(i++, MOrder.DocSubTypeSO_Warehouse);
-			preparedStatement.setInt(i++, clientID);
 			//	
 			resultSet = preparedStatement.executeQuery();
 			posTable.loadTable(resultSet);

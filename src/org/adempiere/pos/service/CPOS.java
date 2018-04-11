@@ -33,7 +33,10 @@ import java.util.Vector;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.command.CommandManager;
+import org.adempiere.pos.posproduction.WPOSInfoProduct_Produc;
 import org.adempiere.pos.util.POSTicketHandler;
+import org.adempiere.webui.apps.WProcessCtl;
+import org.adempiere.webui.panel.action.ReportAction;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_OrderLine;
@@ -52,23 +55,33 @@ import org.compiere.model.MLocator;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MOrderTax;
+import org.compiere.model.MPInstance;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MPayment;
 import org.compiere.model.MPaymentPOS;
 import org.compiere.model.MPaymentProcessor;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MPriceListVersion;
+import org.compiere.model.MProcess;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductPrice;
 import org.compiere.model.MProductPricing;
 import org.compiere.model.MProductPricingPOS;
+import org.compiere.model.MQuery;
 import org.compiere.model.MSequence;
+import org.compiere.model.MTab;
+import org.compiere.model.MTable;
 import org.compiere.model.MTax;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.MWindow;
+import org.compiere.model.PrintInfo;
 import org.compiere.model.Query;
 import org.compiere.model.X_C_Order;
+import org.compiere.print.MPrintFormat;
+import org.compiere.print.ReportCtl;
+import org.compiere.print.ReportCtlPOS;
+import org.compiere.print.ReportEngine;
 import org.compiere.process.DocAction;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.CLogger;
@@ -2454,17 +2467,47 @@ public class CPOS {
 	public void printTicket() {
 		if (!hasOrder())
 			return;
-		else if(hasOrder() && !isCompleted())
-		{
-			FDialog.info(getWindowNo(), null, "No Order Completed");
-			return;
+//		else if(hasOrder() && !isCompleted())
+//		{
+//			FDialog.info(getWindowNo(), null, "No Order Completed");
+//			return;
+//		}
+		
+		//10/04/2018 Vecchia gestione -----
+//		//	Print
+//		POSTicketHandler ticketHandler = POSTicketHandler.getTicketHandler(this);
+//		if(ticketHandler == null)
+//			return;
+//		//	
+//		ticketHandler.printTicket();
+		//-----
+		
+		//Anteprima Report(tasto 'stampante'), come da maschera....
+		int processID = 0;
+		if(getQuickAD_Tab_ID()>0){
+			MTab tab = new MTab(ctx, getQuickAD_Tab_ID(), null);
+			processID = tab.getAD_Process_ID();
 		}
-		//	Print
-		POSTicketHandler ticketHandler = POSTicketHandler.getTicketHandler(this);
-		if(ticketHandler == null)
-			return;
-		//	
-		ticketHandler.printTicket();
+
+		if(processID>0){
+			String nameProc = MProcess.get(ctx, processID).getName();
+			ProcessInfo pi = new ProcessInfo(nameProc, processID, getOrder().get_Table_ID(), getC_Order_ID());
+			
+			WProcessCtl.process(getWindowNo(), pi, null);
+		}
+		else{
+			MPrintFormat pf = MPrintFormat.createFromTable(ctx, getOrder().get_Table_ID());
+			String tableName = getOrder().get_TableName();
+			MQuery query = new MQuery(tableName);
+			query.addRestriction(tableName+"_ID", MQuery.EQUAL, getC_Order_ID());
+			PrintInfo info = new PrintInfo(tableName,  MTable.getTable_ID(tableName), getC_Order_ID());
+			ReportEngine re = new ReportEngine(getCtx(), pf, query, info);
+			ReportCtl.preview(re);
+		}
+		
+		///////
+		
+		
 	}
 
 	/**

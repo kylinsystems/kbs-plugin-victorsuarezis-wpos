@@ -216,6 +216,7 @@ public class WPOSActionMenu implements  POSQueryListener, EventListener<Event>,A
 			@Override
 			public void onEvent(Event event) throws Exception {
 				parent.hideMask();
+				pos.refreshPanel();
 			}
 		});
 
