@@ -133,7 +133,7 @@ public class WPOS_Produc extends CPOS_Produc implements IFormController, EventLi
 	/** Side Server for Printer 				*/
 	private static SideServer 				sideServer;
 	
-	private static final String TYPE_POS = "POI";
+	private static final String TYPE_POS = "POP";
 	/**
 	 * 	Constructor - see init 
 	 */
