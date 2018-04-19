@@ -120,7 +120,7 @@ public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 		}
 		if (keyLayout.get_ID() == 0)
 			return null;
-		MPOSKey[] keys = keyLayout.getKeys(true);
+		MPOSKey[] keys = keyLayout.getKeys(false);
 		
 		HashMap<Integer, MPOSKey> map = new HashMap<Integer, MPOSKey>(keys.length);
 
@@ -141,102 +141,114 @@ public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 		for (MPOSKey key :  keys)
 		{
 			if(!key.getName().equals("")){
-			map.put(key.getC_POSKey_ID(), key);
-			Color keyColor = stdColor;
-			
-			if (key.getAD_PrintColor_ID() != 0)	{
-				MPrintColor color = MPrintColor.get(Env.getCtx(), key.getAD_PrintColor_ID());
-				keyColor = color.getColor();
-			}
-			
-			log.fine( "#" + map.size() + " - " + keyColor); 
-			Panel button = new Panel();
-			Label label = new Label(key.getName());
-			
-			Center nt = new Center();
-			South st = new South();
-			Borderlayout mainLayout = new Borderlayout();
-			AImage img = null;
-			if ( key.getAD_Image_ID() != 0 )
-			{
-				MImage m_mImage = MImage.get(Env.getCtx(), key.getAD_Image_ID());
-//				AImage img = null;
-				byte[] data = m_mImage.getData();
-				if (data != null && data.length > 0) {
-					try {
-						img = new AImage(null, data);				
-					} catch (Exception e) {		
+
+				if ( key.getSubKeyLayout_ID() > 0 )
+				{
+					Panel subcard = new Panel();
+					subcard = createButton(key.getSubKeyLayout_ID());
+					if(subcard!=null){
+						panelMap.put(key.getSubKeyLayout_ID(), subcard);
+						appendChild(subcard);
+						subcard.setVisible(false);
 					}
 				}
-//				Image bImg = new Image();
-//				bImg.setContent(img);
-//				bImg.setWidth("66%");
-//				bImg.setHeight("80%");
-//				nt.appendChild(bImg);
-			}
-			else{
-				
-				if(key.getM_Product().getImageURL()!= null && key.getM_Product().getImageURL().trim().length()>0){
-	        		AImage imageFromURL = null;
-	        		URL url_img = null;
-	        		try {
-	        			System.setProperty("http.agent", "Chrome");
-	        			url_img = new URL(key.getM_Product().getImageURL());
-						imageFromURL = new AImage(url_img);
-						if(imageFromURL != null && imageFromURL.getByteData().length>0){
-							img = new AImage(null,imageFromURL.getByteData());
+
+				map.put(key.getC_POSKey_ID(), key);
+				Color keyColor = stdColor;
+
+				if (key.getAD_PrintColor_ID() != 0)	{
+					MPrintColor color = MPrintColor.get(Env.getCtx(), key.getAD_PrintColor_ID());
+					keyColor = color.getColor();
+				}
+
+				log.fine( "#" + map.size() + " - " + keyColor); 
+				Panel button = new Panel();
+				Label label = new Label(key.getName());
+
+				Center nt = new Center();
+				South st = new South();
+				Borderlayout mainLayout = new Borderlayout();
+				AImage img = null;
+				if ( key.getAD_Image_ID() != 0 )
+				{
+					MImage m_mImage = MImage.get(Env.getCtx(), key.getAD_Image_ID());
+					//				AImage img = null;
+					byte[] data = m_mImage.getData();
+					if (data != null && data.length > 0) {
+						try {
+							img = new AImage(null, data);				
+						} catch (Exception e) {		
 						}
-						
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
-	        	}
+					//				Image bImg = new Image();
+					//				bImg.setContent(img);
+					//				bImg.setWidth("66%");
+					//				bImg.setHeight("80%");
+					//				nt.appendChild(bImg);
+				}
+				else{
+
+					if(key.getM_Product().getImageURL()!= null && key.getM_Product().getImageURL().trim().length()>0){
+						AImage imageFromURL = null;
+						URL url_img = null;
+						try {
+							System.setProperty("http.agent", "Chrome");
+							url_img = new URL(key.getM_Product().getImageURL());
+							imageFromURL = new AImage(url_img);
+							if(imageFromURL != null && imageFromURL.getByteData().length>0){
+								img = new AImage(null,imageFromURL.getByteData());
+							}
+
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				if(img!=null){
+					Image bImg = new Image();
+					bImg.setContent(img);
+					bImg.setWidth("66%");
+					bImg.setHeight("80%");
+					nt.appendChild(bImg);
+				}
+
+				label.setStyle("word-wrap: break-word; white-space: pre-line;margin: 25px 0px 0px 0px; top:20px; font-size:10pt; font-weight: bold;color: #FFF;");
+				label.setHeight("100%");
+				button.setHeight("100px");
+				st.appendChild(label);
+				button.setClass("z-button");
+				button.setStyle("float:left; white-space: pre-line;text-align:center; margin:0.4% 1%; Background-color:rgb("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+"); border: 2px outset #CCC; "
+						+ "background: -moz-linear-gradient(top, rgba(247,247,247,1) 0%, rgba(255,255,255,0.93) 7%, rgba(186,186,186,0.25) 15%, rgba("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+",1) 100%);"
+						+ "background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(247,247,247,1)), color-stop(7%, rgba(255,255,255,0.93)), color-stop(15%, rgba(186,186,186,0.25)), color-stop(100%, rgba("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+",1)));"
+						+ "background: -webkit-linear-gradient(top, rgba(247,247,247,1) 0%, rgba(255,255,255,0.93) 7%, rgba(186,186,186,0.25) 15%, rgba("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+",1) 100%);");
+
+				mainLayout.appendChild(nt);
+				mainLayout.appendChild(st);
+				mainLayout.setStyle("background-color: transparent");
+				nt.setStyle("background-color: transparent");
+				st.setStyle("clear: both; background-color: #333; opacity: 0.6;");
+				st.setZindex(99);
+				button.appendChild(mainLayout);
+
+				button.setId(""+key.getC_POSKey_ID());
+				button.addEventListener(Events.ON_CLICK, this);
+
+				int size = 1;
+				if ( key.getSpanX() > 1 )
+				{
+					size = key.getSpanX();
+					button.setWidth("96%");
+				}
+				else 
+					button.setWidth(90/cols+"%");
+				if ( key.getSpanY() > 1 )
+				{
+					size = size*key.getSpanY();
+				}
+				buttons = buttons + size;
+				content.appendChild(button);
 			}
-			if(img!=null){
-				Image bImg = new Image();
-				bImg.setContent(img);
-				bImg.setWidth("66%");
-				bImg.setHeight("80%");
-				nt.appendChild(bImg);
-			}
-			
-			label.setStyle("word-wrap: break-word; white-space: pre-line;margin: 25px 0px 0px 0px; top:20px; font-size:10pt; font-weight: bold;color: #FFF;");
-			label.setHeight("100%");
-			button.setHeight("100px");
-			st.appendChild(label);
-			button.setClass("z-button");
-			button.setStyle("float:left; white-space: pre-line;text-align:center; margin:0.4% 1%; Background-color:rgb("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+"); border: 2px outset #CCC; "
-					+ "background: -moz-linear-gradient(top, rgba(247,247,247,1) 0%, rgba(255,255,255,0.93) 7%, rgba(186,186,186,0.25) 15%, rgba("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+",1) 100%);"
-					+ "background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(247,247,247,1)), color-stop(7%, rgba(255,255,255,0.93)), color-stop(15%, rgba(186,186,186,0.25)), color-stop(100%, rgba("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+",1)));"
-					+ "background: -webkit-linear-gradient(top, rgba(247,247,247,1) 0%, rgba(255,255,255,0.93) 7%, rgba(186,186,186,0.25) 15%, rgba("+keyColor.getRed()+","+keyColor.getGreen()+","+keyColor.getBlue()+",1) 100%);");
-			
-			mainLayout.appendChild(nt);
-			mainLayout.appendChild(st);
-			mainLayout.setStyle("background-color: transparent");
-			nt.setStyle("background-color: transparent");
-			st.setStyle("clear: both; background-color: #333; opacity: 0.6;");
-			st.setZindex(99);
-			button.appendChild(mainLayout);
-			
-			button.setId(""+key.getC_POSKey_ID());
-			button.addEventListener(Events.ON_CLICK, this);
-			
-			int size = 1;
-			if ( key.getSpanX() > 1 )
-			{
-				size = key.getSpanX();
-				button.setWidth("96%");
-			}
-			else 
-				button.setWidth(90/cols+"%");
-			if ( key.getSpanY() > 1 )
-			{
-				size = size*key.getSpanY();
-			}
-			buttons = buttons + size;
-			content.appendChild(button);
-		}
 		}
 		int rows = Math.max ((buttons / cols), ROWS);
 		if ( buttons % cols > 0 )
@@ -267,7 +279,7 @@ public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 		  
 		if (keyLayout.get_ID() == 0)
 			return null;
-		MPOSKey[] keys = keyLayout.getKeys(true);
+		MPOSKey[] keys = keyLayout.getKeys(false);
 		
 		//	Content
 		for (MPOSKey key :  keys)
@@ -276,9 +288,11 @@ public class WPOSKeyPanel extends Panel implements EventListener<Event> {
 			{
 			  Panel subcard = new Panel();
 			  subcard = createButton(key.getSubKeyLayout_ID());
-			  panelMap.put(key.getSubKeyLayout_ID(), subcard);
-				appendChild(subcard);
-        subcard.setVisible(false);
+			  if(subcard!=null){
+				  panelMap.put(key.getSubKeyLayout_ID(), subcard);
+				  appendChild(subcard);
+				  subcard.setVisible(false);
+			  }
 			}
 		}
 		return card;
