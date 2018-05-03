@@ -316,11 +316,15 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 					else if(posPanel.isAddQty() 
 							|| Events.ON_CHANGE.equals(e.getName())){
 						//  Verify if it add or set
-						if(posPanel.isAddQty()) {
-							posPanel.setQtyAdded(value);
-						} else {
+					//iDempiereConsulting__ 02/05/2018 -- Commentato per errata aggiunta di qta non prevista; problema dovuto a 'isAddQty' impostato a TRUE 
+						//     al primissimo inserimento di un nuovo prodotto (?)  .....codice core trovato così, nessuna modifica di iDempiereConsulting...... 
+//						if(posPanel.isAddQty()) {
+//							posPanel.setQtyAdded(value);
+//						} else {
+				
 							posPanel.setQty(value);
-						}
+//						}
+					//iDempiereConsulting__ 02/05/2018 -- 
 					}
 
 				}
