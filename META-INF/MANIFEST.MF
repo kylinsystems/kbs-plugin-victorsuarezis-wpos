@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: WPOS
 Bundle-SymbolicName: org.idempiere.wpos;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 6.2.0.qualifier
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
  org.adempiere.plugin.utils;bundle-version="3.1.0",
@@ -33,3 +33,4 @@ Import-Package: it.cnet.idempiere.utilPDF.utility,
  org.libero.tables
 Export-Package: net.miginfocom.swing
 Bundle-ClassPath: .
+Automatic-Module-Name: org.idempiere.wpos
