@@ -1,2 +1,6 @@
 syntax: glob
-bin
+*.class
+target/
+*/lib/
+^[^/]+/lib/.*\.jar$
+^*/lib$
