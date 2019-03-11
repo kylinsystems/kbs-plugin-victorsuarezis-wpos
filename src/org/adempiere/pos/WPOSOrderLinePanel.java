@@ -394,19 +394,22 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		if ( data != null )	{
 			Integer id = (Integer) ((IDColumn)data).getRecord_ID();
 			posPanel.setOrderLineId(id);
-      BigDecimal quantity = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_QTYORDERED);
-      BigDecimal price = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_PRICE);
-      BigDecimal discount = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_DISCOUNT);
 
-      //	Refresh
-      posPanel.setQty(quantity);
-      posPanel.setPrice(price);
-      posPanel.setDiscountPercentage(discount);
-      posPanel.changeViewPanel();
-      posPanel.refreshProductInfo(posPanel.getM_Product_ID(posPanel.getOrderLineId()));
+			BigDecimal quantity = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_QTYORDERED);
+			BigDecimal price = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_PRICE);
+			BigDecimal discount = (BigDecimal) posTable.getModel().getValueAt(row, POSOrderLineTableHandle.POSITION_DISCOUNT);
+			String name = (String)posTable.getModel().getValueAt(row, 1);
 
-//			posPanel.refreshProductInfo(m_M_Product_ID);
-		
+			//	Refresh
+			posPanel.setQty(quantity);
+			posPanel.setPrice(price);
+			posPanel.setDiscountPercentage(discount);
+			posPanel.getActionPanel().setFieldProductName(name);
+			posPanel.changeViewPanel();
+			posPanel.refreshProductInfo(posPanel.getM_Product_ID(posPanel.getOrderLineId()));
+
+			//	posPanel.refreshProductInfo(m_M_Product_ID);
+
 		}
 	}
 

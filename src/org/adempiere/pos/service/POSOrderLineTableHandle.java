@@ -120,8 +120,10 @@ public class POSOrderLineTableHandle {
 	 * @return void
 	 */
 	public void setEditable(boolean isModifyPrice, boolean isDrafted) {
-		table.setColumnClass(POSITION_QTYORDERED, BigDecimal.class, !isDrafted);
-		table.setColumnClass(POSITION_PRICE, BigDecimal.class, !(isModifyPrice && isDrafted));
+		//table.setColumnClass(POSITION_QTYORDERED, BigDecimal.class, !isDrafted);
+		table.setColumnClass(POSITION_QTYORDERED, BigDecimal.class, true);
+		//table.setColumnClass(POSITION_PRICE, BigDecimal.class, !(isModifyPrice && isDrafted));
+		table.setColumnClass(POSITION_PRICE, BigDecimal.class, true);
 	}
 	
 	/**

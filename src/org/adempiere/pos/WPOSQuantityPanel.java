@@ -84,11 +84,16 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 	private Button			buttonFilter;
 	private Button          btnAddInfo;
 	//	private POSNumberBox 	fieldQuantity;
-	private NumberBox 	    fieldQuantity;
-	//	private POSNumberBox 	fieldPrice;
-	private NumberBox 	    fieldPrice;
-	//	private POSNumberBox	fieldDiscountPercentage;
-	private NumberBox 	    fieldDiscountPercentage;
+	
+	//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+	/*
+		private NumberBox 	    fieldQuantity;
+		//	private POSNumberBox 	fieldPrice;
+		private NumberBox 	    fieldPrice;
+		//	private POSNumberBox	fieldDiscountPercentage;
+		private NumberBox 	    fieldDiscountPercentage;
+	*/
+	//iDempiereConsulting __07/03/2019 -----
 	
 	/**	Process Action 						*/
 	private WPOSFilterMenu actionFilterMenu;
@@ -152,69 +157,72 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		btnAddInfo.addActionListener(this);
 		row.appendChild (btnAddInfo);
 
-		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
-		row.appendChild(qtyLabel);
-
-		//		fieldQuantity = new POSNumberBox(false);
-		fieldQuantity = new NumberBox(true);
-
-		row.appendChild(fieldQuantity);
-		fieldQuantity.addEventListener(Events.ON_OK, this);
-		fieldQuantity.addEventListener(Events.ON_CHANGE, this);
-		//		fieldQuantity.setStyle("display: inline;width:65px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldQuantity, "65px");
-		ZKUpdateUtil.setHeight(fieldQuantity.getDecimalbox(),"30px");
-		ZKUpdateUtil.setHeight(fieldQuantity.getButton(),"30px");
-		fieldQuantity.getDecimalbox().setStyle("display: inline;Font-size:medium;");
-
-		Label priceLabel = new Label(Msg.translate(Env.getCtx(), "PriceActual"));
-		row.appendChild(priceLabel);
-
-		//		fieldPrice = new POSNumberBox(false);
-		fieldPrice = new NumberBox(false);
-		DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount, AEnv.getLanguage(Env.getCtx()));
-		fieldPrice.getDecimalbox().setFormat(format.toPattern());
-
-		fieldPrice.setTooltiptext(Msg.translate(Env.getCtx(), "PriceActual"));
-		row.appendChild(fieldPrice);
-		if (!posPanel.isModifyPrice())
-			fieldPrice.setEnabled(false);
-		else {
-			fieldPrice.addEventListener(Events.ON_OK, this);
-			fieldPrice.addEventListener(Events.ON_CHANGE, this);
-		}
-		//		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldPrice, "70px");
-		ZKUpdateUtil.setHeight(fieldPrice.getDecimalbox(),"30px");
-		ZKUpdateUtil.setHeight(fieldPrice.getButton(),"30px");
-		fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
-
-		Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
-		row.appendChild(priceDiscount);
-
-		//		fieldDiscountPercentage = new POSNumberBox(false);
-		fieldDiscountPercentage = new NumberBox(false);
-		row.appendChild(fieldDiscountPercentage);
-		fieldDiscountPercentage.setTooltiptext(Msg.translate(Env.getCtx(), "Discount"));
-		if (!posPanel.isModifyPrice())
-			fieldDiscountPercentage.setEnabled(false);
-		else{
-			fieldDiscountPercentage.addEventListener(Events.ON_OK, this);
-			fieldDiscountPercentage.addEventListener(Events.ON_CHANGE, this);
-		}
-		//		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldDiscountPercentage, "70px");
-		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getDecimalbox(),"30px");
-		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getButton(),"30px");
-		fieldDiscountPercentage.getDecimalbox().setStyle("display: inline;Font-size:medium;");
-
-		Keylistener keyListener = new Keylistener();
-		fieldPrice.appendChild(keyListener);
-		keyListener.setCtrlKeys("@#up@#down^#f3^1^0");
-		keyListener.addEventListener(Events.ON_CTRL_KEY, posPanel);
-		keyListener.addEventListener(Events.ON_CTRL_KEY, this);
-		keyListener.setAutoBlur(false);
-		
+		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+		/*
+			Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
+			row.appendChild(qtyLabel);
+	
+			//		fieldQuantity = new POSNumberBox(false);
+			fieldQuantity = new NumberBox(true);
+	
+			row.appendChild(fieldQuantity);
+			fieldQuantity.addEventListener(Events.ON_OK, this);
+			fieldQuantity.addEventListener(Events.ON_CHANGE, this);
+			//		fieldQuantity.setStyle("display: inline;width:65px;height:30px;Font-size:medium;");
+			ZKUpdateUtil.setWidth(fieldQuantity, "65px");
+			ZKUpdateUtil.setHeight(fieldQuantity.getDecimalbox(),"30px");
+			ZKUpdateUtil.setHeight(fieldQuantity.getButton(),"30px");
+			fieldQuantity.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+	
+			Label priceLabel = new Label(Msg.translate(Env.getCtx(), "PriceActual"));
+			row.appendChild(priceLabel);
+	
+			//		fieldPrice = new POSNumberBox(false);
+			fieldPrice = new NumberBox(false);
+			DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount, AEnv.getLanguage(Env.getCtx()));
+			fieldPrice.getDecimalbox().setFormat(format.toPattern());
+	
+			fieldPrice.setTooltiptext(Msg.translate(Env.getCtx(), "PriceActual"));
+			row.appendChild(fieldPrice);
+			if (!posPanel.isModifyPrice())
+				fieldPrice.setEnabled(false);
+			else {
+				fieldPrice.addEventListener(Events.ON_OK, this);
+				fieldPrice.addEventListener(Events.ON_CHANGE, this);
+			}
+			//		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
+			ZKUpdateUtil.setWidth(fieldPrice, "70px");
+			ZKUpdateUtil.setHeight(fieldPrice.getDecimalbox(),"30px");
+			ZKUpdateUtil.setHeight(fieldPrice.getButton(),"30px");
+			fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+	
+			Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
+			row.appendChild(priceDiscount);
+	
+			//		fieldDiscountPercentage = new POSNumberBox(false);
+			fieldDiscountPercentage = new NumberBox(false);
+			row.appendChild(fieldDiscountPercentage);
+			fieldDiscountPercentage.setTooltiptext(Msg.translate(Env.getCtx(), "Discount"));
+			if (!posPanel.isModifyPrice())
+				fieldDiscountPercentage.setEnabled(false);
+			else{
+				fieldDiscountPercentage.addEventListener(Events.ON_OK, this);
+				fieldDiscountPercentage.addEventListener(Events.ON_CHANGE, this);
+			}
+			//		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
+			ZKUpdateUtil.setWidth(fieldDiscountPercentage, "70px");
+			ZKUpdateUtil.setHeight(fieldDiscountPercentage.getDecimalbox(),"30px");
+			ZKUpdateUtil.setHeight(fieldDiscountPercentage.getButton(),"30px");
+			fieldDiscountPercentage.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+	
+			Keylistener keyListener = new Keylistener();
+			fieldPrice.appendChild(keyListener);
+			keyListener.setCtrlKeys("@#up@#down^#f3^1^0");
+			keyListener.addEventListener(Events.ON_CTRL_KEY, posPanel);
+			keyListener.addEventListener(Events.ON_CTRL_KEY, this);
+			keyListener.setAutoBlur(false);
+		*/
+		//iDempiereConsulting __07/03/2019 -----
 		actionFilterMenu = new WPOSFilterMenu(posPanel);
 
 		changeStatus(false);
@@ -233,21 +241,25 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 				if (keyEvent.getKeyCode() == 40 ) {
 					posPanel.moveDown();
 				}
+				//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+
 				//ctrl+f3 == 114
 				if (keyEvent.getKeyCode() == 114 ) {
 					posPanel.deleteLine(posPanel.getC_OrderLine_ID());
-					fieldQuantity.setValue(0.0);
-					fieldPrice.setValue(0.0);
-					fieldDiscountPercentage.setValue(0.0);
+					posPanel.getActionPanel().getFieldQuantity().setValue(0.0);
+					posPanel.getActionPanel().getFieldPrice().setValue(0.0);
+					posPanel.getActionPanel().getFieldDiscountPercentage().setValue(0.0);
 				}
 				//ctrl+1 == 49
 				if (keyEvent.getKeyCode() == 49 ) {
-					fieldQuantity.setValue(fieldQuantity.getValue().add(CurrentQuantity));
+					posPanel.getActionPanel().getFieldQuantity().setValue(posPanel.getActionPanel().getFieldQuantity().getValue().add(CurrentQuantity));
 				}
 				//ctrl+0 == 48
 				if (keyEvent.getKeyCode() == 48 ) {
-					fieldQuantity.setValue(fieldQuantity.getValue().subtract(CurrentQuantity));
+					posPanel.getActionPanel().getFieldQuantity().setValue(posPanel.getActionPanel().getFieldQuantity().getValue().subtract(CurrentQuantity));
 				}
+
+				//iDempiereConsulting __07/03/2019 -----
 			}
 			if (e.getTarget().equals(buttonUp)){
 				posPanel.moveUp();
@@ -257,8 +269,10 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 				posPanel.moveDown();
 				return;
 			}
+			//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+
 			if (e.getTarget().equals(buttonMinus)){
-				BigDecimal quantity = fieldQuantity.getValue().subtract(CurrentQuantity);
+				BigDecimal quantity = posPanel.getActionPanel().getFieldQuantity().getValue().subtract(CurrentQuantity);
 				if(quantity.compareTo(Env.ZERO) == 0) {
 					if(posPanel.isUserPinValid()) {
 						posPanel.setQty(quantity);
@@ -266,10 +280,14 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 				} else {
 					posPanel.setQty(quantity);
 				}
+
 			}
 			else if (e.getTarget().equals(buttonPlus)){
-				posPanel.setQty(fieldQuantity.getValue().add(CurrentQuantity));
+				posPanel.setQty(posPanel.getActionPanel().getFieldQuantity().getValue().add(CurrentQuantity));
 			}
+
+			//iDempiereConsulting __07/03/2019 -----
+
 			else if (e.getTarget().equals(buttonDelete)){
 				if(posPanel.isUserPinValid()) {
 					posPanel.deleteLine(posPanel.getC_OrderLine_ID());
@@ -281,13 +299,13 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 			}
 
 			if (e.getTarget().equals(buttonFilter)){
-//				openFilter();
-//				Point point = MouseInfo.getPointerInfo().getLocation();
+				//				openFilter();
+				//				Point point = MouseInfo.getPointerInfo().getLocation();
 				actionFilterMenu.getPopUp().setPage(buttonFilter.getPage());
-//				actionFilterMenu.getPopUp().setPage(this.getPage());
-                actionFilterMenu.getPopUp().open(buttonFilter, "after_start");
-//				actionFilterMenu.getPopUp().open(Double.valueOf(point.getX()).intValue()-140,Double.valueOf(point.getY()).intValue()-190);
-                return;
+				//				actionFilterMenu.getPopUp().setPage(this.getPage());
+				actionFilterMenu.getPopUp().open(buttonFilter, "after_start");
+				//				actionFilterMenu.getPopUp().open(Double.valueOf(point.getX()).intValue()-140,Double.valueOf(point.getY()).intValue()-190);
+				return;
 			}
 			else if(e.getTarget().equals(btnAddInfo)){
 				WQuickEntryPOS qE = new WQuickEntryPOS(posPanel, 1);
@@ -300,52 +318,56 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 				});
 				qE.setVisible(true);
 				AEnv.showWindow(qE);
-			
+
 			}
 
 			BigDecimal value = Env.ZERO;
+			//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+
 			if(Events.ON_OK.equals(e.getName()) || Events.ON_CHANGE.equals(e.getName())) {
 
-				value = fieldQuantity.getValue();
+				value = posPanel.getActionPanel().getFieldQuantity().getValue();
 				if(value == null)
 					return;
-				if(e.getTarget().equals(fieldQuantity.getDecimalbox())) {
+				if(e.getTarget().equals(posPanel.getActionPanel().getFieldQuantity().getDecimalbox())) {
 					if(Events.ON_OK.equals(e.getName())){
 						posPanel.setQty(value);
 					}
 					else if(posPanel.isAddQty() 
 							|| Events.ON_CHANGE.equals(e.getName())){
 						//  Verify if it add or set
-					//iDempiereConsulting__ 02/05/2018 -- Commentato per errata aggiunta di qta non prevista; problema dovuto a 'isAddQty' impostato a TRUE 
+						//iDempiereConsulting__ 02/05/2018 -- Commentato per errata aggiunta di qta non prevista; problema dovuto a 'isAddQty' impostato a TRUE 
 						//     al primissimo inserimento di un nuovo prodotto (?)  .....codice core trovato così, nessuna modifica di iDempiereConsulting...... 
-//						if(posPanel.isAddQty()) {
-//							posPanel.setQtyAdded(value);
-//						} else {
-				
-							posPanel.setQty(value);
-//						}
-					//iDempiereConsulting__ 02/05/2018 -- 
+						//						if(posPanel.isAddQty()) {
+						//							posPanel.setQtyAdded(value);
+						//						} else {
+
+						posPanel.setQty(value);
+						//						}
+						//iDempiereConsulting__ 02/05/2018 -- 
 					}
 
 				}
 
-				if (e.getTarget().equals(fieldPrice.getDecimalbox())) {
-					value = fieldPrice.getValue();
+				if (e.getTarget().equals(posPanel.getActionPanel().getFieldPrice().getDecimalbox())) {
+					value = posPanel.getActionPanel().getFieldPrice().getValue();
 					if(value == null)
 						return;
 					if(posPanel.isUserPinValid()) {
 						posPanel.setPrice(value);
 					}
 				}
-				else if ( e.getTarget().equals(fieldDiscountPercentage.getDecimalbox())) {
+				else if ( e.getTarget().equals(posPanel.getActionPanel().getFieldDiscountPercentage().getDecimalbox())) {
 					if(posPanel.isUserPinValid()) {
-						value = fieldDiscountPercentage.getValue();
+						value = posPanel.getActionPanel().getFieldDiscountPercentage().getValue();
 						if(value == null)
 							return;
 						posPanel.setDiscountPercentage(value);
 					}
 				}
 			}
+
+			//iDempiereConsulting __07/03/2019 -----
 
 			posPanel.updateLineTable();
 			posPanel.refreshPanel();
@@ -361,9 +383,13 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 	 * @param status
 	 */
 	public void changeStatus(boolean status) {
-		fieldQuantity.setEnabled(true);
-		fieldPrice.setEnabled(true);
-		fieldDiscountPercentage.setEnabled(true);
+		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+		if(posPanel.getActionPanel()!=null) {
+			posPanel.getActionPanel().getFieldQuantity().setEnabled(true);
+			posPanel.getActionPanel().getFieldPrice().setEnabled(true);
+			posPanel.getActionPanel().getFieldDiscountPercentage().setEnabled(true);
+		}
+		//iDempiereConsulting __07/03/2019 -----
 		buttonDelete.setEnabled(true);
 		buttonPlus.setEnabled(true);
 		buttonMinus.setEnabled(status);
@@ -389,14 +415,18 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 				else
 					buttonScales.setVisible(false);
 
-				fieldQuantity.setEnabled(true);
+				//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+				
+				posPanel.getActionPanel().getFieldQuantity().setEnabled(true);
 				if(posPanel.isReturnMaterial() ){
-					fieldPrice.setEnabled(false);
-					fieldDiscountPercentage.setEnabled(false);					
+					posPanel.getActionPanel().getFieldPrice().setEnabled(false);
+					posPanel.getActionPanel().getFieldDiscountPercentage().setEnabled(false);					
 				} else {
-					fieldPrice.setEnabled(true);
-					fieldDiscountPercentage.setEnabled(true);					
+					posPanel.getActionPanel().getFieldPrice().setEnabled(true);
+					posPanel.getActionPanel().getFieldDiscountPercentage().setEnabled(true);					
 				}
+				
+				//iDempiereConsulting __07/03/2019 -----
 			}else {
 				buttonDelete.setEnabled(false);
 				buttonPlus.setEnabled(false);
@@ -407,9 +437,11 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 				else
 					buttonScales.setVisible(false);
 
-				fieldPrice.setEnabled(false);
-				fieldQuantity.setEnabled(false);
-				fieldDiscountPercentage.setEnabled(false);
+				//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+				posPanel.getActionPanel().getFieldPrice().setEnabled(false);
+				posPanel.getActionPanel().getFieldQuantity().setEnabled(false);
+				posPanel.getActionPanel().getFieldDiscountPercentage().setEnabled(false);
+				//iDempiereConsulting __07/03/2019 -----
 			}
 		} else {
 			buttonDown.setEnabled(false);
@@ -438,15 +470,17 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 			changeStatus(false);
 		else
 			changeStatus(true);
-		fieldQuantity.setValue(posPanel.getQty());
-		fieldPrice.setValue(posPanel.getPrice());
-		fieldDiscountPercentage.setValue(posPanel.getDiscountPercentage());
+		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+		
+		posPanel.getActionPanel().getFieldQuantity().setValue(posPanel.getQty());
+		posPanel.getActionPanel().getFieldPrice().setValue(posPanel.getPrice());
+		posPanel.getActionPanel().getFieldDiscountPercentage().setValue(posPanel.getDiscountPercentage());
+		
+		//iDempiereConsulting __07/03/2019 -----
 	}
 
 	public void resetPanel() {
-		fieldQuantity.setValue(0);
-		fieldPrice.setValue(0);
-		fieldDiscountPercentage.setValue(0);
+		
 		buttonDown.setEnabled(false);
 		buttonUp.setEnabled(false);
 		buttonDelete.setEnabled(false);
@@ -454,18 +488,33 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		buttonMinus.setEnabled(false);
 		if (posPanel.isPresentElectronicScales())
 			buttonScales.setEnabled(false);
-		fieldPrice.setEnabled(false);
-		fieldQuantity.setEnabled(false);
-		fieldDiscountPercentage.setEnabled(false);
+		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+		
+		posPanel.getActionPanel().getFieldQuantity().setValue(0);
+		posPanel.getActionPanel().getFieldPrice().setValue(0);
+		posPanel.getActionPanel().getFieldDiscountPercentage().setValue(0);
+		posPanel.getActionPanel().getFieldPrice().setEnabled(false);
+		posPanel.getActionPanel().getFieldQuantity().setEnabled(false);
+		posPanel.getActionPanel().getFieldDiscountPercentage().setEnabled(false);
+		
+		//iDempiereConsulting __07/03/2019 -----
 	}
 
 	public void setQuantity(BigDecimal value) {
-		fieldQuantity.setValue(value);
-		fieldQuantity.focus();
+		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+		
+		posPanel.getActionPanel().getFieldQuantity().setValue(value);
+		posPanel.getActionPanel().getFieldQuantity().focus();
+		
+		//iDempiereConsulting __07/03/2019 -----
 	}
 
 	public void requestFocus() {
-		fieldQuantity.focus();
+		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java
+		
+		posPanel.getActionPanel().getFieldQuantity().focus();
+		
+		//iDempiereConsulting __07/03/2019 -----
 	}
 
 	/**

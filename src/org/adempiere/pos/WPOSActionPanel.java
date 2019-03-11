@@ -19,6 +19,7 @@ package org.adempiere.pos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,8 @@ import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
+import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.NumberBox;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Textbox;
@@ -69,6 +72,7 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkforge.keylistener.Keylistener;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -115,8 +119,13 @@ public class WPOSActionPanel extends WPOSSubPanel
 	/**	Is Keyboard			*/
 	private boolean			isKeyboard;
 	/**	For Show Product	*/
-//	private	WPOSTextField 	fieldProductName;
+	private	Label 	fieldProductName;
 	private WSearchEditor onlyProduct = null; 
+	
+	private NumberBox 	    fieldQuantity;
+	private NumberBox 	    fieldPrice;
+	private NumberBox 	    fieldDiscountPercentage;
+	
 	/** Find Product Timer **/
 	private Timer findProductTimer;
 	private WPOSLookupProduct lookupProduct;
@@ -224,9 +233,9 @@ public class WPOSActionPanel extends WPOSSubPanel
 		row.appendChild (buttonLogout);
 		row.setHeight("55px");
 
-//		fieldProductName = new WPOSTextField(Msg.translate(Env.getCtx(), "M_Product_ID"), posPanel.getKeyboard());
-//		fieldProductName.setWidth("98%");
-//		fieldProductName.setHeight("35px");
+		fieldProductName = new Label(Msg.translate(Env.getCtx(), "M_Product_ID"));
+		ZKUpdateUtil.setWidth(fieldProductName,"98%");
+		ZKUpdateUtil.setHeight(fieldProductName,"35px");
 		
 		onlyProduct = createProduct(posPanel.getWindowNo());
 		ZKUpdateUtil.setWidth(onlyProduct.getComponent(), "98%");
@@ -240,9 +249,8 @@ public class WPOSActionPanel extends WPOSSubPanel
     	keyListener.addEventListener(Events.ON_CTRL_KEY, this);
     	keyListener.setAutoBlur(false);
     	
-//		fieldProductName.setStyle("Font-size:medium; font-weight:bold");
-//		fieldProductName.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
-//		fieldProductName.addEventListener(this);
+		fieldProductName.setStyle("Font-size:medium; font-weight:bold");
+		fieldProductName.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
 		
 		onlyProduct.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 //		onlyProduct.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
@@ -268,11 +276,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 					try {
 						ResultSet rs =DB.prepareStatement(("SELECT * FROM LIT_C_POSKey_v WHERE M_Product_ID="+prod_ID), null).executeQuery();
 						if(rs!=null){
-							rs.next();
-							key = new MPOSKey(ctx, rs, null);
-							keyReturned(key);
-							((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
+							while(rs.next()) {
+								key = new MPOSKey(ctx, rs, null);
+								keyReturned(key);
+								
+								((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
+							}
 						}
+						((WSearchEditor)evt.getSource()).getComponent().getTextbox().setText("");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -291,17 +302,73 @@ public class WPOSActionPanel extends WPOSSubPanel
 			}
 		});
 		
-		onlyProduct.getComponent().getTextbox().addFocusListener(new EventListener<Event>() {
+		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
+//		row.appendChild(qtyLabel);
 
-			@Override
-			public void onEvent(Event evt2) throws Exception {
-				((Textbox)evt2.getTarget()).select();
-				
-			}
-		});
+		//		fieldQuantity = new POSNumberBox(false);
+		fieldQuantity = new NumberBox(false);
 
+//		row.appendChild(fieldQuantity);
+		fieldQuantity.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
+		fieldQuantity.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
+		//		fieldQuantity.setStyle("display: inline;width:65px;height:30px;Font-size:medium;");
+		ZKUpdateUtil.setWidth(fieldQuantity, "65px");
+		ZKUpdateUtil.setHeight(fieldQuantity.getDecimalbox(),"30px");
+		ZKUpdateUtil.setHeight(fieldQuantity.getButton(),"30px");
+		fieldQuantity.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+
+		Label priceLabel = new Label(Msg.translate(Env.getCtx(), "PriceActual"));
+//		row.appendChild(priceLabel);
+
+		//		fieldPrice = new POSNumberBox(false);
+		fieldPrice = new NumberBox(false);
+		DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount, AEnv.getLanguage(Env.getCtx()));
+		fieldPrice.getDecimalbox().setFormat(format.toPattern());
+
+		fieldPrice.setTooltiptext(Msg.translate(Env.getCtx(), "PriceActual"));
+//		row.appendChild(fieldPrice);
+		if (!posPanel.isModifyPrice())
+			fieldPrice.setEnabled(false);
+		else {
+			fieldPrice.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
+			fieldPrice.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
+		}
+		//		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
+		ZKUpdateUtil.setWidth(fieldPrice, "70px");
+		ZKUpdateUtil.setHeight(fieldPrice.getDecimalbox(),"30px");
+		ZKUpdateUtil.setHeight(fieldPrice.getButton(),"30px");
+		fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+
+		Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
+//		row.appendChild(priceDiscount);
+
+		//		fieldDiscountPercentage = new POSNumberBox(false);
+		fieldDiscountPercentage = new NumberBox(false);
+//		row.appendChild(fieldDiscountPercentage);
+		fieldDiscountPercentage.setTooltiptext(Msg.translate(Env.getCtx(), "Discount"));
+		if (!posPanel.isModifyPrice())
+			fieldDiscountPercentage.setEnabled(false);
+		else{
+			fieldDiscountPercentage.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
+			fieldDiscountPercentage.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
+		}
+		//		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
+		ZKUpdateUtil.setWidth(fieldDiscountPercentage, "70px");
+		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getDecimalbox(),"30px");
+		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getButton(),"30px");
+		fieldDiscountPercentage.getDecimalbox().setStyle("display: inline;Font-size:medium;");
+
+		Keylistener keyListener2 = new Keylistener();
+		fieldPrice.appendChild(keyListener);
+		keyListener.setCtrlKeys("@#up@#down^#f3^1^0");
+		keyListener.addEventListener(Events.ON_CTRL_KEY, posPanel);
+		keyListener.addEventListener(Events.ON_CTRL_KEY, this);
+		keyListener.setAutoBlur(false);
+		
+		
+		
 		row = rows.newRow();
-		row.setSpans("12");
+		row.setHeight("35px");
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) {
 //			lookupProduct = new WPOSLookupProduct(this, fieldProductName, new Long("1"));
 			lookupProduct = new WPOSLookupProduct(this, null, new Long("1"));
@@ -322,11 +389,17 @@ public class WPOSActionPanel extends WPOSSubPanel
 	        onlyProduct.setVisible(false);
 			onlyProduct.getComponent().setWidth("0%");
 		} else {
-			row.appendChild(onlyProduct.getComponent());
-			onlyProduct.getComponent().setWidth("60%");
-//			row.appendChild(fieldProductName);
-//			fieldProductName.appendChild(keyListener);
+			row.appendCellChild(onlyProduct.getComponent(),3);
+//			onlyProduct.getComponent().setWidth("30%");
 //			fieldProductName.setWidth("40%");
+			row.appendCellChild(fieldProductName,3);
+			row.appendCellChild(qtyLabel);
+			row.appendCellChild(fieldQuantity);
+			row.appendCellChild(priceLabel);
+			row.appendCellChild(fieldPrice);
+			row.appendCellChild(priceDiscount);
+			row.appendCellChild(fieldDiscountPercentage);
+
 		}
 		enableButton();
 		actionProcessMenu = new WPOSActionMenu(posPanel);
@@ -959,5 +1032,21 @@ public class WPOSActionPanel extends WPOSSubPanel
 	
 	public void resetActionMenu(){
 		actionProcessMenu.initActionMenu_();
+	}
+	
+	public NumberBox getFieldQuantity() {
+		return fieldQuantity;
+	}
+
+	public NumberBox getFieldPrice() {
+		return fieldPrice;
+	}
+
+	public NumberBox getFieldDiscountPercentage() {
+		return fieldDiscountPercentage;
+	}
+	
+	public void setFieldProductName(String nameProd) {
+		fieldProductName.setText(nameProd);
 	}
 }//	WPOSActionPanel

@@ -199,12 +199,12 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 		userPinTimer.addEventListener(Events.ON_TIMER, userPinListener);
 		userPinListener.setTimer(userPinTimer);
 		userPinTimer.setRunning(false);
-		Borderlayout mainLayout = new Borderlayout();	
+		Borderlayout mainLayout = new Borderlayout();
+		quantityPanel = new WPOSQuantityPanel(this);
 		actionPanel = new WPOSActionPanel(this);
 		documentPanel = new WPOSDocumentPanel(this);
 		orderLinePanel = new WPOSOrderLinePanel(this, showPanelDescProduct());
 		infoProductPanel = new WPOSInfoProduct(this);
-		quantityPanel = new WPOSQuantityPanel(this);
 		East east = new East();
 		Center center = new Center();
 		West westPanel = new West();
@@ -674,6 +674,10 @@ public class WPOS extends CPOS implements IFormController, EventListener, POSPan
 	
 	public WPOSActionPanel getActionPanel(){
 		return actionPanel;
+	}
+	
+	public WPOSQuantityPanel getQuantityPanel() {
+		return quantityPanel;
 	}
 	
 	public String getProductUOMSymbol()

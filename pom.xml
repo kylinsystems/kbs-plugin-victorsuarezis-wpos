@@ -33,6 +33,26 @@
 			<layout>p2</layout>
 			<url>file:///opt/repos/idempiere-italia/org.idempiere.p2/target/repository/</url>
 		</repository>
+		<repository>
+			<id>edNatP2</id>
+			<layout>p2</layout>
+			<url>file:///opt/repos/idempiere-ita-plugin/it.cnet.impl.editorNatIDNumber/target</url>
+		</repository>
+		<repository>
+			<id>utilPdfP2</id>
+			<layout>p2</layout>
+			<url>file:///opt/repos/idempiere-ita-plugin/it.cnet.impl.utilPDF/target</url>
+		</repository>
+		<repository>
+			<id>coreUtilP2</id>
+			<layout>p2</layout>
+			<url>file:///opt/repos/idempiere-ita-plugin/it.idIta.impl.coreUtil/target</url>
+		</repository>
+		<repository>
+			<id>liberoMfgP2</id>
+			<layout>p2</layout>
+			<url>file:///opt/repos/plugin-standard.org.lib.mfg4/target</url>
+		</repository>
 	</repositories>
 
 	<build>
