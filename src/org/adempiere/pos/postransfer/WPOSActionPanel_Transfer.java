@@ -15,22 +15,22 @@
  * Contributor(s): Raul Muñoz www.erpcya.com					              *
  *****************************************************************************/
 
-package org.adempiere.pos;
+package org.adempiere.pos.postransfer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.pos.POSKeyListener;
+import org.adempiere.pos.WPOSLookupProduct;
+import org.adempiere.pos.postransfer.search.WQueryBPartner_Transfer;
+import org.adempiere.pos.postransfer.search.WQueryDocType_Transfer;
+import org.adempiere.pos.postransfer.search.WQueryMovementHistory;
 import org.adempiere.pos.search.WQueryBPartner;
-import org.adempiere.pos.search.WQueryDocType;
-import org.adempiere.pos.search.WQueryOrderHistory;
 import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.service.POSLookupProductInterface;
 import org.adempiere.pos.service.POSPanelInterface;
@@ -39,21 +39,19 @@ import org.adempiere.pos.service.POSQueryListener;
 import org.adempiere.util.Callback;
 import org.adempiere.webui.AdempiereWebUI;
 import org.adempiere.webui.LayoutUtils;
-import org.adempiere.webui.adwindow.ADTabpanel;
 import org.adempiere.webui.adwindow.ProcessButtonPopup;
 import org.adempiere.webui.adwindow.ToolbarProcessButton;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
+import org.adempiere.webui.component.DocumentLink;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.NumberBox;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
-import org.adempiere.webui.component.Textbox;
 import org.adempiere.webui.component.Window;
 import org.adempiere.webui.editor.WSearchEditor;
-import org.adempiere.webui.event.DialogEvents;
 import org.adempiere.webui.event.ValueChangeEvent;
 import org.adempiere.webui.event.ValueChangeListener;
 import org.adempiere.webui.info.InfoProductWindow;
@@ -64,28 +62,24 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
-import org.compiere.model.MResource;
-import org.compiere.model.Query;
+import org.compiere.process.DocAction;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkforge.keylistener.Keylistener;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
+import org.zkoss.zul.Caption;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Timer;
 
 /**
- * @author Mario Calderon, mario.calderon@westfalia-it.com, Systemhaus Westfalia, http://www.westfalia-it.com
- * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
- * @author Raul Muñoz, rmunoz@erpcya.com, ERPCYA http://www.erpcya.com
- * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public class WPOSActionPanel extends WPOSSubPanel
+public class WPOSActionPanel_Transfer extends WPOSSubPanel_Transfer
 		implements POSKeyListener, POSPanelInterface, POSQueryListener ,  POSLookupProductInterface{
 
 	/**
@@ -97,7 +91,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 	 * 	Constructor
 	 *	@param posPanel POS Panel
 	 */
-	public WPOSActionPanel (WPOS posPanel) {
+	public WPOSActionPanel_Transfer (WPOS_Transfer posPanel) {
 		super (posPanel);
 	}	//	WPosSubCustomer
 
@@ -105,7 +99,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 	/**	Buttons Command		*/
 	private Button 			buttonNew;
 	private Button 			buttonPrint;
-	private Button 			buttonDocType;
+//	private Button 			buttonDocType;
 	private Button 			buttonProduct;
 	private Button 			buttonBPartner;
 	private Button 			buttonProcess;
@@ -123,17 +117,15 @@ public class WPOSActionPanel extends WPOSSubPanel
 	private WSearchEditor onlyProduct = null; 
 	
 	private NumberBox 	    fieldQuantity;
-	private NumberBox 	    fieldPrice;
-	private NumberBox 	    fieldDiscountPercentage;
+	
+	private WPOSActionMenu_Transfer actionProcessMenu; 
 	
 	/** Find Product Timer **/
 	private Timer findProductTimer;
 	private WPOSLookupProduct lookupProduct;
-	/**	Process Action 						*/
-	private WPOSActionMenu actionProcessMenu;
 
 	/**	Logger			*/
-	private static CLogger logger = CLogger.getCLogger(WPOSActionPanel.class);
+	private static CLogger logger = CLogger.getCLogger(WPOSActionPanel_Transfer.class);
 
 	private final String ACTION_NEW         = "New";
 	private final String ACTION_PRINT       = "Print";
@@ -179,11 +171,11 @@ public class WPOSActionPanel extends WPOSSubPanel
 		row.appendChild(buttonPrint);
 
 		// DocType 
-		buttonDocType = createButtonAction(ACTION_DOCTYPE, "F10");
-		buttonDocType.addActionListener(this);
-		buttonDocType.setTooltiptext("F10-"+Msg.translate(ctx, "C_DocType_ID"));
-		
-		row.appendChild(buttonDocType);
+//		buttonDocType = createButtonAction(ACTION_DOCTYPE, "F10");
+//		buttonDocType.addActionListener(this);
+//		buttonDocType.setTooltiptext("F10-"+Msg.translate(ctx, "C_DocType_ID"));
+//		
+//		row.appendChild(buttonDocType);
 		// PRODUCT
 		buttonProduct = createButtonAction(ACTION_PRODUCT, "Alt+I");
 		buttonProduct.addActionListener(this);
@@ -303,7 +295,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			}
 		});
 		
-		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
+		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "MovementQty"));
 //		row.appendChild(qtyLabel);
 
 		//		fieldQuantity = new POSNumberBox(false);
@@ -318,67 +310,16 @@ public class WPOSActionPanel extends WPOSSubPanel
 		ZKUpdateUtil.setHeight(fieldQuantity.getButton(),"30px");
 		fieldQuantity.getDecimalbox().setStyle("display: inline;Font-size:medium;");
 
-		Label priceLabel = new Label(Msg.translate(Env.getCtx(), "PriceActual"));
-//		row.appendChild(priceLabel);
-
-		//		fieldPrice = new POSNumberBox(false);
-		fieldPrice = new NumberBox(false);
-		DecimalFormat format = DisplayType.getNumberFormat(DisplayType.Amount, AEnv.getLanguage(Env.getCtx()));
-		fieldPrice.getDecimalbox().setFormat(format.toPattern());
-
-		fieldPrice.setTooltiptext(Msg.translate(Env.getCtx(), "PriceActual"));
-//		row.appendChild(fieldPrice);
-		if (!posPanel.isModifyPrice())
-			fieldPrice.setEnabled(false);
-		else {
-			fieldPrice.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
-			fieldPrice.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
-		}
-		//		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldPrice, "70px");
-		ZKUpdateUtil.setHeight(fieldPrice.getDecimalbox(),"30px");
-		ZKUpdateUtil.setHeight(fieldPrice.getButton(),"30px");
-		fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
-
-		Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
-//		row.appendChild(priceDiscount);
-
-		//		fieldDiscountPercentage = new POSNumberBox(false);
-		fieldDiscountPercentage = new NumberBox(false);
-//		row.appendChild(fieldDiscountPercentage);
-		fieldDiscountPercentage.setTooltiptext(Msg.translate(Env.getCtx(), "Discount"));
-		if (!posPanel.isModifyPrice())
-			fieldDiscountPercentage.setEnabled(false);
-		else{
-			fieldDiscountPercentage.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
-			fieldDiscountPercentage.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
-		}
-		//		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldDiscountPercentage, "70px");
-		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getDecimalbox(),"30px");
-		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getButton(),"30px");
-		fieldDiscountPercentage.getDecimalbox().setStyle("display: inline;Font-size:medium;");
-
-		Keylistener keyListener2 = new Keylistener();
-		fieldPrice.appendChild(keyListener);
-		keyListener.setCtrlKeys("@#up@#down^#f3^1^0");
-		keyListener.addEventListener(Events.ON_CTRL_KEY, posPanel);
-		keyListener.addEventListener(Events.ON_CTRL_KEY, this);
-		keyListener.setAutoBlur(false);
-		
-		
-		
 		row = rows.newRow();
 		row.setHeight("35px");
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) {
 //			lookupProduct = new WPOSLookupProduct(this, fieldProductName, new Long("1"));
 			lookupProduct = new WPOSLookupProduct(this, null, new Long("1"));
-			lookupProduct.setPriceListId(posPanel.getM_PriceList_ID());
 			lookupProduct.setPartnerId(posPanel.getC_BPartner_ID());
 			lookupProduct.setWarehouseId(posPanel.getM_Warehouse_ID());
 			findProductTimer = new Timer(500); // , lookupProduct);
 			lookupProduct.setWidth("100%");
-			lookupProduct.setStyle(WPOS.FONTSTYLE+WPOS.FONTSIZELARGE);
+			lookupProduct.setStyle(WPOS_Transfer.FONTSTYLE+WPOS_Transfer.FONTSIZELARGE);
 //			fieldProductName.appendChild(keyListener);
 //			fieldProductName.setVisible(false);
 //			fieldProductName.setWidth("0%");
@@ -396,17 +337,13 @@ public class WPOSActionPanel extends WPOSSubPanel
 			row.appendCellChild(fieldProductName,3);
 			row.appendCellChild(qtyLabel);
 			row.appendCellChild(fieldQuantity);
-			row.appendCellChild(priceLabel);
-			row.appendCellChild(fieldPrice);
-			row.appendCellChild(priceDiscount);
-			row.appendCellChild(fieldDiscountPercentage);
 
 		}
 		enableButton();
-		actionProcessMenu = new WPOSActionMenu(posPanel);
+		actionProcessMenu = new WPOSActionMenu_Transfer(posPanel); 
 		
 		//	List Orders
-		posPanel.listOrder();
+		posPanel.listMovement();
 		getMainFocus();
 	}
 
@@ -414,14 +351,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 	 * Open window Doctype 
 	 */
 	private void openDocType() { 
-		WQueryDocType qt = new WQueryDocType(posPanel);
+		WQueryDocType_Transfer qt = new WQueryDocType_Transfer(posPanel);
 		qt.setVisible(true);
 		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 		AEnv.showWindow(qt);
 	}
 	
 	private void openHistory() { 
-		WQueryOrderHistory qt = new WQueryOrderHistory(posPanel);
+		WQueryMovementHistory qt = new WQueryMovementHistory(posPanel);
 		qt.setVisible(true);
 		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 		AEnv.showWindow(qt);
@@ -429,14 +366,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 	}
 	
 	private void openBPartner() {
-		WQueryBPartner qt = new WQueryBPartner(posPanel);
+		WQueryBPartner_Transfer qt = new WQueryBPartner_Transfer(posPanel);
 		if(!posPanel.isBPartnerStandard())
 			qt.loadData();
 		qt.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 		AEnv.showWindow(qt);
 		if (qt.getRecord_ID() > 0) {
-			if(!posPanel.hasOrder()) {
-				posPanel.newOrder(qt.getRecord_ID());
+			if(!posPanel.hasMovement()) {
+				posPanel.newMovement(qt.getRecord_ID());
 				posPanel.refreshPanel();
 			} else {
 				posPanel.configureBPartner(qt.getRecord_ID());
@@ -459,18 +396,18 @@ public class WPOSActionPanel extends WPOSSubPanel
                 KeyEvent keyEvent = (KeyEvent) e;
                 //F2 == 113
                 if (keyEvent.getKeyCode() == 113 ) {
-                    posPanel.newOrder();
+                    posPanel.newMovement();
                 }
                 //F3 == 114
                 else if (keyEvent.getKeyCode() == 114 ) {
                     if (posPanel.isUserPinValid())
-                        deleteOrder();
+                        deleteMovement();
                 }
-                //F4 == 115
-                else if (keyEvent.getKeyCode() == 115 ) {
-                    payOrder();
-                    return;
-                }
+//                //F4 == 115
+//                else if (keyEvent.getKeyCode() == 115 ) {
+//                    payOrder();
+//                    return;
+//                }
                 //F9 == 120
                 else if (keyEvent.getKeyCode() == 120 ) {
                     openHistory();
@@ -523,30 +460,30 @@ public class WPOSActionPanel extends WPOSSubPanel
 //                }
 
             if (e.getTarget().equals(buttonNew)){
-                posPanel.newOrder();
+                posPanel.newMovement();
             }
 			if (e.getTarget().equals(buttonPrint)){
 				posPanel.printTicket();
 			}
-            else if (e.getTarget().equals(buttonDocType)){
-                if(posPanel.isUserPinValid()) {
-                    openDocType();
-                }
-            }
+//            else if (e.getTarget().equals(buttonDocType)){
+//                if(posPanel.isUserPinValid()) {
+//                    openDocType();
+//                }
+//            }
 			else if (e.getTarget().equals(buttonProduct)) {
 				showWindowProduct("");
 			}
 			else if (e.getTarget().equals(buttonBPartner)) {
 				openBPartner();
 			}
-            else if(e.getTarget().equals(buttonCollect)){
-            	if(posPanel.isReturnMaterial()) {
-					completeReturn();
-				} else {
-					payOrder();
-				}
-                return;
-            }
+//            else if(e.getTarget().equals(buttonCollect)){
+//            	if(posPanel.isReturnMaterial()) {
+//					completeReturn();
+//				} else {
+//					payOrder();
+//				}
+//                return;
+//            }
             else if(e.getTarget().equals(buttonProcess)){
                 if(posPanel.isUserPinValid()) {
 //                    actionProcessMenu.getPopUp().setPage(this.getPage());
@@ -561,6 +498,44 @@ public class WPOSActionPanel extends WPOSSubPanel
         					buttonList.add(processButton.getButton());
         				}
         			}
+        			
+        			//COMPLETE document
+        			org.zkoss.zul.Button btnComplete = createButton("Completa Trasferimento");
+        			btnComplete.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+        			@Override
+        			public void onEvent(Event e) throws Exception {
+        				if(posPanel.getMovement()!=null && !posPanel.getMovement().isComplete()) {
+        					if(posPanel.getMovement().processIt(DocAction.ACTION_Complete)) {
+        						Div div_1 = new Div();
+        						
+        						DocumentLink recordLink = new DocumentLink(Msg.parseTranslation(ctx, "@M_Movement_ID@")+": "+posPanel.getMovement().getDocumentNo(), posPanel.getMovement().get_Table_ID(), posPanel.getM_Movement_ID());
+        						div_1.appendChild(recordLink);
+        						
+        						Div msgPopupCnt = new Div();
+        						ZKUpdateUtil.setVflex(msgPopupCnt, "1");
+        						msgPopupCnt.appendChild(div_1);
+
+        						Window msgPopup = new Window();
+        						msgPopup.setBorder(true);
+        						msgPopup.setClosable(true);
+        						msgPopup.setSizable(true);
+        						msgPopup.setContentStyle("overflow: auto");
+        						ZKUpdateUtil.setWidth(msgPopup, "500px");
+        				        msgPopup.appendChild(msgPopupCnt);
+        				        msgPopup.setShadow(true);
+        				        Caption msgPopupCaption = new Caption();
+        				        msgPopup.appendChild(msgPopupCaption);
+        				        
+        				        posPanel.getForm().getParent().appendChild(msgPopup);
+        						LayoutUtils.openOverlappedWindow(posPanel.getForm().getParent(), msgPopup, "middle_center");
+        					};
+        					
+        					
+        				}
+        				
+        			}});
+        			buttonList.add(btnComplete);
+        			//
 
         			popup.render(buttonList);
 
@@ -591,7 +566,7 @@ public class WPOSActionPanel extends WPOSSubPanel
             // Cancel
             else if (e.getTarget().equals(buttonCancel)){
                 if(posPanel.isUserPinValid()) {
-                    deleteOrder();
+                    deleteMovement();
                 }
             }
             //	History
@@ -684,7 +659,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		} catch (Exception e) {}
 		//	
 		List<Vector<Object>> results = CPOS.getQueryProduct(query, posPanel.getM_Warehouse_ID(), 
-				posPanel.getM_PriceList_ID() , posPanel.getC_BPartner_ID());
+				0 , posPanel.getC_BPartner_ID());
 		//	Set Result
 		if (results.size() == 1) {
 			Optional<Vector<Object>> columns = results.stream().findFirst();
@@ -692,7 +667,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 				Integer productId = (Integer) columns.get().elementAt(0);
 				String productName = (String) columns.get().elementAt(2);
 				posPanel.setAddQty(true);
-				posPanel.addOrUpdateLine(productId, editQty? Env.ZERO: Env.ONE, posPanel.getOrder().isSOTrx());
+				posPanel.addOrUpdate(productId, editQty? Env.ZERO: Env.ONE);
 //				fieldProductName.setText(productName);
 				onlyProduct.getComponent().getTextbox().setText(productName);
 			}
@@ -728,60 +703,60 @@ public class WPOSActionPanel extends WPOSSubPanel
 		posPanel.refreshPanel();
 	}
 	
-	/**
-	 * Complete Return Material
-	 */
-	private void completeReturn() {
-		String errorMsg = null;
-		String askMsg = "@new.customer.return.order@ @DisplayDocumentInfo@ : " + posPanel.getDocumentNo()
-                + " @To@ @C_BPartner_ID@ : " + posPanel.getBPName();
-		//	
-		if (posPanel.isCompleted()) {
-			return;
-		}
-		//	Show Ask
-		if (FDialog.ask(posPanel.getWindowNo(), this, "StartProcess?", Msg.parseTranslation(posPanel.getCtx(), askMsg))) {
-			try {
-				posPanel.completeReturn();
-			} catch(Exception e) {
-				errorMsg = e.getLocalizedMessage();
-			}
-		}
-		//	show if exists error
-		if(errorMsg != null)
-			FDialog.error(posPanel.getWindowNo(), Msg.parseTranslation(ctx, errorMsg));
-		//	Update
-		posPanel.refreshPanel();
-	}
+//	/**
+//	 * Complete Return Material
+//	 */
+//	private void completeReturn() {
+//		String errorMsg = null;
+//		String askMsg = "@new.customer.return.order@ @DisplayDocumentInfo@ : " + posPanel.getDocumentNo()
+//                + " @To@ @C_BPartner_ID@ : " + posPanel.getBPName();
+//		//	
+//		if (posPanel.isCompleted()) {
+//			return;
+//		}
+//		//	Show Ask
+//		if (FDialog.ask(posPanel.getWindowNo(), this, "StartProcess?", Msg.parseTranslation(posPanel.getCtx(), askMsg))) {
+//			try {
+//				posPanel.completeReturn();
+//			} catch(Exception e) {
+//				errorMsg = e.getLocalizedMessage();
+//			}
+//		}
+//		//	show if exists error
+//		if(errorMsg != null)
+//			FDialog.error(posPanel.getWindowNo(), Msg.parseTranslation(ctx, errorMsg));
+//		//	Update
+//		posPanel.refreshPanel();
+//	}
 
-	/**
-	 * Execute order payment
-	 * If order is not processed, process it first.
-	 * If it is successful, proceed to pay and print ticket
-	 */
-	private void payOrder() {
-		//Check if order is completed, if so, print and open drawer, create an empty order and set cashGiven to zero
-		if(!posPanel.hasOrder()) {
-			FDialog.warn(posPanel.getWindowNo(), Msg.getMsg(ctx, "POS.MustCreateOrder"));
-		} 
-		else if(posPanel.hasOrder() && (posPanel.isPurchaseOrder() || posPanel.isStandardOrder()))
-		{
-			if(posPanel.isPurchaseOrder())
-				posPanel.getOrder().setIsSOTrx(false);
-				
-			posPanel.processOrder(posPanel.getOrder().get_TrxName(), false, false);
-			posPanel.showKeyboard();
-			posPanel.setOrder(posPanel.getOrder().get_ID());
-			posPanel.refreshPanel();
-			posPanel.refreshProductInfo(null);
-            posPanel.restoreTable();
-			return;
-		}
-		else {
-			posPanel.hideKeyboard();
-			posPanel.showCollectPayment();
-		}
-	}  // payOrder
+//	/**
+//	 * Execute order payment
+//	 * If order is not processed, process it first.
+//	 * If it is successful, proceed to pay and print ticket
+//	 */
+//	private void payOrder() {
+//		//Check if order is completed, if so, print and open drawer, create an empty order and set cashGiven to zero
+//		if(!posPanel.hasOrder()) {
+//			FDialog.warn(posPanel.getWindowNo(), Msg.getMsg(ctx, "POS.MustCreateOrder"));
+//		} 
+//		else if(posPanel.hasOrder() && (posPanel.isPurchaseOrder() || posPanel.isStandardOrder()))
+//		{
+//			if(posPanel.isPurchaseOrder())
+//				posPanel.getOrder().setIsSOTrx(false);
+//				
+//			posPanel.processOrder(posPanel.getOrder().get_TrxName(), false, false);
+//			posPanel.showKeyboard();
+//			posPanel.setOrder(posPanel.getOrder().get_ID());
+//			posPanel.refreshPanel();
+//			posPanel.refreshProductInfo(null);
+//            posPanel.restoreTable();
+//			return;
+//		}
+//		else {
+//			posPanel.hideKeyboard();
+//			posPanel.showCollectPayment();
+//		}
+//	}  // payOrder
 
 	/**
 	 * Execute deleting an order
@@ -789,10 +764,10 @@ public class WPOSActionPanel extends WPOSSubPanel
 	 * If the order is in completed status -> ask to void it it
 	 * Otherwise, it must be done outside this class.
 	 */
-	private void deleteOrder() {
+	private void deleteMovement() {
 //		String errorMsg = null;
 		errorMsg = null;
-		String askMsg = "POS.DeleteOrder";
+		String askMsg = "POS.DeleteMovement";
 		if (posPanel.isCompleted()) {
 			askMsg = "POS.OrderIsAlreadyCompleted";
 		}
@@ -801,7 +776,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 
 			@Override
 			public void onCallback(Boolean result) {
-				errorMsg = posPanel.cancelOrder();
+				errorMsg = posPanel.cancelMovement();
 				posPanel.refreshPanel();
 			}
 			
@@ -833,9 +808,9 @@ public class WPOSActionPanel extends WPOSSubPanel
 
 	@Override
 	public void refreshPanel() {
-		if(posPanel.hasOrder()) {
+		if(posPanel.hasMovement()) {
 			if (lookupProduct != null && posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) {
-				lookupProduct.setPriceListId(posPanel.getM_PriceList_ID());
+//				lookupProduct.setPriceListId(posPanel.getM_PriceList_ID());
 				lookupProduct.setPartnerId(posPanel.getC_BPartner_ID());
 				lookupProduct.setWarehouseId(posPanel.getM_Warehouse_ID());
 			}
@@ -846,8 +821,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			buttonBack.setEnabled(!posPanel.isFirstRecord() && posPanel.hasRecord());
 			//	For Collect
 			if(posPanel.hasLines()
-					&& !posPanel.isPaid()
-					&& !posPanel.isVoided() && posPanel.getOrder()!=null && posPanel.getOrder().isSOTrx()) {
+					&& !posPanel.isVoided() && posPanel.getMovement()!=null) {
 				//	For Credit Order
 				buttonCollect.setEnabled(true);
 			} else {
@@ -855,10 +829,10 @@ public class WPOSActionPanel extends WPOSSubPanel
 			}
 			// For BusinessPartner and Document Type
 			if(posPanel.isDrafted() || posPanel.isInProgress()) {
-				buttonDocType.setEnabled(true);
+//				buttonDocType.setEnabled(true);
 				buttonBPartner.setEnabled(true);
 			} else {
-				buttonDocType.setEnabled(false);
+//				buttonDocType.setEnabled(false);
 				buttonBPartner.setEnabled(false);
 			} 
 			//	For Cancel Action
@@ -877,7 +851,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			//	For Cancel Action
 			buttonCancel.setEnabled(false);
 			// For BusinessPartner and Document Type
-			buttonDocType.setEnabled(false);
+//			buttonDocType.setEnabled(false);
 			buttonBPartner.setEnabled(false);
 		}
 		buttonNew.setEnabled(true);
@@ -905,19 +879,19 @@ public class WPOSActionPanel extends WPOSSubPanel
 			if (query.getRecord_ID() <= 0)
 				return;
 			//	For Ticket
-			if(query instanceof WQueryOrderHistory) {
-				posPanel.setOrder(query.getRecord_ID());
+			if(query instanceof WQueryMovementHistory) {
+				posPanel.setMovement(query.getRecord_ID());
 				posPanel.reloadIndex(query.getRecord_ID());
 			} else if(query instanceof WQueryBPartner) {
-				if(!posPanel.hasOrder()) {
-					posPanel.newOrder(query.getRecord_ID());
+				if(!posPanel.hasMovement()) {
+					posPanel.newMovement(query.getRecord_ID());
 					posPanel.getMainFocus();
 				} else {
 					posPanel.configureBPartner(query.getRecord_ID());
 				}
 				//
 				logger.fine("C_BPartner_ID=" + query.getRecord_ID());
-			} else if(query instanceof WQueryDocType) {
+			} else if(query instanceof WQueryDocType_Transfer) {
 				if (query.getRecord_ID() > 0) {
 					posPanel.setC_DocType_ID(query.getRecord_ID());
 				}
@@ -953,7 +927,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 	    buttonBack.setEnabled(false);
 	    buttonCollect.setEnabled(false);
 	    buttonCancel.setEnabled(false);
-	    buttonDocType.setEnabled(false);
+//	    buttonDocType.setEnabled(false);
 	    buttonBPartner.setEnabled(false); 
 	    buttonProcess.setEnabled(false);
 	}
@@ -974,7 +948,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 	public void keyReturned(MPOSKey key) {
 
 		// processed order
-		if (posPanel.hasOrder()
+		if (posPanel.hasMovement()
 				&& posPanel.isCompleted()) {
 			//	Show Product Info
 			posPanel.refreshProductInfo(key);
@@ -984,7 +958,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		try{
       //  Issue 139
 		  posPanel.setAddQty(true);
-			posPanel.addOrUpdateLine(key.getM_Product_ID(), key.getQty(), posPanel.getOrder().isSOTrx());
+			posPanel.addOrUpdate(key.getM_Product_ID(), key.getQty());
 			posPanel.refreshPanel();
 			posPanel.changeViewPanel();
 //			posPanel.getMainFocus();
@@ -1027,7 +1001,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		return null;
 	}
 	
-	private WPOSActionPanel getContent(){
+	private WPOSActionPanel_Transfer getContent(){
 		return this;
 	}
 	
@@ -1037,14 +1011,6 @@ public class WPOSActionPanel extends WPOSSubPanel
 	
 	public NumberBox getFieldQuantity() {
 		return fieldQuantity;
-	}
-
-	public NumberBox getFieldPrice() {
-		return fieldPrice;
-	}
-
-	public NumberBox getFieldDiscountPercentage() {
-		return fieldDiscountPercentage;
 	}
 	
 	public void setFieldProductName(String nameProd) {

@@ -18,6 +18,8 @@ public class MBPartnerInfoPOS extends MBPartnerInfo {
 	/**	Static Logger	*/
 	private static CLogger	s_logPOS	= CLogger.getCLogger (MBPartnerInfoPOS.class);
 	
+	private static StringBuffer sql = null;
+	
 	/**
 	 * 
 	 */
@@ -41,7 +43,9 @@ public class MBPartnerInfoPOS extends MBPartnerInfo {
 	public static MBPartnerInfo[] find(Properties ctx,
 									   String value, String taxId, String name, String name2, String contact, String eMail, String phone, String city)
 	{
-		StringBuffer sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y'");
+		//iDempiereConsulting __12/07/2019 --- Controllo per eventuale utilizzo query con ricerca di SOLO BPartener con InterCompany.... (bp.ad_orgbp_id valorizzato)
+		if(sql==null)
+			sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y'");
 		StringBuffer sb = new StringBuffer();
 		value = getFindParameter (value);
 		if (value != null)
@@ -149,5 +153,31 @@ public class MBPartnerInfoPOS extends MBPartnerInfo {
 		list.toArray(retValue);
 		return retValue;
 	}	//	find
+
+	/**
+	 * 	Find BPartners
+	 *	@param ctx context
+	 *	@param value Business Partner Value
+	 *	@param taxId Business Partner TaxID
+	 *	@param name Business Partner Name
+	 * @param name2 Business Partner Name2
+	 * @param contact Contact/User Name
+	 * @param eMail Contact/User EMail
+	 * @param phone phone
+	 * @param city city      @return array if of info
+	 * @param interCompany (bp.ad_orgbp_id valorizzato)
+	 */
+	public static MBPartnerInfo[] find(Properties ctx,
+									   String value, String taxId, String name, String name2, String contact, String eMail, String phone, String city, boolean interCompany)
+	{
+		//iDempiereConsulting __12/07/2019 --- Controllo per eventuale utilizzo query con ricerca di SOLO BPartener con InterCompany.... (bp.ad_orgbp_id valorizzato)
+		if(interCompany)
+			sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y' AND AD_OrgBp_ID IS NOT NULL ");
+		MBPartnerInfo[] result = find(ctx, value, taxId, name, name2, contact, eMail, phone, city);
+		sql = null;
+		
+		return result;
+	}	//	find
+
 
 }
