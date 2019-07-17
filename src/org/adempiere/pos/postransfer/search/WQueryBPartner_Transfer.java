@@ -234,6 +234,7 @@ public class WQueryBPartner_Transfer extends WPOSQuery_Transfer {
 //		posTable.setWidth("100%");
 //		posTable.setHeight("99%");
 		posTable.addActionListener(this);
+		posTable.setRows(8);
 		center.appendChild(posTable);
 		mainLayout.appendChild(center);
 		posTable.setClass("Table-OrderLine");

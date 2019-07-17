@@ -21,11 +21,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
-import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.search.WQueryBPartner;
@@ -38,8 +36,6 @@ import org.adempiere.pos.service.POSQueryInterface;
 import org.adempiere.pos.service.POSQueryListener;
 import org.adempiere.util.Callback;
 import org.adempiere.webui.AdempiereWebUI;
-import org.adempiere.webui.LayoutUtils;
-import org.adempiere.webui.adwindow.ADTabpanel;
 import org.adempiere.webui.adwindow.ProcessButtonPopup;
 import org.adempiere.webui.adwindow.ToolbarProcessButton;
 import org.adempiere.webui.apps.AEnv;
@@ -50,13 +46,12 @@ import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.NumberBox;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
-import org.adempiere.webui.component.Textbox;
 import org.adempiere.webui.component.Window;
 import org.adempiere.webui.editor.WSearchEditor;
-import org.adempiere.webui.event.DialogEvents;
 import org.adempiere.webui.event.ValueChangeEvent;
 import org.adempiere.webui.event.ValueChangeListener;
-import org.adempiere.webui.info.InfoProductWindow;
+import org.adempiere.webui.factory.InfoManager;
+import org.adempiere.webui.info.InfoWindow;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.Lookup;
@@ -64,17 +59,13 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
-import org.compiere.model.MResource;
-import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkforge.keylistener.Keylistener;
-import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zul.Timer;
@@ -610,15 +601,17 @@ public class WPOSActionPanel extends WPOSSubPanel
 	private void showWindowProduct(String query) {
 		//	Show Info
 		//posPanel.getFrame().getContentPane().invalidate();
-		InfoProductWindow infoProduct = new InfoProductWindow(
-				posPanel.getWindowNo(),
-				MProduct.Table_Name,
-				"M_Product_ID",
-				"",
-				true,
-				query,
-				0,
-				true);
+//		InfoProductWindow infoProduct = new InfoProductWindow(
+//				posPanel.getWindowNo(),
+//				MProduct.Table_Name,
+//				"M_Product_ID",
+//				"",
+//				true,
+//				query,
+//				0,
+//				true);
+		InfoWindow infoProduct = (InfoWindow)InfoManager.create(0, "M_Product", "M_Product_ID", query, false, "", true);
+		
 		AEnv.showWindow(infoProduct);
 		Object[] result = infoProduct.getSelectedKeys();
 		if(result == null)
