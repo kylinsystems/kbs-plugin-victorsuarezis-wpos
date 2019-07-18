@@ -35,6 +35,7 @@ import org.compiere.model.MDocType;
 import org.compiere.model.MInventoryLine;
 import org.compiere.model.MLocator;
 import org.compiere.model.MOrg;
+import org.compiere.model.MOrgInfo;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
 import org.compiere.model.MSequence;
@@ -671,15 +672,13 @@ public class CPOS_Move {
 		line.setM_Inventory_ID(currentInventory.getM_Inventory_ID());
 		line.setM_Product_ID(product.getM_Product_ID());
 		line.setQtyInternalUse(qtyInternalUse);
-		int chargeID = DB.getSQLValue(null, "SELECT C_Charge_ID FROM C_Charge WHERE IsActive='Y' AND AD_Client_ID=? AND Name=?", Env.getAD_Client_ID(getCtx()),"InternalInventory");
-		if(chargeID>0)
-			line.setC_Charge_ID(chargeID);
+		line.setC_Charge_ID(entityPOS.getC_Charge_ID());
 		
 		int locatorID = product.getM_Locator_ID();
 		if(locatorID<=0){
-			MWarehouse warehouse = new MWarehouse(getCtx(), Env.getContextAsInt(getCtx(), "#M_Warehouse_ID"),null);
-			if(warehouse!=null)
-				line.setM_Locator_ID(warehouse.getDefaultLocator().getM_Locator_ID());
+			MOrgInfo orgInfo = MOrgInfo.get(getCtx(), Env.getAD_Org_ID(getCtx()), null);
+			if(orgInfo.getM_Warehouse()!=null && orgInfo.getM_Warehouse().getM_ReserveLocator_ID()>0)
+				line.setM_Locator_ID(orgInfo.getM_Warehouse().getM_ReserveLocator_ID());
 		}
 		//	Save Line
 		line.saveEx();
