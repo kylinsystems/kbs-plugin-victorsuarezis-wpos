@@ -183,7 +183,7 @@ public class CPOS {
 			
 			for (MPOS mpos : poss) {
 				
-				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos) && mpos.getAD_User_ID()==userId){
+				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos) && mpos.getAD_User_ID()==userId && mpos.getDescription().contains(Env.getContext(Env.getCtx(), "##FormName_"))){
 					entityPOS = mpos;
 					break;
 				}
