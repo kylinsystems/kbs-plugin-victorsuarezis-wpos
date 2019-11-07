@@ -137,7 +137,7 @@ public class CPOS_Return {
 			
 			for (MPOS mpos : poss) {
 				
-				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos) && mpos.getAD_User_ID()==userId && mpos.getDescription().contains(Env.getContext(Env.getCtx(), "##FormName_"))){
+				if(mpos.get_ValueAsString("LIT_POSType").equals(typePos) && mpos.getAD_User_ID()==userId && mpos.get_ValueAsString("LabelPrint").contains(Env.getContext(Env.getCtx(), "##FormName_"))){
 					entityPOS = mpos;
 					break;
 				}
