@@ -2,6 +2,7 @@ package org.adempiere.webui.grid;
 
 import java.util.logging.Level;
 
+import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.WPOS;
 import org.adempiere.webui.ClientInfo;
 import org.adempiere.webui.component.Grid;
@@ -16,6 +17,7 @@ import org.compiere.model.GridWindow;
 import org.compiere.model.MField;
 import org.compiere.model.MRole;
 import org.compiere.model.MTab;
+import org.compiere.model.MWindow;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.Component;
@@ -62,6 +64,13 @@ public class WQuickEntryPOS extends WQuickEntry {
 		
 	protected void initPOs(){
 		GridWindow gridwindow = GridWindow.get(Env.getCtx(), m_WindowNo, m_AD_Window_ID);
+		//iDempiereConsulting __08/11/2019 --- Segnalazione di problema accesso ruolo window 
+		if(gridwindow == null) {
+			MWindow win = new MWindow(Env.getCtx(), m_AD_Window_ID, null);
+			String nameWindow = win.get_Translation("Name");
+			throw new AdempierePOSException("Problema di accesso Ruolo per maschera: \""+nameWindow+"\". Contattare Amministratore di Sistema per risolvere il problema.");
+		}
+		
 		this.setTitle(gridwindow.getName());
 		boolean newTab = false;
 		
