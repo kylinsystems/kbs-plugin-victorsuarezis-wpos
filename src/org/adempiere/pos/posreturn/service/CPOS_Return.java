@@ -647,7 +647,7 @@ public class CPOS_Return {
 //		if (entityPOS.getDeliveryRule() != null)
 //			currentDDT.setDeliveryRule(getDeliveryRule());
 		
-		currentReturn.setM_Warehouse_ID(entityPOS.getM_Warehouse_ID()); 
+		currentReturn.set_ValueNoCheck("M_Warehouse_ID",entityPOS.getM_Warehouse_ID()); 
 		currentReturn.setC_DocType_ID(docTypeTargetId);
 		String movementTypeShipment = null;
 		MDocType dtShipment = new MDocType(Env.getCtx(), docTypeTargetId, null); 
