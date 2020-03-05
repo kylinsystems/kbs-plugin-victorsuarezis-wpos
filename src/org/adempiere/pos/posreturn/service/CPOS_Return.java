@@ -828,7 +828,7 @@ public class CPOS_Return {
 		}
         //create new line
 		MInOutLine line = new MInOutLine(currentReturn);
-		line.setM_Product_ID(product.getM_Product_ID());
+		line.setProduct(product);
 		line.setQty(qtyEntered);
 		
 		MOrgInfo orgInfo = MOrgInfo.get(getCtx(), Env.getAD_Org_ID(getCtx()), null);
