@@ -25,6 +25,7 @@ import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 
 
@@ -35,7 +36,7 @@ import org.zkoss.zk.ui.event.EventListener;
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
 public abstract class WPOSSubPanel extends Panel 
-	implements EventListener
+	implements EventListener<Event>
 {
 	/**
 	 * 

@@ -32,7 +32,7 @@ import org.zkoss.zul.Timer;
  * Component allows display the POS password Pin
  *  eEvolution author Victor Perez <victor.perez@e-evolution.com>, Created by e-Evolution on 26/01/16.
  */
-public class WPOSUserPinListener implements EventListener {
+public class WPOSUserPinListener implements EventListener<Event> {
     
 	/**
 	 * Constructor

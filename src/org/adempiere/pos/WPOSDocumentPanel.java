@@ -114,8 +114,10 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	@Override
 	public void init(){
 		int C_POSKeyLayout_ID = posPanel.getC_POSKeyLayout_ID();
-		if (C_POSKeyLayout_ID == 0)
+		if (C_POSKeyLayout_ID == 0) {
+			log.severe("C_POSKeyLayout_ID is Mandatory");
 			return;
+		}
 		m_Format = DisplayType.getNumberFormat(DisplayType.Amount);
 		isKeyboard = false;
 		v_TotalsPanel = GridFactory.newGridLayout();
@@ -511,39 +513,44 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 	@Override
 	public void refreshPanel() {
 		log.fine("RefreshPanel");
-		if (!posPanel.hasOrder()) {
-			//	Document Info
-			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals"));
-			salesRep.setSelectedKeyNamePair(new KeyNamePair(posPanel.getSalesRep_ID(), posPanel.getSalesRepName()));
-			documentType.setText(Msg.getMsg(posPanel.getCtx(), "Order"));
-			documentNo.setText(Msg.getMsg(posPanel.getCtx(), "New"));
-			documentStatus.setText("");
-			documentDate.setText("");
-			documentDatePromised.setText("");
-			totalLines.setText(posPanel.getNumberFormat().format(Env.ZERO));
-			grandTotal.setText(posPanel.getNumberFormat().format(Env.ZERO));
-			taxAmount.setText(posPanel.getNumberFormat().format(Env.ZERO));
-			bPartnerName.setText(null);
+		if(v_TitleBorder == null) {
+			log.severe("TitleBorder is NULL in WPOSDocumentPanel");
+			return;
 		} else {
-			//	Set Values
-			//	Document Info
-			String currencyISOCode = posPanel.getCurSymbol();
-			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals") + " (" +currencyISOCode + ")");
-			salesRep.setSelectedKeyNamePair(new KeyNamePair(posPanel.getSalesRep_ID(), posPanel.getSalesRepName()));
-			documentType.setText(posPanel.getDocumentTypeName());
-			documentNo.setText(posPanel.getDocumentNo());
-			documentStatus.setText(posPanel.getOrder().getDocStatusName());
-			documentDate.setText(posPanel.getDateOrderedForView());
-			documentDatePromised.setText(posPanel.getDatePromisedForView());
-			totalLines.setText(posPanel.getTotaLinesForView());
-			grandTotal.setText(posPanel.getGrandTotalForView());
-			taxAmount.setText(posPanel.getTaxAmtForView());
-			bPartnerName.setText(posPanel.getBPName());
+			if (!posPanel.hasOrder()) {
+				//	Document Info
+				v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals"));
+				salesRep.setSelectedKeyNamePair(new KeyNamePair(posPanel.getSalesRep_ID(), posPanel.getSalesRepName()));
+				documentType.setText(Msg.getMsg(posPanel.getCtx(), "Order"));
+				documentNo.setText(Msg.getMsg(posPanel.getCtx(), "New"));
+				documentStatus.setText("");
+				documentDate.setText("");
+				documentDatePromised.setText("");
+				totalLines.setText(posPanel.getNumberFormat().format(Env.ZERO));
+				grandTotal.setText(posPanel.getNumberFormat().format(Env.ZERO));
+				taxAmount.setText(posPanel.getNumberFormat().format(Env.ZERO));
+				bPartnerName.setText(null);
+			} else {
+				//	Set Values
+				//	Document Info
+				String currencyISOCode = posPanel.getCurSymbol();
+				v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Totals") + " (" +currencyISOCode + ")");
+				salesRep.setSelectedKeyNamePair(new KeyNamePair(posPanel.getSalesRep_ID(), posPanel.getSalesRepName()));
+				documentType.setText(posPanel.getDocumentTypeName());
+				documentNo.setText(posPanel.getDocumentNo());
+				documentStatus.setText(posPanel.getOrder().getDocStatusName());
+				documentDate.setText(posPanel.getDateOrderedForView());
+				documentDatePromised.setText(posPanel.getDatePromisedForView());
+				totalLines.setText(posPanel.getTotaLinesForView());
+				grandTotal.setText(posPanel.getGrandTotalForView());
+				taxAmount.setText(posPanel.getTaxAmtForView());
+				bPartnerName.setText(posPanel.getBPName());
+			}
+			//	Repaint
+			v_TotalsPanel.invalidate();
+			v_OrderPanel.invalidate();
+			v_GroupPanel.invalidate();
 		}
-		//	Repaint
-		v_TotalsPanel.invalidate();
-		v_OrderPanel.invalidate();
-		v_GroupPanel.invalidate();
 	}
 
 

@@ -60,11 +60,11 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Separator;
 
-import it.cnet.impl.editorNatIDNumber.editor.TaxIDbox;
-import it.cnet.impl.editorNatIDNumber.editor_2.TaxIdbox;
-import it.cnet.impl.editorNatIDNumber.editor_2.WTaxIdFormWindow;
-import it.cnet.impl.editorNatIDNumber.editor_2.WTaxIdNumbEditor;
-import it.cnet.impl.editorNatIDNumber.model.MLIT_BPTaxIDInfo;
+//import it.cnet.impl.editorNatIDNumber.editor.TaxIDbox;
+//import it.cnet.impl.editorNatIDNumber.editor_2.TaxIdbox;
+//import it.cnet.impl.editorNatIDNumber.editor_2.WTaxIdFormWindow;
+//import it.cnet.impl.editorNatIDNumber.editor_2.WTaxIdNumbEditor;
+//import it.cnet.impl.editorNatIDNumber.model.MLIT_BPTaxIDInfo;
 
 /**
  * Business Partner : Based on VBPartner
@@ -76,7 +76,7 @@ import it.cnet.impl.editorNatIDNumber.model.MLIT_BPTaxIDInfo;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  */
 
-public class WPOSBPartner_Transfer extends Window implements EventListener
+public class WPOSBPartner_Transfer extends Window implements EventListener<Event>
 {
 	/**
 	 * 
@@ -146,7 +146,7 @@ public class WPOSBPartner_Transfer extends Window implements EventListener
 	
 	private WPOS_Transfer		pos = null;
 	
-	private TaxIDbox  taxIdNumb;
+//	private TaxIDbox  taxIdNumb;
 
 	/**
 	 *	Static Init
@@ -235,73 +235,73 @@ public class WPOSBPartner_Transfer extends Window implements EventListener
 		GridWindow gridWindow = GridWindow.get(Env.getCtx(), 0, MWindow.getWindow_ID("Business Partner"), true);
 		GridTab gridTab = gridWindow.getTab(0);
 		gridTab.initTab(false);
-		GridField gridField = gridTab.getField("LIT_TaxID");
+//		GridField gridField = gridTab.getField("LIT_TaxID");
 		
-		taxIdNumb = new TaxIDbox();
-		taxIdNumb.setEnabled(true);
-		taxIdNumb.getTextbox().setReadonly(false);
-		taxIdNumb.setButtonImage(ThemeManager.getThemeResource("images/Location10.png"));
-//		taxIdNumb.getComponent().setWidth("97%");
-		taxIdNumb.getTextbox().setStyle(WPOS.FONTSIZESMALL);
-		createLine(taxIdNumb, "LIT_TaxID", false);
-		taxIdNumb.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
-
-			@Override
-			public void onEvent(Event event) throws Exception {
-				if(taxIdNumb.getText()!=null && taxIdNumb.getText().trim().length()>0){
-					final WTaxIdPopup window = new WTaxIdPopup((String)taxIdNumb.getText());
-					window.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "taxIDNumber");
-					window.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
-					window.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
-						@Override
-						public void onEvent(Event event) throws Exception {
-							if(window.getSuccessOK()){
-								
-								pos.configureBPartner(window.getBP_ID());
-								//	Refresh
-								pos.refreshPanel();
-								
-								dispose();
-								
-	//							setValue(window.getValueTaxID());
-	//							ValueChangeEvent vc = new ValueChangeEvent(WTaxIdNumbEditor.this,getColumnName(),null,window.getValueTaxID());
-	//							fireValueChange(vc);
-							}
-						}
-					});
-					AEnv.showWindow(window);
-				}
-			}
-		});
-		taxIdNumb.addEventListener(Events.ON_OK, new EventListener<Event>() {
-
-			@Override
-			public void onEvent(Event event) throws Exception {
-				if(taxIdNumb.getText()!=null && taxIdNumb.getText().trim().length()>0){
-					final WTaxIdPopup window = new WTaxIdPopup((String)taxIdNumb.getText());
-					window.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "taxIDNumber");
-					window.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
-					window.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
-						@Override
-						public void onEvent(Event event) throws Exception {
-							if(window.getSuccessOK()){
-								
-								pos.configureBPartner(window.getBP_ID());
-								//	Refresh
-								pos.refreshPanel();
-								
-								dispose();
-								
-	//							setValue(window.getValueTaxID());
-	//							ValueChangeEvent vc = new ValueChangeEvent(WTaxIdNumbEditor.this,getColumnName(),null,window.getValueTaxID());
-	//							fireValueChange(vc);
-							}
-						}
-					});
-					AEnv.showWindow(window);
-				}
-			}
-		});
+//		taxIdNumb = new TaxIDbox();
+//		taxIdNumb.setEnabled(true);
+//		taxIdNumb.getTextbox().setReadonly(false);
+//		taxIdNumb.setButtonImage(ThemeManager.getThemeResource("images/Location10.png"));
+////		taxIdNumb.getComponent().setWidth("97%");
+//		taxIdNumb.getTextbox().setStyle(WPOS.FONTSIZESMALL);
+//		createLine(taxIdNumb, "LIT_TaxID", false);
+//		taxIdNumb.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+//
+//			@Override
+//			public void onEvent(Event event) throws Exception {
+//				if(taxIdNumb.getText()!=null && taxIdNumb.getText().trim().length()>0){
+//					final WTaxIdPopup window = new WTaxIdPopup((String)taxIdNumb.getText());
+//					window.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "taxIDNumber");
+//					window.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
+//					window.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
+//						@Override
+//						public void onEvent(Event event) throws Exception {
+//							if(window.getSuccessOK()){
+//								
+//								pos.configureBPartner(window.getBP_ID());
+//								//	Refresh
+//								pos.refreshPanel();
+//								
+//								dispose();
+//								
+//	//							setValue(window.getValueTaxID());
+//	//							ValueChangeEvent vc = new ValueChangeEvent(WTaxIdNumbEditor.this,getColumnName(),null,window.getValueTaxID());
+//	//							fireValueChange(vc);
+//							}
+//						}
+//					});
+//					AEnv.showWindow(window);
+//				}
+//			}
+//		});
+//		taxIdNumb.addEventListener(Events.ON_OK, new EventListener<Event>() {
+//
+//			@Override
+//			public void onEvent(Event event) throws Exception {
+//				if(taxIdNumb.getText()!=null && taxIdNumb.getText().trim().length()>0){
+//					final WTaxIdPopup window = new WTaxIdPopup((String)taxIdNumb.getText());
+//					window.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "taxIDNumber");
+//					window.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
+//					window.addEventListener(DialogEvents.ON_WINDOW_CLOSE, new EventListener<Event>() {
+//						@Override
+//						public void onEvent(Event event) throws Exception {
+//							if(window.getSuccessOK()){
+//								
+//								pos.configureBPartner(window.getBP_ID());
+//								//	Refresh
+//								pos.refreshPanel();
+//								
+//								dispose();
+//								
+//	//							setValue(window.getValueTaxID());
+//	//							ValueChangeEvent vc = new ValueChangeEvent(WTaxIdNumbEditor.this,getColumnName(),null,window.getValueTaxID());
+//	//							fireValueChange(vc);
+//							}
+//						}
+//					});
+//					AEnv.showWindow(window);
+//				}
+//			}
+//		});
 		
 		
 		//
@@ -374,7 +374,7 @@ public class WPOSBPartner_Transfer extends Window implements EventListener
 		if (m_pLocation != null)
 		{
 			int location = m_pLocation.getC_Location_ID();
-			fAddress.setValue (new Integer(location));
+			fAddress.setValue (location);
 			
 			fPhone.setText(m_pLocation.getPhone());
 			fPhone2.setText(m_pLocation.getPhone2());
@@ -509,13 +509,13 @@ public class WPOSBPartner_Transfer extends Window implements EventListener
 		isKeyboard = true;
 		Textbox field = (Textbox) e.getTarget();
 
-		WPOSKeyboard keyboard = null;//pos.getKeyboard();
-	  	if(keyboard != null){
-	  		if(e.getName().equals(Events.ON_FOCUS)){
-	  			keyboard.setPosTextField(field);	
-	  			AEnv.showWindow(keyboard);
-	  		}
-		}
+//		WPOSKeyboard keyboard = null;//pos.getKeyboard();
+//	  	if(keyboard != null){
+//	  		if(e.getName().equals(Events.ON_FOCUS)){
+//	  			keyboard.setPosTextField(field);	
+//	  			AEnv.showWindow(keyboard);
+//	  		}
+//		}
 		return field.getText();
 	}
 	

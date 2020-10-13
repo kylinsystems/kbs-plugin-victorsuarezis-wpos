@@ -47,10 +47,10 @@ import org.zkoss.zul.Center;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
 
-import it.cnet.impl.editorNatIDNumber.model.MLIT_BPTaxIDInfo;
-import it.cnet.impl.editorNatIDNumber.vies_client.ViesVatRegistration;
-import it.cnet.impl.editorNatIDNumber.vies_client.ViesVatService;
-import it.cnet.impl.editorNatIDNumber.vies_client.ViesVatServiceException;
+//import it.cnet.impl.editorNatIDNumber.model.MLIT_BPTaxIDInfo;
+//import it.cnet.impl.editorNatIDNumber.vies_client.ViesVatRegistration;
+//import it.cnet.impl.editorNatIDNumber.vies_client.ViesVatService;
+//import it.cnet.impl.editorNatIDNumber.vies_client.ViesVatServiceException;
 
 /**
  * 
@@ -100,7 +100,7 @@ public class WTaxIdPopup extends Window implements EventListener<Event>, DialogE
 	
 	private static final String LABEL_STYLE = "white-space: nowrap;";
 	
-	private MLIT_BPTaxIDInfo   m_taxIDNumber;
+	//private MLIT_BPTaxIDInfo   m_taxIDNumber;
 	private MLocation   m_location;
 
 	private String name;
@@ -124,7 +124,7 @@ public class WTaxIdPopup extends Window implements EventListener<Event>, DialogE
 			zkInit();
 //			initOK = dynInit(); // Null Pointer if order/invoice not saved yet
 			
-			loadData(valueTxt);
+			//loadData(valueTxt);
 			
 //			m_taxIDNumber = getRecord(valueTxt);
 //			if(m_taxIDNumber!=null)
@@ -143,95 +143,95 @@ public class WTaxIdPopup extends Window implements EventListener<Event>, DialogE
 		this.setAttribute(Window.MODE_KEY, Window.MODE_HIGHLIGHTED);
 	}
 	
-	private void loadData(String valueTxt){
-		if(valueTxt!=null && valueTxt.trim().length()>0)
-			txtVATNumber.setText(valueTxt);
-		else
-			return;
-		
-		String okNoDuplicate = duplicateCtrl(valueTxt);
-		
-		ViesVatService vl = new ViesVatService();
-		String countryCode = ((MCountry)lstCountryCode.getSelectedItem().getValue()).getCountryCode();
-//		String countryCode = "IT";
-		String VATNumber = valueTxt;
-		ViesVatRegistration resDk = null;
-		try
-		{
-			resDk = vl.lookup(countryCode, VATNumber);
-		}catch(ViesVatServiceException ex)
-		{
-			FDialog.error(0, this, "Error_Bussiness_Service", Msg.parseTranslation(Env.getCtx(), ex.getMessage()));
-			return;
-		}
+//	private void loadData(String valueTxt){
+//		if(valueTxt!=null && valueTxt.trim().length()>0)
+//			txtVATNumber.setText(valueTxt);
+//		else
+//			return;
+//		
+//		String okNoDuplicate = duplicateCtrl(valueTxt);
+//		
+//		ViesVatService vl = new ViesVatService();
+//		String countryCode = ((MCountry)lstCountryCode.getSelectedItem().getValue()).getCountryCode();
+////		String countryCode = "IT";
+//		String VATNumber = valueTxt;
+//		ViesVatRegistration resDk = null;
+//		try
+//		{
+//			resDk = vl.lookup(countryCode, VATNumber);
+//		}catch(ViesVatServiceException ex)
+//		{
+//			FDialog.error(0, this, "Error_Bussiness_Service", Msg.parseTranslation(Env.getCtx(), ex.getMessage()));
+//			return;
+//		}
         
         //System.out.println("vl.lookup(\"IT\", \"00488410010\") = "+ resDk);
         
-        if(resDk !=null){
-        	
-        	StringBuffer result = new StringBuffer();
-        	
-        	
-        	name = resDk.getName();
-        	result.append(name).append("\n");
-        	address = resDk.getAddress().substring(0, resDk.getAddress().indexOf("\n"));
-        	result.append("\n"+" --- " +address).append("\n");
-
-        	postal = resDk.getAddress().substring(resDk.getAddress().indexOf("\n")+1);
-        	
-        	MRegion rr = null;
-        	MCountry c = new Query(Env.getCtx(), MCountry.Table_Name, MCountry.COLUMNNAME_CountryCode+"=?", null)
-        			.setOnlyActiveRecords(true)
-        			.setParameters(countryCode)
-        			.first();
-        	
-        	result.append("\n"+" --- " +postal.substring(0, 5)).append("\n");
-        	
-        	if(countryCode.equals("IT"))
-        	{
-        		city= postal.substring(6, postal.lastIndexOf("\n")-3);
-        		result.append("\n"+" --- " +city).append("\n");
-        		
-        		txtCity.setValue(city);
-        		
-        		rr = new Query(Env.getCtx(), MRegion.Table_Name, 
-	        			MRegion.COLUMNNAME_Name+"=? AND "+MRegion.COLUMNNAME_C_Country_ID+"=?",
-	        			null)
-	        			.setParameters(postal.substring(postal.lastIndexOf("\n")-3,postal.lastIndexOf("\n")).trim(), c.getC_Country_ID())
-	        			.first();
-        	}
-        	else{
-        		result.append("\n"+" --- " +postal.substring(6).replace("\n", "")).append("\n");
-        	}
-        	regionName = rr.getName();
-        	countryName = c.getName();
-        	result.append("\n"+" --- " +regionName).append("\n");
-        	result.append("\n"+" --- " + countryName).append("\n");
-			
-			if(!okNoDuplicate.equals("OK"))
-			{
-				throw new WrongValueException(txtVATNumber, "Business Partner Duplicated...");
-			}
-			
-        	lblRegion.setMultiline(true);
-        	lblRegion.setValue(result.toString());
-			
-        }
-        else{
-        	FDialog.error(-1, "Error_Bussiness_Service");
-        }
-	}
+//        if(resDk !=null){
+//        	
+//        	StringBuffer result = new StringBuffer();
+//        	
+//        	
+//        	name = resDk.getName();
+//        	result.append(name).append("\n");
+//        	address = resDk.getAddress().substring(0, resDk.getAddress().indexOf("\n"));
+//        	result.append("\n"+" --- " +address).append("\n");
+//
+//        	postal = resDk.getAddress().substring(resDk.getAddress().indexOf("\n")+1);
+//        	
+//        	MRegion rr = null;
+//        	MCountry c = new Query(Env.getCtx(), MCountry.Table_Name, MCountry.COLUMNNAME_CountryCode+"=?", null)
+//        			.setOnlyActiveRecords(true)
+//        			.setParameters(countryCode)
+//        			.first();
+//        	
+//        	result.append("\n"+" --- " +postal.substring(0, 5)).append("\n");
+//        	
+////        	if(countryCode.equals("IT"))
+////        	{
+////        		city= postal.substring(6, postal.lastIndexOf("\n")-3);
+////        		result.append("\n"+" --- " +city).append("\n");
+////        		
+////        		txtCity.setValue(city);
+////        		
+////        		rr = new Query(Env.getCtx(), MRegion.Table_Name, 
+////	        			MRegion.COLUMNNAME_Name+"=? AND "+MRegion.COLUMNNAME_C_Country_ID+"=?",
+////	        			null)
+////	        			.setParameters(postal.substring(postal.lastIndexOf("\n")-3,postal.lastIndexOf("\n")).trim(), c.getC_Country_ID())
+////	        			.first();
+////        	}
+////        	else{
+//        		result.append("\n"+" --- " +postal.substring(6).replace("\n", "")).append("\n");
+//        	//}
+//        	regionName = rr.getName();
+//        	countryName = c.getName();
+//        	result.append("\n"+" --- " +regionName).append("\n");
+//        	result.append("\n"+" --- " + countryName).append("\n");
+//			
+////			if(!okNoDuplicate.equals("OK"))
+////			{
+////				throw new WrongValueException(txtVATNumber, "Business Partner Duplicated...");
+////			}
+//			
+//        	lblRegion.setMultiline(true);
+//        	lblRegion.setValue(result.toString());
+//			
+//        }
+//        else{
+//        	FDialog.error(-1, "Error_Bussiness_Service");
+//        }
+//	}
 	
-	private MLIT_BPTaxIDInfo getRecord(String valueTxt) {
-
-		String whereClause = MLIT_BPTaxIDInfo.COLUMNNAME_LIT_VATNumber+"=? ";
-		return new Query(Env.getCtx(), MLIT_BPTaxIDInfo.Table_Name, whereClause, null)
-				.setClient_ID()
-				.setOnlyActiveRecords(true)
-				.setParameters(valueTxt)
-				.first();
-		
-	}
+//	private MLIT_BPTaxIDInfo getRecord(String valueTxt) {
+//
+//		String whereClause = MLIT_BPTaxIDInfo.COLUMNNAME_LIT_VATNumber+"=? ";
+//		return new Query(Env.getCtx(), MLIT_BPTaxIDInfo.Table_Name, whereClause, null)
+//				.setClient_ID()
+//				.setOnlyActiveRecords(true)
+//				.setParameters(valueTxt)
+//				.first();
+//		
+//	}
 
 	private void zkInit() throws Exception {
 		this.appendChild(mainPanel);
@@ -350,27 +350,27 @@ public class WTaxIdPopup extends Window implements EventListener<Event>, DialogE
 		if (event.getTarget() == confirmPanel.getButton(ConfirmPanel.A_OK)) 
 		{
 			
-			if(m_taxIDNumber==null)
-				m_taxIDNumber = new MLIT_BPTaxIDInfo(Env.getCtx(), 0, null);
-			
-			m_taxIDNumber.setCountryCode(((MCountry)lstCountryCode.getSelectedItem().getValue()).getName().toUpperCase());
-			m_taxIDNumber.setC_Country_ID(((MCountry)lstCountryCode.getSelectedItem().getValue()).get_ID());
-			m_taxIDNumber.setLIT_TradeName(name);
-			m_taxIDNumber.setLIT_VATNumber(txtVATNumber.getValue());
-			m_taxIDNumber.setName(txtVATNumber.getValue()+"_"+name);
-			m_taxIDNumber.setAddress1(address);
-			m_taxIDNumber.setC_City_ID(txtCity.getC_City_ID()); 
-			m_taxIDNumber.setCity(city);
-			m_taxIDNumber.setPostal(postal);
-			m_taxIDNumber.saveEx();
+//			if(m_taxIDNumber==null)
+//				m_taxIDNumber = new MLIT_BPTaxIDInfo(Env.getCtx(), 0, null);
+//			
+//			m_taxIDNumber.setCountryCode(((MCountry)lstCountryCode.getSelectedItem().getValue()).getName().toUpperCase());
+//			m_taxIDNumber.setC_Country_ID(((MCountry)lstCountryCode.getSelectedItem().getValue()).get_ID());
+//			m_taxIDNumber.setLIT_TradeName(name);
+//			m_taxIDNumber.setLIT_VATNumber(txtVATNumber.getValue());
+//			m_taxIDNumber.setName(txtVATNumber.getValue()+"_"+name);
+//			m_taxIDNumber.setAddress1(address);
+//			m_taxIDNumber.setC_City_ID(txtCity.getC_City_ID()); 
+//			m_taxIDNumber.setCity(city);
+//			m_taxIDNumber.setPostal(postal);
+//			m_taxIDNumber.saveEx();
 			
 			MBPartner partner = new MBPartner(Env.getCtx(), 0, null);
 			partner.setName(name);
 			partner.set_ValueOfColumn("TaxID", txtVATNumber.getValue());
 			partner.saveEx();
 			
-			m_taxIDNumber.setC_BPartner_ID(partner.getC_BPartner_ID());
-			m_taxIDNumber.saveEx();
+//			m_taxIDNumber.setC_BPartner_ID(partner.getC_BPartner_ID());
+//			m_taxIDNumber.saveEx();
 			bpartnerID = partner.getC_BPartner_ID();
 			
 			Trx trx = Trx.get(Trx.createTrxName("WTaxIdNumberDialog"), true);
@@ -432,7 +432,7 @@ public class WTaxIdPopup extends Window implements EventListener<Event>, DialogE
 		else if (lstCountryCode.equals(event.getTarget()))
 		{
 			
-			loadData(txtVATNumber.getValue());
+			//loadData(txtVATNumber.getValue());
 //			//  refresh
 //			try {
 //				dynInit();
@@ -517,19 +517,19 @@ public class WTaxIdPopup extends Window implements EventListener<Event>, DialogE
 			return "";
 	}
 	
-	private String duplicateCtrl(String cf)
-	{
-			
-		String sql = "SELECT "+MLIT_BPTaxIDInfo.COLUMNNAME_LIT_C_BPartner_TaxIDInfo_ID 
-				+ " FROM "+MLIT_BPTaxIDInfo.Table_Name 
-				+ " WHERE "+MLIT_BPTaxIDInfo.COLUMNNAME_LIT_VATNumber+"=? "
-				+ "AND "+MLIT_BPTaxIDInfo.COLUMNNAME_AD_Client_ID+"=?";
-		
-		int result = DB.getSQLValue(null, sql, cf, Env.getAD_Client_ID(Env.getCtx()));
-		
-		if(result >0)
-			return Msg.getMsg(Env.getCtx(), "TaxCode_Duplicated", true);
-		
-		return "OK";
-	}
+//	private String duplicateCtrl(String cf)
+//	{
+//			
+//		String sql = "SELECT "+MLIT_BPTaxIDInfo.COLUMNNAME_LIT_C_BPartner_TaxIDInfo_ID 
+//				+ " FROM "+MLIT_BPTaxIDInfo.Table_Name 
+//				+ " WHERE "+MLIT_BPTaxIDInfo.COLUMNNAME_LIT_VATNumber+"=? "
+//				+ "AND "+MLIT_BPTaxIDInfo.COLUMNNAME_AD_Client_ID+"=?";
+//		
+//		int result = DB.getSQLValue(null, sql, cf, Env.getAD_Client_ID(Env.getCtx()));
+//		
+//		if(result >0)
+//			return Msg.getMsg(Env.getCtx(), "TaxCode_Duplicated", true);
+//		
+//		return "OK";
+//	}
 }

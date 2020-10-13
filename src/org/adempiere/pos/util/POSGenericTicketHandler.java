@@ -27,7 +27,7 @@ import org.compiere.process.ProcessInfo;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
-import it.cnet.idempiere.utilPDF.utility.PrinterUtil;
+//import it.cnet.idempiere.utilPDF.utility.PrinterUtil;
 
 /**
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
@@ -74,9 +74,9 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 //						false, 
 //						null, 
 //						info);
-			PrinterUtil printerUtil = new PrintDirect(info);
-			printerUtil.setDirectPrint(true);
-			printerUtil.print();
+//			PrinterUtil printerUtil = new PrintDirect(info);
+//			printerUtil.setDirectPrint(true);
+//			printerUtil.print();
 				
 				
 			} else {
@@ -84,8 +84,8 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 					info = new ProcessInfo ("", 0, invoice.Table_ID, invoice.getC_Invoice_ID());
 					info.setTransactionName(getPOS().get_TrxName());
 					
-					int LIT_POS_InvoicePrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_InvoicePrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));
-					MPrintFormat printformat = new MPrintFormat(Env.getCtx(), LIT_POS_InvoicePrintForm_ID, null);
+//					int LIT_POS_InvoicePrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_InvoicePrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));
+//					MPrintFormat printformat = new MPrintFormat(Env.getCtx(), LIT_POS_InvoicePrintForm_ID, null);
 //					ReportCtlPOS.startDocumentPrint(
 //							ReportEngine.INVOICE, 
 //							printformat, 
@@ -95,9 +95,9 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 //							false, 
 //							null, 
 //							info);
-					PrinterUtil printerUtil = new PrintDirect(info);
-					printerUtil.setDirectPrint(true);
-					printerUtil.print();
+//					PrinterUtil printerUtil = new PrintDirect(info);
+//					printerUtil.setDirectPrint(true);
+//					printerUtil.print();
                 }
 			}
 		} catch (Exception e) {
