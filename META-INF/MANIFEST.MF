@@ -22,14 +22,9 @@ Require-Bundle: org.adempiere.base;bundle-version="6.2.0",
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Ing. Victor Suárez - victor.suarez.is@gmail.com
 Service-Component: OSGI-INF/FormFactoryWPOS.xml
-Import-Package: it.cnet.idempiere.utilPDF.utility,
- it.cnet.impl.editorNatIDNumber.editor,
- it.cnet.impl.editorNatIDNumber.editor_2,
- it.cnet.impl.editorNatIDNumber.model,
- it.cnet.impl.editorNatIDNumber.vies_client,
- org.libero.model,
- org.libero.tables
 Export-Package: net.miginfocom.swing
 Automatic-Module-Name: org.idempiere.wpos
 Bundle-ClassPath: lib/miglayout-3.7.1-swing.jar,
  .
+Import-Package: org.libero.model,
+ org.libero.tables
