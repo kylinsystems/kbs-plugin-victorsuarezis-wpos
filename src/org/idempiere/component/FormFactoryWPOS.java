@@ -30,7 +30,7 @@ public class FormFactoryWPOS implements IFormFactory {
 		}
 
 		try {
-			form = clazz.newInstance();
+			form = clazz.getConstructor().newInstance();
 		} catch (Exception e) {
 			log.warning(String.format("Class cannot be instantiated for Form: %s", formName));
 			e.printStackTrace();
