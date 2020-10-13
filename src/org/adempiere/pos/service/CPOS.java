@@ -1763,9 +1763,11 @@ public class CPOS {
 			//	
 			return;
 		}
-		currentOrder.load(currentOrder.get_TrxName());
-		currentOrder.getLines(true, "Line");
-		partner = MBPartner.get(getCtx(), currentOrder.getC_BPartner_ID());
+		if(currentOrder.getC_Order_ID() > 0) {
+			currentOrder.load(currentOrder.get_TrxName());
+			currentOrder.getLines(true, "Line");
+			partner = MBPartner.get(getCtx(), currentOrder.getC_BPartner_ID());
+		}
 	}
 	
 	/**
