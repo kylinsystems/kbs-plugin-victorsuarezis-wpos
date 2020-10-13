@@ -156,14 +156,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 		appendChild(LayoutButton);
 		rows = LayoutButton.newRows();
 		LayoutButton.setStyle("border:none");
-		row = rows.newRow();
-		row.setHeight("100px");
+//		row = rows.newRow();
+//		row.setHeight("100px");
 		Label title = new Label(posPanel.getM_POS().getDescription());
 		title.setStyle("-webkit-box-sizing: content-box;\n" + 
 				"  -moz-box-sizing: content-box;\n" + 
 				"  box-sizing: content-box;\n" + 
 				"  width: 98%;\n" + 
-				"  height: 300px;\n" + 
+				"  height: 50px;\n" + 
 				"  border: none;\n" + 
 				"  font: normal 30px/1 \"Times New Roman\", Times, serif;\n" + 
 				"  color: rgba(255,255,255,1);\n" + 
@@ -180,7 +180,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 				"  background-clip: border-box;\n" + 
 				"  -webkit-background-size: auto auto;\n" + 
 				"  background-size: auto auto;");
-		row.appendCellChild(title, 11);
+//		row.appendCellChild(title, 11);
 		
 		row = rows.newRow();
 		row.setHeight("55px");
@@ -421,8 +421,8 @@ public class WPOSActionPanel extends WPOSSubPanel
 		}
 		enableButton();
 		actionProcessMenu = new WPOSActionMenu(posPanel);
-		
-		//	List Orders
+//		
+//		//	List Orders
 		posPanel.listOrder();
 		getMainFocus();
 	}

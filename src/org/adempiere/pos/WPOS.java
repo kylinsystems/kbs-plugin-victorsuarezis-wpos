@@ -71,7 +71,7 @@ import org.zkoss.zul.Timer;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public class WPOS extends CPOS implements IFormController, EventListener, POSPanelInterface, POSScalesPanelInterface {
+public class WPOS extends CPOS implements IFormController, EventListener<Event>, POSPanelInterface, POSScalesPanelInterface {
 
 	/** Window No 							*/
 	private int 							windowNo 	 = 0 ;
