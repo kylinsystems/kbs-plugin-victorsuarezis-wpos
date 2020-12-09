@@ -28,15 +28,16 @@ import org.compiere.util.Msg;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 
+
 /**
  * @author Mario Calderon, mario.calderon@westfalia-it.com, Systemhaus Westfalia, http://www.westfalia-it.com
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author Raul Muñoz, rmunoz@erpcya.com, ERPCYA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
- * @author <a href="mailto:victor.suarez.is@gmail.com">Ing. Victor Suarez</a>
- *
  */
-public class WPOSSubPanel_Shopfl extends Panel implements EventListener<Event> {
+public abstract class WPOSSubPanel_Shopfl extends Panel 
+	implements EventListener<Event> {
+	
 
 	/**
 	 * 
@@ -130,4 +131,4 @@ public class WPOSSubPanel_Shopfl extends Panel implements EventListener<Event> {
 		return button;
 	}	//	getButton
 
-}
+}	//	PosSubPanel
