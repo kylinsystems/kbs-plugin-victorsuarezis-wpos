@@ -46,7 +46,7 @@ import org.zkoss.zk.ui.event.EventListener;
  * @author <a href="mailto:victor.suarez.is@gmail.com">Ing. Victor Suarez</a>
  *
  */
-public class WPOSFilterMenu_Shopfl implements POSQueryListener, EventListener<T> {
+public class WPOSFilterMenu_Shopfl implements POSQueryListener, EventListener<Event> {
 
 	private WPOS_Shopfl pos;
 	private WPOSQuery queryPartner;
