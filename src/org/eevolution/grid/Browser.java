@@ -1562,13 +1562,13 @@ public abstract class Browser {
 						else if (field.isKey() && field.getName().equals(field.getAD_View_Column().getColumnSQL().equals("'Row' AS \"Row\"")))
 							data = new IDColumn(no);
 						else if (DisplayType.YesNo == field.getAD_Reference_ID())
-							data = new Boolean("Y".equals(m_rs
-									.getString(colIndex)));
+							data = "Y".equals(m_rs
+									.getString(colIndex));
 						else if (DisplayType.isDate(field.getAD_Reference_ID()))
 							data = m_rs.getTimestamp(colIndex);
 						else if(DisplayType.isID(field.getAD_Reference_ID())
 								|| DisplayType.Integer == field.getAD_Reference_ID())
-							data = new Integer(m_rs.getInt(colIndex));
+							data = m_rs.getInt(colIndex);
 						else if (DisplayType.isNumeric(field.getAD_Reference_ID()))
 							data = m_rs.getBigDecimal(colIndex);
 						/*else if (c == KeyNamePair.class) {

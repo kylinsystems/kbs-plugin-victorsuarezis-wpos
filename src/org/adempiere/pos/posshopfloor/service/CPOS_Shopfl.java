@@ -34,19 +34,19 @@ import org.compiere.model.I_AD_User;
 import org.compiere.model.MDocType;
 import org.compiere.model.MLocator;
 import org.compiere.model.MPOSKey;
-import org.compiere.model.MProduction;
+//import org.compiere.model.MProduction;
 import org.compiere.model.MSequence;
 import org.compiere.model.MUser;
 import org.compiere.model.MWarehouse;
-import org.compiere.process.DocAction;
+//import org.compiere.process.DocAction;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.idempiere.model.MPOS;
 
-import it.cnet.idempiere.LIT_WarehouseExtend.model.MShopfloorControl;
-import it.cnet.idempiere.LIT_WarehouseExtend.model.X_LIT_ShopfloorControl;
+//import it.cnet.idempiere.LIT_WarehouseExtend.model.MShopfloorControl;
+//import it.cnet.idempiere.LIT_WarehouseExtend.model.X_LIT_ShopfloorControl;
 
 /**
  * @author Mario Calderon, mario.calderon@westfalia-it.com, Systemhaus Westfalia, http://www.westfalia-it.com
@@ -70,7 +70,7 @@ public class CPOS_Shopfl {
 	/**	POS Configuration		*/
 	private MPOS 				entityPOS;
 	/**	Current Production		*/
-	private MShopfloorControl currentProduction;
+//	private MShopfloorControl currentProduction;
 	/** Sequence Doc 			*/
 	private MSequence 			documentSequence;
 	/** Context					*/
@@ -181,8 +181,9 @@ public class CPOS_Shopfl {
 			return false;
 		}
 		//	
-		return currentProduction.isProcessed()
-				&& X_LIT_ShopfloorControl.DOCSTATUS_Completed.equals(currentProduction.getDocStatus());
+//		return currentProduction.isProcessed()
+//				&& X_LIT_ShopfloorControl.DOCSTATUS_Completed.equals(currentProduction.getDocStatus());
+		return true;
 	}
 	
 	/**
@@ -217,7 +218,8 @@ public class CPOS_Shopfl {
 			return false;
 		}
 		//
-		return X_LIT_ShopfloorControl.DOCSTATUS_Closed.equals(currentProduction.getDocStatus());
+		//return X_LIT_ShopfloorControl.DOCSTATUS_Closed.equals(currentProduction.getDocStatus());
+		return true;
 	}
 
 	/**
@@ -230,7 +232,8 @@ public class CPOS_Shopfl {
 			return false;
 		}
 		//	
-		return X_LIT_ShopfloorControl.DOCSTATUS_Voided.equals(currentProduction.getDocStatus());
+		//return X_LIT_ShopfloorControl.DOCSTATUS_Voided.equals(currentProduction.getDocStatus());
+		return true;
 	}
 	
 	/**
@@ -244,8 +247,8 @@ public class CPOS_Shopfl {
 		}
 		//	
 		return !isCompleted() 
-				&& !isVoided() 
-				&& X_LIT_ShopfloorControl.DOCSTATUS_Drafted.equals(currentProduction.getDocStatus());
+				&& !isVoided(); 
+				//&& X_LIT_ShopfloorControl.DOCSTATUS_Drafted.equals(currentProduction.getDocStatus());
 	}
 	
 	/**
@@ -259,8 +262,8 @@ public class CPOS_Shopfl {
 		}
 		//	
 		return !isCompleted() 
-				&& !isVoided() 
-				&& X_LIT_ShopfloorControl.DOCSTATUS_InProgress.equals(currentProduction.getDocStatus());
+				&& !isVoided(); 
+				//&& X_LIT_ShopfloorControl.DOCSTATUS_InProgress.equals(currentProduction.getDocStatus());
 	}
 	
 	/**
@@ -274,8 +277,8 @@ public class CPOS_Shopfl {
 		}
 		//	
 		return !isCompleted() 
-				&& !isVoided() 
-				&& X_LIT_ShopfloorControl.DOCSTATUS_Invalid.equals(currentProduction.getDocStatus());
+				&& !isVoided();
+				//&& X_LIT_ShopfloorControl.DOCSTATUS_Invalid.equals(currentProduction.getDocStatus());
 	}
 	
 	
@@ -319,7 +322,8 @@ public class CPOS_Shopfl {
 			return 0;
 		}
 		//	
-		return currentProduction.getC_DocType_ID();
+		//return currentProduction.getC_DocType_ID();
+		return 0;
 	}
 	
 	/**
@@ -346,13 +350,13 @@ public class CPOS_Shopfl {
 	 * @return
 	 * @return MInventory
 	 */
-	public MShopfloorControl getProduction() {
-		return currentProduction;
-	}
-	
-	public void resetProduction(){
-		currentProduction = null;
-	}
+//	public MShopfloorControl getProduction() {
+//		return currentProduction;
+//	}
+//	
+//	public void resetProduction(){
+//		currentProduction = null;
+//	}
 	
 	/**
 	 * Has Production
@@ -361,8 +365,9 @@ public class CPOS_Shopfl {
 	 * @return boolean
 	 */
 	public boolean hasProduction() {
-		return currentProduction != null
-				&& currentProduction.getLIT_ShopfloorControl_ID() != 0;
+//		return currentProduction != null
+//				&& currentProduction.getLIT_ShopfloorControl_ID() != 0;
+		return false;
 	}
 				
 	/**
@@ -474,7 +479,7 @@ public class CPOS_Shopfl {
 	 */
 	public void newProduction(/*int partnerId*/) {
 		log.info( "PosPanel.newProduction");
-		currentProduction = null;
+		//currentProduction = null;
 		int docTypeId = entityPOS.getC_DocType_ID();
 		//	Create Production
 		createProduction(docTypeId);
@@ -492,13 +497,13 @@ public class CPOS_Shopfl {
 		if(!isDrafted())
 			return;
 		//	Set Document Type
-		currentProduction.setC_DocType_ID(docTypeTargetId);
+		//currentProduction.setC_DocType_ID(docTypeTargetId);
 		//	Set Sequenced No
-		String value = DB.getDocumentNo(getC_DocType_ID(), null, false, currentProduction);
-		if (value != null) {
-			currentProduction.setDocumentNo(value);
-		}
-		currentProduction.saveEx();
+//		String value = DB.getDocumentNo(getC_DocType_ID(), null, false, currentProduction);
+//		if (value != null) {
+//			///currentProduction.setDocumentNo(value);
+//		}
+		//currentProduction.saveEx();
 	}
 	
 	
@@ -510,28 +515,28 @@ public class CPOS_Shopfl {
 		int productionId = getFreeLIT_ShopfloorControl_ID();
 		//	Change Values for new Inventory
 		if(productionId > 0) {
-			currentProduction = new MShopfloorControl(Env.getCtx(), productionId, null);
-			currentProduction.setMovementDate(getToday());
+//			currentProduction = new MShopfloorControl(Env.getCtx(), productionId, null);
+//			currentProduction.setMovementDate(getToday());
 			
 		} else {
-			currentProduction = new MShopfloorControl(Env.getCtx(), 0, null);
+//			currentProduction = new MShopfloorControl(Env.getCtx(), 0, null);
 		}
-		currentProduction.setAD_Org_ID(entityPOS.getAD_Org_ID());
-		currentProduction.setC_POS_ID(entityPOS.getC_POS_ID());
-		currentProduction.setM_Warehouse_ID(entityPOS.getM_Warehouse_ID());
-		if (docTypeTargetId != 0) {
-			currentProduction.setC_DocType_ID(docTypeTargetId);
-		} else {
-			currentProduction.setC_DocType_ID(MDocType.getDocType(MDocType.DOCBASETYPE_ManufacturingCostCollector));
-		}
+//		currentProduction.setAD_Org_ID(entityPOS.getAD_Org_ID());
+//		currentProduction.setC_POS_ID(entityPOS.getC_POS_ID());
+//		currentProduction.setM_Warehouse_ID(entityPOS.getM_Warehouse_ID());
+//		if (docTypeTargetId != 0) {
+//			currentProduction.setC_DocType_ID(docTypeTargetId);
+//		} else {
+//			currentProduction.setC_DocType_ID(MDocType.getDocType(MDocType.DOCBASETYPE_ManufacturingCostCollector));
+//		}
 //		currentProduction.saveEx();
 		//	Add if is new
 		if(productionId < 0) {
 			//	Add To List
-			productionList.add(currentProduction.getLIT_ShopfloorControl_ID());
+//			productionList.add(currentProduction.getLIT_ShopfloorControl_ID());
 		}
 		//  Add record
-		reloadIndex(currentProduction.getLIT_ShopfloorControl_ID());
+//		reloadIndex(currentProduction.getLIT_ShopfloorControl_ID());
 	} // PosProductionModel
 	
 	/**
@@ -568,7 +573,7 @@ public class CPOS_Shopfl {
 	 * @param productionId
 	 */
 	public void setProduction(int productionId) {
-		currentProduction = new MShopfloorControl(ctx, productionId, null);
+//		currentProduction = new MShopfloorControl(ctx, productionId, null);
 		//	
 		reloadProduction();
 	}
@@ -581,23 +586,23 @@ public class CPOS_Shopfl {
 	 * @throws Exception 
 	 * @throws AdempiereException 
 	 */
-	private boolean voidProduction() throws AdempiereException, Exception {
-		if (!(currentProduction.getDocStatus().equals(MShopfloorControl.STATUS_Drafted)
-				|| currentProduction.getDocStatus().equals(DocAction.STATUS_InProgress)
-				|| currentProduction.getDocStatus().equals(DocAction.STATUS_Completed)))
-			return false;
-		
-		// Standard way of voiding an order
-		currentProduction.setDocAction(MShopfloorControl.DOCACTION_Void);
-		if (currentProduction.processIt(MShopfloorControl.DOCACTION_Void) ) {
-			currentProduction.setDocAction(MShopfloorControl.DOCACTION_None);
-			currentProduction.setDocStatus(MShopfloorControl.STATUS_Voided);
-			currentProduction.saveEx();
-			return true;
-		} else {
-			return false;
-		}
-	} // 
+//	private boolean voidProduction() throws AdempiereException, Exception {
+//		if (!(currentProduction.getDocStatus().equals(MShopfloorControl.STATUS_Drafted)
+//				|| currentProduction.getDocStatus().equals(DocAction.STATUS_InProgress)
+//				|| currentProduction.getDocStatus().equals(DocAction.STATUS_Completed)))
+//			return false;
+//		
+//		// Standard way of voiding an order
+//		currentProduction.setDocAction(MShopfloorControl.DOCACTION_Void);
+//		if (currentProduction.processIt(MShopfloorControl.DOCACTION_Void) ) {
+//			currentProduction.setDocAction(MShopfloorControl.DOCACTION_None);
+//			currentProduction.setDocStatus(MShopfloorControl.STATUS_Voided);
+//			currentProduction.saveEx();
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	} // 
 	
 	/**
 	 * Execute deleting an Production
@@ -609,23 +614,23 @@ public class CPOS_Shopfl {
 		String errorMsg = null;
 		try {
 			//	Get Index
-			int currentIndex = productionList.indexOf(currentProduction.getLIT_ShopfloorControl_ID());
+//			int currentIndex = productionList.indexOf(currentProduction.getLIT_ShopfloorControl_ID());
 			if (!hasProduction()) {
 				throw new AdempierePOSException("@POS.MustCreateOrder@");
 			} else if (!isCompleted()) {
 				//	Delete Production
-				currentProduction.deleteEx(true);
+//				currentProduction.deleteEx(true);
 			} else if (isCompleted()) {	
-				voidProduction();
+//				voidProduction();
 			} else {
 				throw new AdempierePOSException("@POS.ProdutionIsNotProcessed@");
 			}
 			//	Remove from List
-			if(currentIndex >= 0) {
-				productionList.remove(currentIndex);
-			}
+//			if(currentIndex >= 0) {
+//				productionList.remove(currentIndex);
+//			}
 			//	
-			currentProduction = null;
+//			currentProduction = null;
 			//	Change to Next
 			if(hasRecord()){
 				if(isFirstRecord()) {
@@ -778,25 +783,25 @@ public class CPOS_Shopfl {
 			setIsToPrint(false);
 		} else {	//	Complete Production
 			//	Replace
-			if(trxName == null) {
-				trxName = currentProduction.get_TrxName();
-			} else {
-				currentProduction.set_TrxName(trxName);
-			}
+//			if(trxName == null) {
+//				trxName = currentProduction.get_TrxName();
+//			} else {
+//				currentProduction.set_TrxName(trxName);
+//			}
 			// In case the Order is Invalid, set to In Progress; otherwise it will not be completed
-			if (currentProduction.getDocStatus().equalsIgnoreCase(MShopfloorControl.STATUS_Invalid)) 
-				currentProduction.setDocStatus(MShopfloorControl.STATUS_InProgress);
-			//	Set Document Action
-			currentProduction.setDocAction(DocAction.ACTION_Complete);
-			if (currentProduction.processIt(DocAction.ACTION_Complete)) {
-				currentProduction.saveEx();
-				productionCompleted = true;
-				setIsToPrint(true);
-			} else {
-				log.info( "Process Production FAILED " + currentProduction.getProcessMsg());
-				currentProduction.saveEx();
-				return productionCompleted;
-			}
+//			if (currentProduction.getDocStatus().equalsIgnoreCase(MShopfloorControl.STATUS_Invalid)) 
+//				currentProduction.setDocStatus(MShopfloorControl.STATUS_InProgress);
+//			//	Set Document Action
+//			currentProduction.setDocAction(DocAction.ACTION_Complete);
+//			if (currentProduction.processIt(DocAction.ACTION_Complete)) {
+//				currentProduction.saveEx();
+//				productionCompleted = true;
+//				setIsToPrint(true);
+//			} else {
+//				log.info( "Process Production FAILED " + currentProduction.getProcessMsg());
+//				currentProduction.saveEx();
+//				return productionCompleted;
+//			}
 		}
 
 		return productionCompleted;
@@ -809,7 +814,8 @@ public class CPOS_Shopfl {
 	 * @return String
 	 */
 	public String getProcessMsg() {
-		return currentProduction.getProcessMsg();
+		//return currentProduction.getProcessMsg();
+		return null;
 	}
 			
 	/**
@@ -819,7 +825,8 @@ public class CPOS_Shopfl {
 	 * @return String
 	 */
 	public String getDocumentNo() {
-		return currentProduction.getDocumentNo();
+		//return currentProduction.getDocumentNo();
+		return null;
 	}
 
 //	/**
@@ -844,16 +851,16 @@ public class CPOS_Shopfl {
 	 * 	Load Order
 	 */
 	public void reloadProduction() {
-		if (currentProduction == null) {
-			
-			if(recordPosition != -1
-					&& recordPosition < productionList.size()) {
-				setProduction(productionList.get(recordPosition));
-			}
-			//	
-			return;
-		}
-		currentProduction.load(currentProduction.get_TrxName());
+//		if (currentProduction == null) {
+//			
+//			if(recordPosition != -1
+//					&& recordPosition < productionList.size()) {
+//				setProduction(productionList.get(recordPosition));
+//			}
+//			//	
+//			return;
+//		}
+//		currentProduction.load(currentProduction.get_TrxName());
 	}
 	
 	/**
@@ -903,12 +910,12 @@ public class CPOS_Shopfl {
 	 * @return String
 	 */
 	public String getDocumentTypeName() {
-		if(hasProduction() || currentProduction !=null) {
-			MDocType m_DocType = MDocType.get(getCtx(), currentProduction.getC_DocType_ID());
-			if(m_DocType != null) {
-				return m_DocType.getName();
-			}
-		}
+//		if(hasProduction() || currentProduction !=null) {
+//			MDocType m_DocType = MDocType.get(getCtx(), currentProduction.getC_DocType_ID());
+//			if(m_DocType != null) {
+//				return m_DocType.getName();
+//			}
+//		}
 		//	Default None
 		return "";
 	}
@@ -918,9 +925,9 @@ public class CPOS_Shopfl {
 	 * @return
 	 */
 	public Timestamp getMovementDate() {
-		if(hasProduction() || currentProduction !=null) {
-			return currentProduction.getMovementDate();
-		}
+//		if(hasProduction() || currentProduction !=null) {
+//			return currentProduction.getMovementDate();
+//		}
 		//	Default
 		return null;
 	}
@@ -930,15 +937,15 @@ public class CPOS_Shopfl {
 	 * @return
 	 */
 	public String getDocumentNoMinOut() {
-		if(hasProduction() || currentProduction !=null) {
-			MProduction production = new MProduction(getCtx(), currentProduction.getM_Production_ID(), null);
-			if(production.get_ValueAsInt("lit_c_orderline_outprod_id")>0) {
-				String sql = "SELECT DocumentNo FROM M_InOut "
-						+ "WHERE M_InOut.MovementType IN ('V+') AND (SELECT C_DocType.LIT_DocType_DynamicVal FROM C_DocType WHERE M_InOut.C_DocType_ID=C_DocType.C_DocType_ID) ='SO' "
-						+ "AND C_Order_ID IN (SELECT C_Order_ID FROM LIT_C_Orderline_OutProd WHERE LIT_C_Orderline_OutProd_ID=?)";
-				return DB.getSQLValueString(null, sql, production.get_ValueAsInt("lit_c_orderline_outprod_id"));
-			}
-		}
+//		if(hasProduction() || currentProduction !=null) {
+//			MProduction production = new MProduction(getCtx(), currentProduction.getM_Production_ID(), null);
+//			if(production.get_ValueAsInt("lit_c_orderline_outprod_id")>0) {
+//				String sql = "SELECT DocumentNo FROM M_InOut "
+//						+ "WHERE M_InOut.MovementType IN ('V+') AND (SELECT C_DocType.LIT_DocType_DynamicVal FROM C_DocType WHERE M_InOut.C_DocType_ID=C_DocType.C_DocType_ID) ='SO' "
+//						+ "AND C_Order_ID IN (SELECT C_Order_ID FROM LIT_C_Orderline_OutProd WHERE LIT_C_Orderline_OutProd_ID=?)";
+//				return DB.getSQLValueString(null, sql, production.get_ValueAsInt("lit_c_orderline_outprod_id"));
+//			}
+//		}
 		//	Default
 		return null;
 		
@@ -990,7 +997,7 @@ public class CPOS_Shopfl {
 	public int getLIT_ShopfloorControl_ID() {
 		int m_LIT_ShopfloorControl_ID = 0;
 		if(hasProduction()) {
-			m_LIT_ShopfloorControl_ID = currentProduction.getLIT_ShopfloorControl_ID();
+//			m_LIT_ShopfloorControl_ID = currentProduction.getLIT_ShopfloorControl_ID();
 		}
 		//	Default
 		return m_LIT_ShopfloorControl_ID;
@@ -1323,7 +1330,8 @@ public class CPOS_Shopfl {
 		if(!hasProduction())
 			return null;
 		//	Default
-		return currentProduction.get_TrxName();
+		//return currentProduction.get_TrxName();
+		return null;
 	}
 
 }

@@ -22,6 +22,7 @@ import org.adempiere.webui.component.Textbox;
 import org.zkoss.zhtml.Table;
 import org.zkoss.zhtml.Td;
 import org.zkoss.zhtml.Tr;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Div;
@@ -198,7 +199,7 @@ public class WPOSTextField extends Div {
 	}
 	
 	@Override
-	public boolean addEventListener(String Event, EventListener listener)
+	public boolean addEventListener(String Event, EventListener<? extends Event> listener)
 	{
 		addEventListener(listener);
 	    return true;
@@ -209,7 +210,7 @@ public class WPOSTextField extends Div {
 	* @param listener		
 	* @return void		
 	*/		
-	public void addEventListener(EventListener listener)
+	public void addEventListener(EventListener<? extends Event> listener)
 	{
 
 		f_TextField.addEventListener(Events.ON_FOCUS, listener);

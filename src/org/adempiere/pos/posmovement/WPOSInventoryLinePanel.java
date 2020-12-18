@@ -34,7 +34,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Style;
+//import org.zkoss.zul.Style;
 import org.zkoss.zul.event.ListDataEvent;
 
 /**

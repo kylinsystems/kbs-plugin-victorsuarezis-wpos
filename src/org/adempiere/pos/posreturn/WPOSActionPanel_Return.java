@@ -340,7 +340,7 @@ public class WPOSActionPanel_Return extends WPOSSubPanel_Return
 		row.setHeight("35px");
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) {
 //			lookupProduct = new WPOSLookupProduct(this, fieldProductName, new Long("1"));
-			lookupProduct = new WPOSLookupProduct(this, null, new Long("1"));
+			lookupProduct = new WPOSLookupProduct(this, null, 1);
 			lookupProduct.setPartnerId(posPanel.getC_BPartner_ID());
 			lookupProduct.setWarehouseId(posPanel.getM_Warehouse_ID());
 			findProductTimer = new Timer(500); // , lookupProduct);

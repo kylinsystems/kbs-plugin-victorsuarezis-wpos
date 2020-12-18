@@ -23,7 +23,7 @@ import java.util.Properties;
 import org.compiere.model.I_AD_Column;
 import org.compiere.model.MColumn;
 import org.compiere.model.Query;
-import org.compiere.util.CLogger;
+//import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 
 /**
@@ -40,7 +40,7 @@ public class MViewColumn extends X_AD_View_Column {
 	 */
 	private static final long serialVersionUID = 1829379740863651306L;
 	/** Logger **/
-	private static CLogger s_log = CLogger.getCLogger(MViewColumn.class);
+//	private static CLogger s_log = CLogger.getCLogger(MViewColumn.class);
 	/** MColumn **/
 	private MColumn m_column = null;
 	

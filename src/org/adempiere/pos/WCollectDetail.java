@@ -17,7 +17,6 @@
 
 package org.adempiere.pos;
 
-import java.awt.Event;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,9 +32,9 @@ import org.adempiere.webui.component.Datebox;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
 import org.adempiere.webui.component.Label;
-import org.adempiere.webui.component.Listbox;
+//import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.ListboxPOS;
-import org.adempiere.webui.component.ListboxFactory;
+//import org.adempiere.webui.component.ListboxFactory;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.window.FDialog;
@@ -47,10 +46,12 @@ import org.compiere.util.Env;
 import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
 import org.compiere.util.ValueNamePair;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.Caption;
+import org.zkoss.zul.Cell;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Panel;
 import org.zkoss.zul.Panelchildren;
@@ -62,7 +63,7 @@ import org.zkoss.zul.Style;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  *  <li>Change Name, Best practices
  */
-public class WCollectDetail extends CollectDetail implements EventListener, POSPanelInterface {
+public class WCollectDetail extends CollectDetail implements EventListener<Event>, POSPanelInterface {
 	
 	/**
 	 * Standard Constructor
@@ -151,7 +152,7 @@ public class WCollectDetail extends CollectDetail implements EventListener, POSP
 		MLookup lookup = MLookupFactory.get(Env.getCtx(), 0, 0, AD_Column_ID, DisplayType.List);
 		ArrayList<Object> types = lookup.getData(true, false, true, true, false);
 		
-		bMinus = v_Parent.createButtonAction("Minus", KeyStroke.getKeyStroke(KeyEvent.VK_F3, Event.F3));
+		bMinus = v_Parent.createButtonAction("Minus", KeyStroke.getKeyStroke(KeyEvent.VK_F3, 1010));
 		bMinus.addActionListener(this);
 		row.setHeight("55px");
 		

@@ -63,7 +63,7 @@ public class MBPartnerPOS extends MBPartner {
 		if (source == null)
 			source = new MBPartner (ctx, 0, null);
 		//	Reset
-		source.set_ValueNoCheck ("C_BPartner_ID", new Integer(0));
+		source.set_ValueNoCheck ("C_BPartner_ID", 0);
 		source.setTaxID("");
 		source.setValue("");
 		source.setName("");

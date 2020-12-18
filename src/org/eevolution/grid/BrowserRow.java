@@ -507,7 +507,7 @@ public class BrowserRow {
                     if (methodStart != -1)      //  no class
                     {
                         Class<?> cClass = Class.forName(cmd.substring(0, methodStart));
-                        call = (BrowserCallOut) cClass.newInstance();
+                        call = (BrowserCallOut) cClass.getConstructor().newInstance();
                         method = cmd.substring(methodStart + 1);
                     }
                 } catch (Exception e) {

@@ -18,11 +18,12 @@ package org.adempiere.pos.util;
 
 import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.service.CPOS;
-import org.compiere.model.MDocType;
+//import org.compiere.model.MDocType;
 import org.compiere.model.MInvoice;
+import org.compiere.model.MOrder;
 import org.compiere.print.MPrintFormat;
-import org.compiere.print.ReportCtlPOS;
-import org.compiere.print.ReportEngine;
+//import org.compiere.print.ReportCtlPOS;
+//import org.compiere.print.ReportEngine;
 import org.compiere.process.ProcessInfo;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -50,7 +51,7 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 			ProcessInfo info = null;
 			if(!getPOS().isInvoiced()) {
 				
-				info = new ProcessInfo ("", 0, getPOS().getOrder().Table_ID, getPOS().getC_Order_ID());
+				info = new ProcessInfo ("", 0, MOrder.Table_ID, getPOS().getC_Order_ID());
 				info.setTransactionName(getPOS().get_TrxName());
 				
 				MPrintFormat printformat = null;
@@ -81,7 +82,7 @@ public class POSGenericTicketHandler extends POSTicketHandler {
 				
 			} else {
 				for (MInvoice invoice :  getPOS().getOrder().getInvoices()) {
-					info = new ProcessInfo ("", 0, invoice.Table_ID, invoice.getC_Invoice_ID());
+					info = new ProcessInfo ("", 0, MInvoice.Table_ID, invoice.getC_Invoice_ID());
 					info.setTransactionName(getPOS().get_TrxName());
 					
 //					int LIT_POS_InvoicePrintForm_ID = DB.getSQLValue(null, "SELECT LIT_POS_InvoicePrintForm_ID FROM AD_PrintForm WHERE IsActive='Y' AND AD_CLIENT_ID=?", Env.getAD_Client_ID(Env.getCtx()));

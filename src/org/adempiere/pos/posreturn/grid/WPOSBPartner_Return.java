@@ -19,22 +19,23 @@ package org.adempiere.pos.posreturn.grid;
 import java.util.logging.Level;
 
 import org.adempiere.pos.WPOS;
-import org.adempiere.pos.WPOSKeyboard;
+//import org.adempiere.pos.WPOSKeyboard;
 import org.adempiere.pos.WPOSTextField;
 import org.adempiere.pos.posreturn.WPOS_Return;
-import org.adempiere.webui.AdempiereWebUI;
-import org.adempiere.webui.apps.AEnv;
+//import org.adempiere.webui.AdempiereWebUI;
+//import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.ConfirmPanel;
 import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.Textbox;
 import org.adempiere.webui.component.VerticalBox;
-import org.adempiere.webui.component.WTaxIdPopup;
+//import org.adempiere.webui.component.WTaxIdPopup;
 import org.adempiere.webui.component.Window;
 import org.adempiere.webui.editor.WLocationEditor;
-import org.adempiere.webui.event.DialogEvents;
-import org.adempiere.webui.theme.ThemeManager;
+import org.adempiere.webui.util.ZKUpdateUtil;
+//import org.adempiere.webui.event.DialogEvents;
+//import org.adempiere.webui.theme.ThemeManager;
 import org.adempiere.webui.window.FDialog;
-import org.compiere.model.GridField;
+//import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.GridWindow;
 import org.compiere.model.MBPartner;
@@ -314,7 +315,7 @@ public class WPOSBPartner_Return extends Window implements EventListener<Event>
 		Hbox hbox = new Hbox(); 
 		
 		hbox.setWidth("100%");
-		hbox.setWidths("30%, 70%");
+		ZKUpdateUtil.setWidth(hbox, "30%, 70%");
 		
 		Label label = new Label(Msg.translate(Env.getCtx(), title));
 		label.setStyle(WPOS.FONTSIZESMALL);

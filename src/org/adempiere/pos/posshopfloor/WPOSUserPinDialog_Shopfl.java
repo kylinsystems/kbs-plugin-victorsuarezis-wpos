@@ -16,7 +16,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Center;
-import org.zkoss.zk.ui.event.EventListener;
+//import org.zkoss.zk.ui.event.EventListener;
 
 /**
  * This Component allows display the POS password Pin

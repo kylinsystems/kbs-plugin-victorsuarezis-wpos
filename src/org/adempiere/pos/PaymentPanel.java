@@ -39,7 +39,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Center;
 
-public class PaymentPanel extends Collect implements EventListener {
+public class PaymentPanel extends Collect implements EventListener<Event> {
 	
 	private String p_TenderType;
 	private Panel mainPanel; 
@@ -71,14 +71,14 @@ public class PaymentPanel extends Collect implements EventListener {
 	private MPOS p_MPOS;
 	private Borderlayout mainLayout;
 	
-	private EventListener p_Event;
+	private EventListener<Event> p_Event;
 	private WPOS p_posBasePanel;
 	
 	private final String FONT_SIZE = "Font-size:medium;";
 	private final String HEIGHT = "height:33px;";
 	private final String WIDTH = "width:139px;";
 	
-	public PaymentPanel(Properties ctx, MOrder m_Order, int m_M_POS_ID, String m_TendeType, EventListener m_event, WPOS m_posBasePanel ) {
+	public PaymentPanel(Properties ctx, MOrder m_Order, int m_M_POS_ID, String m_TendeType, EventListener<Event> m_event, WPOS m_posBasePanel ) {
 		super(ctx, m_Order, m_M_POS_ID);
 		p_TenderType = m_TendeType;
 		p_ctx = ctx;

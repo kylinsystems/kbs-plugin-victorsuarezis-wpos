@@ -70,7 +70,7 @@ import org.zkoss.zul.West;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public class WPOS_Move extends CPOS_Move implements IFormController, EventListener, POSPanelInterface, POSScalesPanelInterface {
+public class WPOS_Move extends CPOS_Move implements IFormController, EventListener<Event>, POSPanelInterface, POSScalesPanelInterface {
 
 	/** Window No 							*/
 	private int 							windowNo 	 = 0 ;
@@ -559,7 +559,7 @@ public class WPOS_Move extends CPOS_Move implements IFormController, EventListen
 	 * return User Pin Listener
 	 * @return
      */
-	public EventListener getUserPinListener()
+	public EventListener<Event> getUserPinListener()
 	{
 		return userPinListener;
 	}

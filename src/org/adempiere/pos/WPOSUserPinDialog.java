@@ -20,7 +20,7 @@ import org.zkoss.zul.Center;
  * This Component allows display the POS password Pin
  * eEvolution author Victor Perez <victor.perez@e-evolution.com>, Created by e-Evolution on 29/01/16.
  */
-public class WPOSUserPinDialog extends Window implements EventListener{
+public class WPOSUserPinDialog extends Window implements EventListener<Event> {
     /**
 	 * 
 	 */

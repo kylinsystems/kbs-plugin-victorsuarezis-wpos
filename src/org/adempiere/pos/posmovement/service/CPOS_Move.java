@@ -34,7 +34,7 @@ import org.compiere.model.I_AD_User;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInventoryLine;
 import org.compiere.model.MLocator;
-import org.compiere.model.MOrg;
+//import org.compiere.model.MOrg;
 import org.compiere.model.MOrgInfo;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;

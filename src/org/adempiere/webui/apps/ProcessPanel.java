@@ -37,9 +37,10 @@ import org.adempiere.webui.editor.WEditor;
 import org.adempiere.webui.editor.WEditorPopupMenu;
 import org.adempiere.webui.editor.WebEditorFactoryPOS;
 import org.adempiere.webui.event.ContextMenuListener;
+//import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.apps.ProcessController;
-import org.adempiere.webui.apps.WProcessCtl;
+//import org.adempiere.webui.apps.WProcessCtl;
 import org.adempiere.model.GridField;
 import org.compiere.model.MPInstance;
 import org.compiere.process.ProcessInfo;
@@ -82,7 +83,7 @@ import org.zkoss.zul.Html;
  *		<li>BF [ <a href="https://github.com/adempiere/adempiere/issues/495">495</a> ] Parameter Panel & SmartBrowser criteria do not set gridField value
  * 	@version 	2006-12-01
  */
-public class ProcessPanel extends ProcessController implements SmallViewEditable, EventListener, ASyncProcess {
+public class ProcessPanel extends ProcessController implements SmallViewEditable, EventListener<Event>, ASyncProcess {
 	/**
 	 *	Dynamic generated Parameter panel.
 	 *  @param WindowNo window

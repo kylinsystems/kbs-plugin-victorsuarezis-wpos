@@ -36,7 +36,7 @@ import org.zkoss.zul.Timer;
  * POS Scales Listener implement controller for POSScalesPanel
  * eEvolution author Victor Perez <victor.perez@e-evolution.com>, Created by e-Evolution on 08/02/16.
  */
-public class WPOSScalesListener implements EventListener {
+public class WPOSScalesListener implements EventListener<Event> {
 	private static boolean active = true;
 	private POSScalesPanelInterface pos;
 	private POSScalesDriverInterface driver;

@@ -20,8 +20,6 @@ package org.adempiere.model;
 import java.sql.ResultSet;
 import java.util.Properties;
 
-import org.adempiere.model.GridField;
-import org.adempiere.model.GridFieldVO;
 import org.compiere.model.M_Element;
 import org.compiere.model.Query;
 import org.compiere.util.DB;

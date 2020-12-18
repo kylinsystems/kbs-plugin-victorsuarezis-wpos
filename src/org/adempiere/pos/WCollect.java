@@ -17,10 +17,11 @@
 
 package org.adempiere.pos;
 
-import java.awt.Event;
+//import java.awt.Event;
 import java.awt.event.KeyEvent;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -41,6 +42,7 @@ import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.theme.ThemeManager;
+import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.X_C_Payment;
@@ -53,6 +55,7 @@ import org.compiere.util.Msg;
 import org.compiere.util.Trx;
 import org.compiere.util.TrxRunnable;
 import org.zkoss.util.media.AMedia;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.North;
@@ -64,7 +67,7 @@ import org.zkoss.zul.Space;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  *  <li>Change Name
  */
-public class WCollect extends Collect implements WPOSKeyListener, EventListener,POSPanelInterface {
+public class WCollect extends Collect implements WPOSKeyListener, EventListener<Event>,POSPanelInterface {
 	
 	/**
 	 * 
@@ -233,7 +236,7 @@ public class WCollect extends Collect implements WPOSKeyListener, EventListener,
 		fPaidAmt.setStyle(FONT_SIZE);
 
 		// Button Plus
-		bPlus = createButtonAction("Plus", KeyStroke.getKeyStroke(KeyEvent.VK_F3, Event.F3));
+		bPlus = createButtonAction("Plus", KeyStroke.getKeyStroke(KeyEvent.VK_F3, 1010));
 		row = rows.newRow();
 
 		row.appendChild(new Space());
@@ -261,8 +264,7 @@ public class WCollect extends Collect implements WPOSKeyListener, EventListener,
 		
 		rows = layout.newRows();
 		row = rows.newRow();
-		row.setWidth("100%");
-
+		ZKUpdateUtil.setWidth(row, "100%");
 
 		// Completed Standard Order: only prepayment possible 
 		if(posPanel.getTotalLines().compareTo(Env.ZERO)==1 &&
@@ -466,7 +468,7 @@ public class WCollect extends Collect implements WPOSKeyListener, EventListener,
 		//
 		//m_PayAmt= m_PayAmt.add(getPrePayAmt());
 		balance = getBalance(posPanel.getOpenAmt());
-		balance = balance.setScale(2, BigDecimal.ROUND_HALF_UP);
+		balance = balance.setScale(2, RoundingMode.HALF_UP);
 		String currencyISO_Code = posPanel.getCurSymbol();
 		//	Change View
 		//fGrandTotal.setText(currencyISO_Code +" "+ m_Format.format(posPanel.getGrandTotal()));

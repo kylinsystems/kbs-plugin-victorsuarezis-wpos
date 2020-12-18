@@ -17,22 +17,22 @@
 
 package org.adempiere.pos.posshopfloor;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
+//import java.awt.MouseInfo;
+//import java.awt.Point;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 import java.util.List;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.pos.WPOSFilterMenu;
-import org.adempiere.pos.search.WQueryDocType;
-import org.adempiere.pos.search.WQueryUserQry;
+//import org.adempiere.pos.WPOSFilterMenu;
+//import org.adempiere.pos.search.WQueryDocType;
+//import org.adempiere.pos.search.WQueryUserQry;
 import org.adempiere.pos.service.POSPanelInterface;
-import org.adempiere.webui.apps.AEnv;
+//import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
-import org.adempiere.webui.component.Label;
+//import org.adempiere.webui.component.Label;
 import org.adempiere.webui.component.ListCell;
 import org.adempiere.webui.component.ListItem;
 import org.adempiere.webui.component.Listbox;
@@ -40,20 +40,20 @@ import org.adempiere.webui.component.NumberBox;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
-import org.adempiere.webui.component.Window;
+//import org.adempiere.webui.component.Window;
 import org.adempiere.webui.editor.WSearchEditor;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.Lookup;
 import org.compiere.model.MColumn;
 import org.compiere.model.MLookupFactory;
-import org.compiere.model.MOrder;
+//import org.compiere.model.MOrder;
 import org.compiere.model.MProduct;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
-import org.zkforge.keylistener.Keylistener;
+//import org.zkforge.keylistener.Keylistener;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
@@ -184,18 +184,18 @@ public class WPOSQuantityPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 //					int docTypeId = posPanel.getM_POS().getC_DocType_ID();
 //					posPanel.getInfoProduct().createInventory(docTypeId);
 					
-					posPanel.getInfoProduct().completeInventory();
-					posPanel.refreshPanel();
-					int M_Production_ID = posPanel.getProduction().getM_Production_ID();
-					updateSummaryInventory(M_Production_ID);
-					//delete inventory not used
-					String sqlDelete = "DELETE FROM M_Inventory "
-							+ "WHERE M_Inventory_ID IN (SELECT M_Inventory_ID FROM M_InventoryLine "
-							+ "							WHERE M_ProductionLine_ID IN (SELECT M_ProductionLine_ID FROM M_ProductionLine "
-							+ "															WHERE M_Production_id=?) "
-							+ "							AND M_Inventory_ID IN (SELECT M_Inventory_ID FROM M_Inventory WHERE DocStatus NOT IN('CO')))";
-					DB.executeUpdate(sqlDelete, M_Production_ID, null);
-					return;
+//					posPanel.getInfoProduct().completeInventory();
+//					posPanel.refreshPanel();
+//					int M_Production_ID = posPanel.getProduction().getM_Production_ID();
+//					updateSummaryInventory(M_Production_ID);
+//					//delete inventory not used
+//					String sqlDelete = "DELETE FROM M_Inventory "
+//							+ "WHERE M_Inventory_ID IN (SELECT M_Inventory_ID FROM M_InventoryLine "
+//							+ "							WHERE M_ProductionLine_ID IN (SELECT M_ProductionLine_ID FROM M_ProductionLine "
+//							+ "															WHERE M_Production_id=?) "
+//							+ "							AND M_Inventory_ID IN (SELECT M_Inventory_ID FROM M_Inventory WHERE DocStatus NOT IN('CO')))";
+//					DB.executeUpdate(sqlDelete, M_Production_ID, null);
+//					return;
 				}
 			}
 
@@ -259,12 +259,12 @@ public class WPOSQuantityPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 					ListCell cellColumn = null;
 					WSearchEditor product = createField(posPanel.getWindowNo(), MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID, null);;
 					product.getComponent().setId("1prodConsum_"+idx);
-					ZKUpdateUtil.setHeight(product.getComponent().getCombobox(),"35px");
+					ZKUpdateUtil.setHeight(product.getComponent().getTextbox(),"35px");
 					ZKUpdateUtil.setHeight(product.getComponent().getButton(),"35px");
 					cellColumn = new ListCell();
 					cellColumn.setId("1prodConsum1_"+idx);
 					cellColumn.appendChild(product.getComponent());
-					product.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+					product.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 					product.getComponent().setEnabled(false);
 					product.setValue(mproductID);
 					item.appendChild(cellColumn);
@@ -292,14 +292,14 @@ public class WPOSQuantityPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 	public void refreshPanel() {
 		if(posPanel.hasRecord()){
 			// Only enable buttons if status==(drafted or in progress)
-			if(posPanel.getProduction().getDocStatus().compareToIgnoreCase(MOrder.STATUS_Drafted)==0 || 
-					posPanel.getProduction().getDocStatus().compareToIgnoreCase(MOrder.STATUS_InProgress)==0 ){
-				buttonDelete.setEnabled(true);
-				buttonComplete.setEnabled(true);
-			}else {
-				buttonDelete.setEnabled(false);
-				buttonComplete.setEnabled(false);
-			}
+//			if(posPanel.getProduction().getDocStatus().compareToIgnoreCase(MOrder.STATUS_Drafted)==0 || 
+//					posPanel.getProduction().getDocStatus().compareToIgnoreCase(MOrder.STATUS_InProgress)==0 ){
+//				buttonDelete.setEnabled(true);
+//				buttonComplete.setEnabled(true);
+//			}else {
+//				buttonDelete.setEnabled(false);
+//				buttonComplete.setEnabled(false);
+//			}
 		} 
 		changeViewPanel();
 	}

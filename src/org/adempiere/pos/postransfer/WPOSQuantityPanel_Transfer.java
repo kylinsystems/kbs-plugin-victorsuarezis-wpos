@@ -17,37 +17,37 @@
 
 package org.adempiere.pos.postransfer;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
+//import java.awt.MouseInfo;
+//import java.awt.Point;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.pos.search.WQueryDocType;
-import org.adempiere.pos.search.WQueryUserQry;
+//import org.adempiere.pos.search.WQueryDocType;
+//import org.adempiere.pos.search.WQueryUserQry;
 import org.adempiere.pos.service.POSPanelInterface;
-import org.adempiere.webui.apps.AEnv;
+//import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Grid;
 import org.adempiere.webui.component.GridFactory;
-import org.adempiere.webui.component.Label;
-import org.adempiere.webui.component.NumberBox;
+//import org.adempiere.webui.component.Label;
+//import org.adempiere.webui.component.NumberBox;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
-import org.adempiere.webui.component.Window;
-import org.adempiere.webui.event.DialogEvents;
-import org.adempiere.webui.grid.WQuickEntryPOS;
+//import org.adempiere.webui.component.Window;
+//import org.adempiere.webui.event.DialogEvents;
+//import org.adempiere.webui.grid.WQuickEntryPOS;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.MMovement;
-import org.compiere.model.MOrder;
-import org.compiere.util.DisplayType;
+//import org.compiere.model.MOrder;
+//import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
-import org.zkforge.keylistener.Keylistener;
+//import org.zkforge.keylistener.Keylistener;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
+//import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
 

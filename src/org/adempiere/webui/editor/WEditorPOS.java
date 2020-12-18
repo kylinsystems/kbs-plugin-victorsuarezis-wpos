@@ -168,10 +168,10 @@ public abstract class WEditorPOS implements EventListener<Event>, PropertyChange
         this.setComponent(comp);
         this.gridField = gridField;
         if (gridField.getGridTab() != null) {
-        	comp.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, gridField.getGridTab().getTableName()+"0"+gridField.getColumnName());
+        	comp.setClientAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, gridField.getGridTab().getTableName()+"0"+gridField.getColumnName());
         	this.gridTab = gridField.getGridTab();
         } else {
-        	comp.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, gridField.getColumnName());
+        	comp.setClientAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, gridField.getColumnName());
         }
         this.setMandatory(gridField.isMandatory(false));
         this.readOnly = gridField.isReadOnly();

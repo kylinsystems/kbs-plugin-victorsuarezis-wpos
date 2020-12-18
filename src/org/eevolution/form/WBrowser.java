@@ -105,7 +105,7 @@ import org.zkoss.zul.Vbox;
  *			Parameter Panel & SmartBrowser criteria do not set gridField value
  */
 public class WBrowser extends Browser implements IFormController,
-		EventListener, ASyncProcess {
+		EventListener<Event>, ASyncProcess {
 
 	private CustomForm m_frame = new CustomForm();
 	private ProcessPanel parameterPanel;
@@ -433,7 +433,7 @@ public class WBrowser extends Browser implements IFormController,
 		
 		bSelectAll.setLabel(Msg.getMsg(Env.getCtx(),"SelectAll").replaceAll("[&]",""));
 		bSelectAll.setEnabled(false);
-		bSelectAll.addActionListener(new EventListener(){
+		bSelectAll.addActionListener(new EventListener<Event>(){
     	public void onEvent(Event evt)
     	{
     		selectedRows();
@@ -457,7 +457,7 @@ public class WBrowser extends Browser implements IFormController,
 
 		bZoom.setLabel(Msg.getMsg(Env.getCtx(),"Zoom").replaceAll("[&]",""));
 		bZoom.setEnabled(false);
-		bZoom.addActionListener(new EventListener() {
+		bZoom.addActionListener(new EventListener<Event>() {
 			public void onEvent(Event evt) {
 				cmd_Zoom();
 			}
@@ -469,7 +469,7 @@ public class WBrowser extends Browser implements IFormController,
 
 		bExport.setLabel(Msg.getMsg(Env.getCtx(),"Export"));
 		bExport.setEnabled(false);
-		bExport.addActionListener(new EventListener() {
+		bExport.addActionListener(new EventListener<Event>() {
 			public void onEvent(Event evt) {
 				cmd_Export();
 			}
@@ -478,7 +478,7 @@ public class WBrowser extends Browser implements IFormController,
 
 		bDelete.setLabel(Msg.getMsg(Env.getCtx(),"Delete").replaceAll("[&]",""));
 		bDelete.setEnabled(false);
-		bDelete.addActionListener(new EventListener() {
+		bDelete.addActionListener(new EventListener<Event>() {
 			public void onEvent(Event evt) {
 				cmd_deleteSelection();
 			}
@@ -509,7 +509,7 @@ public class WBrowser extends Browser implements IFormController,
 
 		bSearch.setLabel(Msg.getMsg(Env.getCtx(), "StartSearch"));
 
-		bSearch.addActionListener(new EventListener() {
+		bSearch.addActionListener(new EventListener<Event>() {
 			public void onEvent(Event evt) {
 				cmd_Search();
 			}
@@ -542,7 +542,7 @@ public class WBrowser extends Browser implements IFormController,
 		dCenter.appendChild(detail);
 		dCenter.setBorder("none");
 		detail.setVflex(true);
-		detail.setFixedLayout(true);
+		detail.setSizedByContent(false);
 		dCenter.setHflex("true");
 		dCenter.setVflex("true");
 		dCenter.setAutoscroll(true);
@@ -562,14 +562,14 @@ public class WBrowser extends Browser implements IFormController,
 
 //		bCancel.setLabel(Msg.getMsg(Env.getCtx(), "Cancel").replaceAll("[&]",""));
 
-		bCancel.addActionListener(new EventListener() {
+		bCancel.addActionListener(new EventListener<Event>() {
 			public void onEvent(Event evt) {
 				cmd_Cancel();
 			}
 		});
 
 //		bOk.setLabel(Msg.getMsg(Env.getCtx(), "Ok").replaceAll("[&]",""));
-		bOk.addActionListener(new EventListener() {
+		bOk.addActionListener(new EventListener<Event>() {
 			public void onEvent(Event evt) {
 				cmd_Ok();
 			}

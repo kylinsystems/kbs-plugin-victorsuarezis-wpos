@@ -27,7 +27,7 @@ import org.adempiere.pos.service.CPOS;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.pos.service.POSScalesPanelInterface;
 import org.adempiere.pos.test.SideServer;
-import org.adempiere.webui.adwindow.ADWindow;
+//import org.adempiere.webui.adwindow.ADWindow;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Borderlayout;
 import org.adempiere.webui.component.Button;
@@ -39,13 +39,13 @@ import org.adempiere.webui.component.ListboxFactory;
 import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
-import org.adempiere.webui.component.Tabpanel;
+//import org.adempiere.webui.component.Tabpanel;
 import org.adempiere.webui.component.Window;
 import org.adempiere.webui.panel.ADForm;
 import org.adempiere.webui.panel.CustomForm;
 import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.panel.StatusBarPanel;
-import org.adempiere.webui.session.SessionManager;
+//import org.adempiere.webui.session.SessionManager;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.idempiere.model.MPOS;
@@ -53,10 +53,11 @@ import org.compiere.model.MPOSKey;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
-import org.zkoss.zk.ui.Component;
+//import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.Cell;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.East;
 import org.zkoss.zul.South;
@@ -311,7 +312,9 @@ public class WPOS extends CPOS implements IFormController, EventListener<Event>,
 		cancelButton.setHeight("45px");
 		listTerminal.setHeight("45px");
 		listTerminal.setStyle("height:45px;"+WPOS.FONTSIZEMEDIUM);
-		row.setSpans("2");
+		Cell cell = row.getLastCell();
+		cell.setColspan(2);
+		//row.setSpans("2");
 		row.appendChild(listTerminal);
 		row.setHeight("45px");
 		row = rows.newRow();
@@ -581,7 +584,7 @@ public class WPOS extends CPOS implements IFormController, EventListener<Event>,
 	 * return User Pin Listener
 	 * @return
      */
-	public EventListener getUserPinListener()
+	public EventListener<Event> getUserPinListener()
 	{
 		return userPinListener;
 	}

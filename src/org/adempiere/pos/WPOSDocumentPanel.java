@@ -30,10 +30,10 @@ import org.adempiere.webui.component.ListItem;
 import org.adempiere.webui.component.Listbox;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
-import org.adempiere.webui.event.ActionEvent;
-import org.adempiere.webui.event.ActionListener;
+//import org.adempiere.webui.event.ActionEvent;
+//import org.adempiere.webui.event.ActionListener;
 import org.adempiere.webui.event.DialogEvents;
-import org.adempiere.webui.event.ValueChangeEvent;
+//import org.adempiere.webui.event.ValueChangeEvent;
 import org.adempiere.webui.grid.WQuickEntryPOS;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
@@ -139,7 +139,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		row = new Row();
 		rows.appendChild(row);
 		rows.setHeight("100%");
-		rows.setWidth("100%");
+		ZKUpdateUtil.setWidth(rows, "100%");
 		v_TotalsGroup = new Groupbox();
 		v_InfOrderGroup = new Groupbox();
 		v_InfOrderGroup.appendChild(v_OrderPanel);
@@ -209,7 +209,8 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		
 		row = rows.newRow();
 		row.setHeight("20px");
-		row.setWidth("100%");
+		
+		ZKUpdateUtil.setWidth(row, "100%");
 		Label f_lb_DocumentType = new Label (Msg.translate(Env.getCtx(), I_C_Order.COLUMNNAME_C_DocType_ID) + ":");
 		f_lb_DocumentType.setStyle(WPOS.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_DocumentType);

@@ -24,11 +24,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import org.compiere.minigrid.DeleteColumn;
+//import org.compiere.minigrid.DeleteColumn;
 import org.adempiere.webui.component.WListItemRenderer;
 import org.adempiere.webui.component.WListboxPOS;
 import org.adempiere.webui.exception.ApplicationException;
-import org.adempiere.webui.util.ZKUpdateUtil;
+//import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.minigrid.ColumnInfo;
 //import org.compiere.minigrid.ColumnInfoPOS;
 import org.compiere.minigrid.IDColumn;
@@ -53,14 +53,14 @@ public class WPOSTable extends WListboxPOS {
 		super();
 		setWidth("100%");
 		setHeight("100%");
-		setFixedLayout(true);
+		setSizedByContent(false);
 //		setVflex(true);
 	}
 	
 	/** Layout set in prepareTable and used in loadTable.    */
 	private ColumnInfo[] m_layout = null;
 	/** column class types (e.g. Boolean) */
-	private ArrayList<Class> m_modelHeaderClass = new ArrayList<Class>();
+	private ArrayList<Class<?>> m_modelHeaderClass = new ArrayList<Class<?>>();
 	/**	Logger. */
 	private static CLogger logger = CLogger.getCLogger(WPOSTable.class);
 	
@@ -79,7 +79,7 @@ public class WPOSTable extends WListboxPOS {
 		Object data = null;
 		int rsColIndex = 0; // index into result set
 		int rsColOffset = 1;  //  result set columns start with 1
-		Class columnClass; // class of the column
+		Class<?> columnClass; // class of the column
 
 		if (getLayout() == null)
 		{
@@ -121,7 +121,7 @@ public class WPOSTable extends WListboxPOS {
 					}	
 					else if (columnClass == Boolean.class)
 					{
-						data = rs.getString(rsColIndex) == null ?  new Boolean(false) : new Boolean(rs.getString(rsColIndex).equals("Y"));
+						data = rs.getString(rsColIndex) == null ?  false : rs.getString(rsColIndex).equals("Y");
 					}
 					else if (columnClass == Timestamp.class)
 					{
@@ -133,11 +133,11 @@ public class WPOSTable extends WListboxPOS {
 					}
 					else if (columnClass == Double.class)
 					{
-						data = new Double(rs.getDouble(rsColIndex));
+						data = rs.getDouble(rsColIndex);
 					}
 					else if (columnClass == Integer.class)
 					{
-						data = new Integer(rs.getInt(rsColIndex));
+						data = rs.getInt(rsColIndex);
 					}
 					else if (columnClass == KeyNamePair.class)
 					{
@@ -198,7 +198,7 @@ public class WPOSTable extends WListboxPOS {
 		int poIndex = 0; // index into the PO array
 		String columnName;
 		Object data;
-		Class columnClass;
+		Class<?> columnClass;
 
 		if (m_layout == null)
 		{
@@ -236,7 +236,7 @@ public class WPOSTable extends WListboxPOS {
 					}
 					else if (columnClass == Double.class)
 					{
-						data = new Double(((BigDecimal)data).doubleValue());
+						data = ((BigDecimal)data).doubleValue();
 					}
 				}
 				//  store
@@ -260,7 +260,7 @@ public class WPOSTable extends WListboxPOS {
 	 * @param columnClass
 	 * @return
 	 */
-	private boolean isColumnClassMismatch(int col, Class columnClass)
+	private boolean isColumnClassMismatch(int col, Class<?> columnClass)
 	{
 		return !columnClass.equals(m_modelHeaderClass.get(col));
 	}
@@ -274,7 +274,7 @@ public class WPOSTable extends WListboxPOS {
 	{
 		return m_layout;
 	}
-	public void setColumnClass (int index, Class classType, boolean readOnly)
+	public void setColumnClass (int index, Class<?> classType, boolean readOnly)
     {
         setColumnReadOnly(index, readOnly);
 
@@ -297,7 +297,7 @@ public class WPOSTable extends WListboxPOS {
 	 * @see #setColumnClass(int, Class, boolean)
 	 * @see #addColumn(String)
 	 */
-	public void addColumn(Class classType, boolean readOnly, String header)
+	public void addColumn(Class<?> classType, boolean readOnly, String header)
 	{
 		m_modelHeaderClass.add(classType);
 
@@ -321,7 +321,7 @@ public class WPOSTable extends WListboxPOS {
 	 *
 	 * @see #setColumnClass(int, Class, boolean)
 	 */
-	public void setColumnClass (int index, Class classType, boolean readOnly, String header)
+	public void setColumnClass (int index, Class<?> classType, boolean readOnly, String header)
 	{
 		WListItemRenderer renderer = (WListItemRenderer)getItemRenderer();
 

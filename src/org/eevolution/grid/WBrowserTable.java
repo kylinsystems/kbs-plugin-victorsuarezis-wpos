@@ -94,7 +94,7 @@ public class WBrowserTable extends Listbox implements IBrowserTable, TableValueC
 	/** Layout set in prepareTable and used in loadTable.    */
 	private List<MBrowseField> browserFields = null;
 	/** column class types (e.g. Boolean) */
-	private ArrayList<Class> m_modelHeaderClass = new ArrayList<Class>();
+	private ArrayList<Class<?>> m_modelHeaderClass = new ArrayList<Class<?>>();
 	/** Color Column Index of Model.     */
 	private int m_colorColumnIndex = -1;
 	/** Color Column compare data.       */
@@ -185,7 +185,7 @@ public class WBrowserTable extends Listbox implements IBrowserTable, TableValueC
 	    return;
 	}
 
-    public void setModel(ListModel model)
+    public void setModel(ListModel<?> model)
     {
         super.setModel(model);
         if (model instanceof ListModelTable)
@@ -252,7 +252,7 @@ public class WBrowserTable extends Listbox implements IBrowserTable, TableValueC
         //  is the column RW?
         if (column == 0 
         		|| (isSelected
-        				&& m_readWriteColumn.contains(new Integer(column)))) {
+        				&& m_readWriteColumn.contains(column))) {
         	return true;
         }
         //	Default
@@ -343,7 +343,7 @@ public class WBrowserTable extends Listbox implements IBrowserTable, TableValueC
 	 */
 	public void setColumnReadOnly (int index, boolean readOnly)
 	{
-		Integer indexObject = new Integer(index);
+		Integer indexObject = index;
 
 		//  Column is ReadWrite
 		if (m_readWriteColumn.contains(indexObject))
@@ -501,7 +501,7 @@ public class WBrowserTable extends Listbox implements IBrowserTable, TableValueC
 	 * @param readOnly	Whether the data in the column is read only
 	 * @param header	The header text for the column
 	 */
-	public void setColumnClass (int index, Class classType, boolean readOnly, String header)
+	public void setColumnClass (int index, Class<?> classType, boolean readOnly, String header)
 	{
 		WBrowserListItemRenderer renderer = (WBrowserListItemRenderer)getItemRenderer();
 

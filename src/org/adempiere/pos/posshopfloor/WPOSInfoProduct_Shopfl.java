@@ -46,7 +46,7 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInventoryLine;
 import org.compiere.model.MLookupFactory;
-import org.compiere.model.MOrgInfo;
+//import org.compiere.model.MOrgInfo;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
 import org.compiere.process.DocAction;
@@ -146,21 +146,21 @@ public class WPOSInfoProduct_Shopfl extends WPOSSubPanel_Shopfl {
 		row.appendChild(lst_consumables);
 		onlyProductSearch = createField(posPanel.getWindowNo(), MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID, "IsKanban='Y'");
 		ZKUpdateUtil.setWidth(onlyProductSearch.getComponent(), "45%");
-		ZKUpdateUtil.setHeight(onlyProductSearch.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyProductSearch.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyProductSearch.getComponent().getButton(),"35px");
-		onlyProductSearch.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyProductSearch.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyProductSearch.addValueChangeListener(new ValueChangeListener() {
 
 			@Override
 			public void valueChange(ValueChangeEvent evt) {
-				if(evt.getNewValue()!=null && posPanel.getProduction()!=null && posPanel.getProduction().getM_Production_ID()>0){
-					if(lst_consumables.getItemCount()==0) {
-						int docTypeId = posPanel.getM_POS().getC_DocType_ID();
-						createInventory(docTypeId);
-					}
-					Integer prod_ID = (Integer) evt.getNewValue();
-					addProductConsume(prod_ID);
-				}
+//				if(evt.getNewValue()!=null && posPanel.getProduction()!=null && posPanel.getProduction().getM_Production_ID()>0){
+//					if(lst_consumables.getItemCount()==0) {
+//						int docTypeId = posPanel.getM_POS().getC_DocType_ID();
+//						createInventory(docTypeId);
+//					}
+//					Integer prod_ID = (Integer) evt.getNewValue();
+//					addProductConsume(prod_ID);
+//				}
 			}
 		});
 		parameterPanel.appendChild(onlyProductSearch.getComponent());
@@ -266,12 +266,12 @@ public class WPOSInfoProduct_Shopfl extends WPOSSubPanel_Shopfl {
 					ListCell cellColumn = null;
 					WSearchEditor product = createField(posPanel.getWindowNo(), MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID, null);;
 					product.getComponent().setId("1prodConsum_"+i);
-					ZKUpdateUtil.setHeight(product.getComponent().getCombobox(),"35px");
+					ZKUpdateUtil.setHeight(product.getComponent().getTextbox(),"35px");
 					ZKUpdateUtil.setHeight(product.getComponent().getButton(),"35px");
 					cellColumn = new ListCell();
 					cellColumn.setId("1prodConsum1_"+i);
 					cellColumn.appendChild(product.getComponent());
-					product.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+					product.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 					product.getComponent().setEnabled(false);
 					product.setValue(M_Product_ID);
 					item.appendChild(cellColumn);
@@ -325,12 +325,12 @@ public class WPOSInfoProduct_Shopfl extends WPOSSubPanel_Shopfl {
 					ListCell cellColumn = null;
 					WSearchEditor product = createField(posPanel.getWindowNo(), MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID, null);;
 					product.getComponent().setId("1prodLine_"+idx);
-					ZKUpdateUtil.setHeight(product.getComponent().getCombobox(),"35px");
+					ZKUpdateUtil.setHeight(product.getComponent().getTextbox(),"35px");
 					ZKUpdateUtil.setHeight(product.getComponent().getButton(),"35px");
 					cellColumn = new ListCell();
 					cellColumn.setId("1prodLine1_"+idx);
 					cellColumn.appendChild(product.getComponent());
-					product.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+					product.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 					product.getComponent().setEnabled(false);
 					product.setValue(mproductID);
 					item.appendChild(cellColumn);

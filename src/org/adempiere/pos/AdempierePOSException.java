@@ -9,6 +9,11 @@ import org.compiere.util.Msg;
  */
 public class AdempierePOSException extends AdempiereException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1760091236354535749L;
+
 	public AdempierePOSException(String message) {
 		super(Msg.parseTranslation(Env.getCtx() ,message));
 	}

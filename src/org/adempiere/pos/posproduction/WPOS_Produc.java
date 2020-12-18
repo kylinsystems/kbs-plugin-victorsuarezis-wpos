@@ -27,7 +27,7 @@ import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.POSKeyboardFocusManager;
 import org.adempiere.pos.WPOSKeyboard;
 import org.adempiere.pos.WPOSScalesListener;
-import org.adempiere.pos.posmovement.service.CPOS_Move;
+//import org.adempiere.pos.posmovement.service.CPOS_Move;
 import org.adempiere.pos.posproduction.service.CPOS_Produc;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.pos.service.POSScalesPanelInterface;

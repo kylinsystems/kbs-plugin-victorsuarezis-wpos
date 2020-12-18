@@ -20,7 +20,7 @@ package org.adempiere.model;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
-import org.adempiere.model.I_AD_View_Column;
+//import org.adempiere.model.I_AD_View_Column;
 
 /** Generated Model for AD_Browse_Field
  *  @author iDempiere (generated) 

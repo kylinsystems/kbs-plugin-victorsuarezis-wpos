@@ -88,7 +88,7 @@ import org.zkoss.zul.ListitemRendererExt;
  * 		<li><a href="https://github.com/adempiere/adempiere/issues/560">
  * 		FR [ 560 ] SB on ZK have always editable the columns</a>
  */
-public class WBrowserListItemRenderer implements ListitemRenderer, EventListener, ListitemRendererExt , ValueChangeListener
+public class WBrowserListItemRenderer implements ListitemRenderer<Object>, EventListener<Event>, ListitemRendererExt , ValueChangeListener
 {
 	/** Array of listeners for changes in the table components. */
 	protected ArrayList<TableValueChangeListener> m_listeners =
@@ -103,7 +103,7 @@ public class WBrowserListItemRenderer implements ListitemRenderer, EventListener
 
     private Listbox listBox;
 
-	private EventListener cellListener;
+	private EventListener<Event> cellListener;
 
 	private List<WTableColumn> hiddenColumns = new ArrayList<WTableColumn>();
 
@@ -1098,7 +1098,7 @@ public class WBrowserListItemRenderer implements ListitemRenderer, EventListener
 	} // valueChange
 
 
-	class CellListener implements EventListener {
+	class CellListener implements EventListener<Event> {
 
 		public CellListener() {
 		}

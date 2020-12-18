@@ -20,7 +20,7 @@ package org.adempiere.pos;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 
 import org.adempiere.pos.service.POSOrderLineTableHandle;
@@ -36,8 +36,8 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zul.Listitem;
-import org.zkoss.zul.ListitemRenderer;
+//import org.zkoss.zul.Listitem;
+//import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.event.ListDataEvent;
 
 /**

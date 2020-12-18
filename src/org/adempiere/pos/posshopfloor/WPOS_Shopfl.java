@@ -33,9 +33,9 @@ import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.POSKeyboardFocusManager;
 import org.adempiere.pos.WPOSKeyboard;
 import org.adempiere.pos.WPOSScalesListener;
-import org.adempiere.pos.posshopfloor.service.CPOS_Shopfl;
-import org.adempiere.pos.service.POSPanelInterface;
-import org.adempiere.pos.service.POSScalesPanelInterface;
+//import org.adempiere.pos.posshopfloor.service.CPOS_Shopfl;
+//import org.adempiere.pos.service.POSPanelInterface;
+//import org.adempiere.pos.service.POSScalesPanelInterface;
 import org.adempiere.pos.test.SideServer;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.Borderlayout;
@@ -49,21 +49,21 @@ import org.adempiere.webui.component.Panel;
 import org.adempiere.webui.component.Row;
 import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.component.Window;
-import org.adempiere.webui.event.ValueChangeEvent;
-import org.adempiere.webui.panel.ADForm;
+//import org.adempiere.webui.event.ValueChangeEvent;
+//import org.adempiere.webui.panel.ADForm;
 import org.adempiere.webui.panel.CustomForm;
-import org.adempiere.webui.panel.IFormController;
+//import org.adempiere.webui.panel.IFormController;
 import org.adempiere.webui.panel.StatusBarPanel;
 import org.adempiere.webui.window.FDialog;
 import org.compiere.model.MPOSKey;
-import org.compiere.model.MProduction;
+//import org.compiere.model.MProduction;
 import org.compiere.util.CLogger;
-import org.compiere.util.DB;
+//import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.idempiere.model.MPOS;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
+//import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Center;
 import org.zkoss.zul.East;
@@ -475,9 +475,9 @@ public class WPOS_Shopfl extends CPOS_Shopfl implements IFormController, EventLi
 	 */
 	public void addOrUpdateLine(int p_M_Product_ID, BigDecimal m_QtyOrdered) {
 		//	Create Order if not exists
-		if (!hasProduction() && getProduction()==null) {
-			newProduction(-1);
-		}
+//		if (!hasProduction() && getProduction()==null) {
+//			newProduction(-1);
+//		}
 		//	Show Product Info
 		refreshProductInfo(p_M_Product_ID);
 		//	
@@ -494,19 +494,19 @@ public class WPOS_Shopfl extends CPOS_Shopfl implements IFormController, EventLi
 	}
 	
 	public String setMaterialAndColor() {
-		if(hasProduction() || getProduction() !=null) {
-			MProduction production = new MProduction(getCtx(), getProduction().getM_Production_ID(), null);
-			if(production.get_ValueAsInt("lit_c_orderline_outprod_id")>0) {
-				//
-				String sql = "SELECT M_Product_To_ID FROM LIT_C_Orderline_OutProd WHERE LIT_C_Orderline_OutProd_ID=?";
-				int productID = DB.getSQLValue(null, sql, production.get_ValueAsInt("lit_c_orderline_outprod_id"));
-				if(productID>0)
-					getInfoProduct().setMaterial(productID);
-				
-				sql = "SELECT name FROM AD_PrintColor WHERE AD_PrintColor_ID IN (SELECT AD_PrintColor_ID FROM LIT_C_Orderline_OutProd WHERE LIT_C_Orderline_OutProd_ID =?)";
-				return DB.getSQLValueString(null, sql, production.get_ValueAsInt("lit_c_orderline_outprod_id"));
-			}
-		}
+//		if(hasProduction() || getProduction() !=null) {
+//			MProduction production = new MProduction(getCtx(), getProduction().getM_Production_ID(), null);
+//			if(production.get_ValueAsInt("lit_c_orderline_outprod_id")>0) {
+//				//
+//				String sql = "SELECT M_Product_To_ID FROM LIT_C_Orderline_OutProd WHERE LIT_C_Orderline_OutProd_ID=?";
+//				int productID = DB.getSQLValue(null, sql, production.get_ValueAsInt("lit_c_orderline_outprod_id"));
+//				if(productID>0)
+//					getInfoProduct().setMaterial(productID);
+//				
+//				sql = "SELECT name FROM AD_PrintColor WHERE AD_PrintColor_ID IN (SELECT AD_PrintColor_ID FROM LIT_C_Orderline_OutProd WHERE LIT_C_Orderline_OutProd_ID =?)";
+//				return DB.getSQLValueString(null, sql, production.get_ValueAsInt("lit_c_orderline_outprod_id"));
+//			}
+//		}
 		return null;
 	}
 	public WPOSDocumentPanel_Shopfl getDocumentPanel() {
@@ -712,10 +712,10 @@ public class WPOS_Shopfl extends CPOS_Shopfl implements IFormController, EventLi
 	 */
 	public void setQty(BigDecimal qty) {
 		documentPanel.setQuantity(qty);
-		if(getProduction()!=null) {
-			//getProduction().setMovementQty(qty);
-			getProduction().setDurationReal(qty);
-		}
+//		if(getProduction()!=null) {
+//			//getProduction().setMovementQty(qty);
+//			getProduction().setDurationReal(qty);
+//		}
 		super.setQty(qty);
 	}
 	

@@ -25,7 +25,7 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MTable;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
-import org.compiere.util.CLogger;
+//import org.compiere.util.CLogger;
 
 /**
  * Class Model for MViewJoin
@@ -67,7 +67,7 @@ public class MViewDefinition extends X_AD_View_Definition {
 	}
 
 	/** Logger */
-	private static CLogger s_log = CLogger.getCLogger(MViewDefinition.class);
+//	private static CLogger s_log = CLogger.getCLogger(MViewDefinition.class);
 	/** Cache */
 	private static CCache<Integer, MViewDefinition> s_cache = new CCache<Integer, MViewDefinition>(
 			Table_Name, 100);

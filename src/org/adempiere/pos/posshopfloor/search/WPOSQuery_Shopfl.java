@@ -27,7 +27,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.adempiere.pos.posproduction.WPOS_Produc;
+//import org.adempiere.pos.posproduction.WPOS_Produc;
 import org.adempiere.pos.posshopfloor.WPOS_Shopfl;
 import org.adempiere.pos.service.POSQueryInterface;
 import org.adempiere.pos.service.POSQueryListener;
@@ -44,6 +44,7 @@ import org.adempiere.webui.component.Window;
 import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.South;
 
@@ -53,7 +54,7 @@ import org.zkoss.zul.South;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public abstract class WPOSQuery_Shopfl extends Window implements POSQueryInterface, MouseListener, ListSelectionListener, EventListener{
+public abstract class WPOSQuery_Shopfl extends Window implements POSQueryInterface, MouseListener, ListSelectionListener, EventListener<Event> {
 
 	
 	

@@ -43,6 +43,7 @@ import org.adempiere.webui.component.Window;
 import org.adempiere.webui.theme.ThemeManager;
 import org.compiere.util.CLogger;
 import org.compiere.util.Msg;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zul.South;
 
@@ -52,7 +53,7 @@ import org.zkoss.zul.South;
  * @author Yamel Senih, ysenih@erpcya.com, ERPCyA http://www.erpcya.com
  * @author victor.perez@e-evolution.com , http://www.e-evolution.com
  */
-public abstract class WPOSQuery_Move extends Window implements POSQueryInterface, MouseListener, ListSelectionListener, EventListener{
+public abstract class WPOSQuery_Move extends Window implements POSQueryInterface, MouseListener, ListSelectionListener, EventListener<Event> {
 
 	
 	

@@ -135,7 +135,7 @@ public class MProcessPOS extends MProcess {
 	 */
 	public static MProcessPOS get (Properties ctx, int AD_Process_ID)
 	{
-		Integer key = new Integer (AD_Process_ID);
+		Integer key = AD_Process_ID;
 		MProcessPOS retValue = (MProcessPOS) s_cache.get (key);
 		if (retValue != null)
 			return retValue;

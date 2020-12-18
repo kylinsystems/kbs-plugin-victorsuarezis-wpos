@@ -231,7 +231,7 @@ public class WPOSActionPanel_Shopfl extends WPOSSubPanel_Shopfl
 		row.setSpans("12");
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) {
 //			lookupProduct = new WPOSLookupProduct(this, fieldProductName, new Long("1"));
-			lookupProduct = new WPOSLookupProduct(this, null, new Long("1"));
+			lookupProduct = new WPOSLookupProduct(this, null, 1);
 			lookupProduct.setWarehouseId(posPanel.getM_Warehouse_ID());
 			findProductTimer = new Timer(500); // , lookupProduct);
 			lookupProduct.setWidth("100%");

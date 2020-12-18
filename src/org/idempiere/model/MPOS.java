@@ -27,7 +27,7 @@ import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.util.CCache;
 import org.compiere.util.Msg;
-import org.idempiere.model.X_C_POS;
+//import org.idempiere.model.X_C_POS;
 
 /**
  *	POS Terminal definition
@@ -50,7 +50,7 @@ public class MPOS extends X_C_POS
 	 */
 	public static MPOS get (Properties ctx, int C_POS_ID)
 	{
-		Integer key = new Integer (C_POS_ID);
+		Integer key = C_POS_ID;
 		MPOS retValue = (MPOS) s_cache.get (key);
 		if (retValue != null)
 			return retValue;

@@ -44,7 +44,12 @@ public class CommandManager {
     private HashMap<String , Command> commands = new HashMap<String , Command>();
 
     private HashMap<String , CommandReceiver> receivers = new HashMap<String , CommandReceiver>(){
-        {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = -8926879659393110936L;
+
+		{
             CommandReceiver   commandReceiver = new CommandReceiver(null, GENERATE_IMMEDIATE_INVOICE, GenerateImmediateInvoice.getProcessName());
             commands.put(GENERATE_IMMEDIATE_INVOICE, new CommandImmediateInvoice(GENERATE_IMMEDIATE_INVOICE ,commandReceiver.getEvent()));
             put(GENERATE_IMMEDIATE_INVOICE, commandReceiver);

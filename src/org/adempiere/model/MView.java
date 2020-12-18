@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.MTable;
-import org.adempiere.model.MViewColumn;
+//import org.adempiere.model.MViewColumn;
 import org.compiere.model.Query;
-import org.compiere.util.CLogger;
+//import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
@@ -43,7 +43,7 @@ public class MView extends X_AD_View {
 	 */
 	private static final long serialVersionUID = -4624429043533053271L;
 	/** Logger */
-	private static CLogger s_log = CLogger.getCLogger(MView.class);
+//	private static CLogger s_log = CLogger.getCLogger(MView.class);
 	private List<MViewColumn> m_ViewColumn = null;
 
 	/**************************************************************************

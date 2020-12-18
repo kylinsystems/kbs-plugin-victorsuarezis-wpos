@@ -28,6 +28,7 @@ import org.adempiere.webui.theme.ThemeManager;
 import org.idempiere.model.MPOS;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 
 
@@ -36,7 +37,7 @@ import org.zkoss.zk.ui.event.EventListener;
  * @author Raul Muñoz 20/03/2015 
  */
 public abstract class WPosSubPanel extends Borderlayout 
-	implements EventListener
+	implements EventListener<Event>
 {
 	/**
 	 * 

@@ -13,14 +13,14 @@
  *****************************************************************************/
 package org.adempiere.webui.component;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+//import java.sql.PreparedStatement;
+//import java.sql.ResultSet;
+//import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.adempiere.exceptions.DBException;
+//import org.adempiere.exceptions.DBException;
 import org.adempiere.webui.LayoutUtils;
 import org.adempiere.webui.apps.BusyDialog;
 import org.adempiere.webui.event.DialogEvents;
@@ -38,7 +38,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Trx;
-import org.zkoss.zk.ui.WrongValueException;
+//import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;

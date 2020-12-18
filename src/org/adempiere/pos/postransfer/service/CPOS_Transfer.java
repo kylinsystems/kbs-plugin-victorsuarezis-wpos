@@ -17,6 +17,7 @@
 package org.adempiere.pos.postransfer.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -842,7 +843,7 @@ public class CPOS_Transfer {
 		
 		MOrgInfo orgInfo = MOrgInfo.get(getCtx(), Env.getAD_Org_ID(getCtx()), null);
 		line.setM_Locator_ID(orgInfo.getM_Warehouse().getM_ReserveLocator_ID());
-		int ad_orgTO = MBPartner.get(getCtx(), getC_BPartner_ID()).getAD_OrgBP_ID_Int();//interCompany
+		int ad_orgTO = MBPartner.get(getCtx(), getC_BPartner_ID()).getAD_OrgBP_ID();//interCompany
 		MOrgInfo orgInfo_TO = MOrgInfo.get(getCtx(), ad_orgTO, null);
 		line.setM_LocatorTo_ID(orgInfo_TO.getM_Warehouse().getM_ReserveLocator_ID());
 		//	
@@ -1606,8 +1607,8 @@ public class CPOS_Transfer {
 				String  productValue = resultSet.getString(2).trim();
 				String  productName = resultSet.getString(3).trim();
 				String  qtyAvailable = resultSet.getBigDecimal(4) != null ? resultSet.getBigDecimal(4).toString().trim() : "0";
-				String  priceStd = resultSet.getBigDecimal(5) != null ? resultSet.getBigDecimal(5).setScale(2, BigDecimal.ROUND_UP).toString().trim() :  "0";
-				String  priceList = resultSet.getBigDecimal(6) != null ? resultSet.getBigDecimal(6).setScale(2, BigDecimal.ROUND_UP).toString().trim() : "0 ";
+				String  priceStd = resultSet.getBigDecimal(5) != null ? resultSet.getBigDecimal(5).setScale(2, RoundingMode.HALF_UP).toString().trim() :  "0";
+				String  priceList = resultSet.getBigDecimal(6) != null ? resultSet.getBigDecimal(6).setScale(2, RoundingMode.HALF_UP).toString().trim() : "0 ";
 				columns.add(productId);
 				columns.add(productValue);
 				columns.add(productName);

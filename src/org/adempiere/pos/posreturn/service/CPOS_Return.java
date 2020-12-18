@@ -17,6 +17,7 @@
 package org.adempiere.pos.posreturn.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -1595,8 +1596,8 @@ public class CPOS_Return {
 				String  productValue = resultSet.getString(2).trim();
 				String  productName = resultSet.getString(3).trim();
 				String  qtyAvailable = resultSet.getBigDecimal(4) != null ? resultSet.getBigDecimal(4).toString().trim() : "0";
-				String  priceStd = resultSet.getBigDecimal(5) != null ? resultSet.getBigDecimal(5).setScale(2, BigDecimal.ROUND_UP).toString().trim() :  "0";
-				String  priceList = resultSet.getBigDecimal(6) != null ? resultSet.getBigDecimal(6).setScale(2, BigDecimal.ROUND_UP).toString().trim() : "0 ";
+				String  priceStd = resultSet.getBigDecimal(5) != null ? resultSet.getBigDecimal(5).setScale(2, RoundingMode.HALF_UP).toString().trim() :  "0";
+				String  priceList = resultSet.getBigDecimal(6) != null ? resultSet.getBigDecimal(6).setScale(2, RoundingMode.HALF_UP).toString().trim() : "0 ";
 				columns.add(productId);
 				columns.add(productValue);
 				columns.add(productName);

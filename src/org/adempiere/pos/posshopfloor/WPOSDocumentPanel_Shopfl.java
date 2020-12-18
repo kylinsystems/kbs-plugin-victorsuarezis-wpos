@@ -19,16 +19,16 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.time.Duration;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
+//import java.time.format.DateTimeFormatter;
+//import java.util.Arrays;
+//import java.util.Date;
 
-import org.adempiere.exceptions.AdempiereException;
+//import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.POSKeyListener;
 import org.adempiere.pos.WPOSScalesPanel;
 import org.adempiere.pos.service.POSPanelInterface;
 import org.adempiere.util.Callback;
-import org.adempiere.webui.adwindow.DetailPane;
+//import org.adempiere.webui.adwindow.DetailPane;
 import org.adempiere.webui.component.Button;
 import org.adempiere.webui.component.Checkbox;
 import org.adempiere.webui.component.DatetimeBox;
@@ -53,12 +53,12 @@ import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProduction;
-import org.compiere.model.MRefList;
+//import org.compiere.model.MRefList;
 import org.compiere.model.MResource;
 import org.compiere.model.MWarehouse;
-import org.compiere.model.Query;
+//import org.compiere.model.Query;
 import org.compiere.util.CLogger;
-import org.compiere.util.DB;
+//import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
@@ -71,14 +71,14 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Style;
 
-import it.cnet.idempiere.LIT_WarehouseExtend.model.MProductionNode;
-import it.cnet.idempiere.LIT_WarehouseExtend.model.MProductionWorkflow;
-import it.cnet.impl.editorNatIDNumber.editor_2.WTaxIdFormWindow;
-import it.idIta.idempiere.coreUtil.webui.UtilWebui;
+//import it.cnet.idempiere.LIT_WarehouseExtend.model.MProductionNode;
+//import it.cnet.idempiere.LIT_WarehouseExtend.model.MProductionWorkflow;
+//import it.cnet.impl.editorNatIDNumber.editor_2.WTaxIdFormWindow;
+//import it.idIta.idempiere.coreUtil.webui.UtilWebui;
 
-import org.adempiere.pos.service.POSPanelInterface;
-import org.compiere.model.MPOSKey;
-import org.zkoss.zk.ui.event.Event;
+//import org.adempiere.pos.service.POSPanelInterface;
+//import org.compiere.model.MPOSKey;
+//import org.zkoss.zk.ui.event.Event;
 
 /**
  * @author Andrea Checchia
@@ -148,7 +148,7 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 	private Button		buttonStart_Stop;
 	
 	private MWorkflow m_node;
-	private MProductionNode pNode;
+//	private MProductionNode pNode;
 	
 	private boolean isStandardMaskMode = false;
 	
@@ -183,13 +183,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		onlyResource = createField(posPanel.getWindowNo(), MResource.Table_Name, MResource.COLUMNNAME_S_Resource_ID);
 		onlyResource.setMandatory(true);
 		ZKUpdateUtil.setWidth(onlyResource.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyResource.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyResource.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyResource.getComponent().getButton(),"35px");
 		Label f_lb_resource = new Label (Msg.translate(Env.getCtx(), "S_Resource_ID") + ":");
 		f_lb_resource.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_resource);
 		row.appendChild(onlyResource.getComponent());
-		onlyResource.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyResource.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyResource.addValueChangeListener(new ValueChangeListener() {
 			@Override
 			public void valueChange(ValueChangeEvent evt) {
@@ -205,77 +205,77 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		onlyProduction = createField(posPanel.getWindowNo(), MProduction.Table_Name, MProduction.COLUMNNAME_M_Production_ID);
 		try {
 			Lookup lkp_change = getLookup_ProductionNotComplete();
-			UtilWebui.setLookup_class(onlyProduction, "lookup", lkp_change);
+			//UtilWebui.setLookup_class(onlyProduction, "lookup", lkp_change);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 		ZKUpdateUtil.setWidth(onlyProduction.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyProduction.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyProduction.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyProduction.getComponent().getButton(),"35px");
 		Label f_lb_ppOrder = new Label (Msg.translate(Env.getCtx(), "M_Production_ID") + ":");
 		f_lb_ppOrder.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_ppOrder);
 		row.appendChild(onlyProduction.getComponent());
-		onlyProduction.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyProduction.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyProduction.addValueChangeListener(new ValueChangeListener() {
 			@Override
 			public void valueChange(ValueChangeEvent evt) {
 				if(evt.getNewValue()!=null){
 					//
-					posPanel.resetProduction();
+		//			posPanel.resetProduction();
 					refreshPanel();
 					//
 					Integer mProduction_ID = (Integer) evt.getNewValue();
 					if(mProduction_ID>0){
 						//if(posPanel.getProduction()==null)   TODO verifdicare se non è da modificare il record in seguito
-							posPanel.newProduction();
-						
-						MProduction prod_order = new MProduction(Env.getCtx(), mProduction_ID, null);
-						posPanel.getProduction().setM_Production_ID(prod_order.getM_Production_ID());
-						posPanel.getProduction().setAD_Org_ID(prod_order.getAD_Org_ID());
-						posPanel.getProduction().setM_Locator_ID(prod_order.getM_Locator_ID());
-						posPanel.getProduction().setM_Warehouse_ID(prod_order.getM_Locator().getM_Warehouse_ID());
-						onlyWarehouse.setValue(prod_order.getM_Locator().getM_Warehouse_ID());
-						posPanel.getProduction().setAD_OrgTrx_ID(prod_order.getAD_OrgTrx_ID());
-						posPanel.getProduction().setC_Activity_ID(prod_order.getC_Activity_ID());
-						posPanel.getProduction().setC_Project_ID(prod_order.getC_Project_ID());
-						posPanel.getProduction().setDescription(prod_order.getDescription());
-						posPanel.getProduction().setM_Product_ID(prod_order.getM_Product_ID());
-						onlyProduct.setValue(prod_order.getM_Product_ID());
-						posPanel.getProduction().setC_UOM_ID(prod_order.getM_Product().getC_UOM_ID());
-						posPanel.getProduction().setM_AttributeSetInstance_ID(prod_order.getM_Product().getM_AttributeSetInstance_ID());
-						posPanel.getProduction().setMovementQty(prod_order.getProductionQty());
-						posPanel.setQty(prod_order.getProductionQty());
-						posPanel.getProduction().setC_DocType_ID(prod_order.get_ValueAsInt("C_DocType_ID"));
-						onlyDocType.setValue(prod_order.get_ValueAsInt("C_DocType_ID"));
-						Timestamp now = new Timestamp(System.currentTimeMillis());
-						posPanel.getProduction().setMovementDate(now);
-						posPanel.getProduction().setDateAcct(now);
-						dateGo.setValue(new Date(now.getTime()));
-						MProductionWorkflow prodWF = getWorkflowProduction(mProduction_ID);
-						posPanel.getProduction().setAD_Workflow_ID(prodWF.getAD_Workflow_ID());
-						onlyWorkflow.setValue(prodWF.getAD_Workflow_ID());
-						try {
-							Lookup lkp_change = getLookup_NodeByWorkflow(prodWF.getAD_Workflow_ID());
-							UtilWebui.setLookup_class(onlyActivity, "lookup", lkp_change);
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-						
-						pNode = prodWF.getLastActivity();
-						if(pNode!=null) {
-							prodNode.setValue(pNode.getAD_WF_Node().getName());
-							posPanel.getProduction().setAD_WF_Node_ID(pNode.getAD_WF_Node_ID());
-						}
-						posPanel.getProduction().setDocumentNo(prod_order.getDocumentNo());
-						posPanel.getProduction().setDocStatus(prod_order.getDocStatus());
-						posPanel.getProduction().setS_Resource_ID((Integer)onlyResource.getValue());
-						
-						setDataProduct((int) onlyProduct.getValue());
-						refreshPanel();
-						posPanel.getInfoProduct().setColor(posPanel.setMaterialAndColor());
-						posPanel.getQtyProduct().updateSummaryInventory(mProduction_ID);
-						posPanel.getInfoProduct().addProductionLine(mProduction_ID);
+//							posPanel.newProduction();
+//						
+//						MProduction prod_order = new MProduction(Env.getCtx(), mProduction_ID, null);
+//						posPanel.getProduction().setM_Production_ID(prod_order.getM_Production_ID());
+//						posPanel.getProduction().setAD_Org_ID(prod_order.getAD_Org_ID());
+//						posPanel.getProduction().setM_Locator_ID(prod_order.getM_Locator_ID());
+//						posPanel.getProduction().setM_Warehouse_ID(prod_order.getM_Locator().getM_Warehouse_ID());
+//						onlyWarehouse.setValue(prod_order.getM_Locator().getM_Warehouse_ID());
+//						posPanel.getProduction().setAD_OrgTrx_ID(prod_order.getAD_OrgTrx_ID());
+//						posPanel.getProduction().setC_Activity_ID(prod_order.getC_Activity_ID());
+//						posPanel.getProduction().setC_Project_ID(prod_order.getC_Project_ID());
+//						posPanel.getProduction().setDescription(prod_order.getDescription());
+//						posPanel.getProduction().setM_Product_ID(prod_order.getM_Product_ID());
+//						onlyProduct.setValue(prod_order.getM_Product_ID());
+//						posPanel.getProduction().setC_UOM_ID(prod_order.getM_Product().getC_UOM_ID());
+//						posPanel.getProduction().setM_AttributeSetInstance_ID(prod_order.getM_Product().getM_AttributeSetInstance_ID());
+//						posPanel.getProduction().setMovementQty(prod_order.getProductionQty());
+//						posPanel.setQty(prod_order.getProductionQty());
+//						posPanel.getProduction().setC_DocType_ID(prod_order.get_ValueAsInt("C_DocType_ID"));
+//						onlyDocType.setValue(prod_order.get_ValueAsInt("C_DocType_ID"));
+//						Timestamp now = new Timestamp(System.currentTimeMillis());
+//						posPanel.getProduction().setMovementDate(now);
+//						posPanel.getProduction().setDateAcct(now);
+//						dateGo.setValue(new Date(now.getTime()));
+//						MProductionWorkflow prodWF = getWorkflowProduction(mProduction_ID);
+//						posPanel.getProduction().setAD_Workflow_ID(prodWF.getAD_Workflow_ID());
+//						onlyWorkflow.setValue(prodWF.getAD_Workflow_ID());
+//						try {
+//							Lookup lkp_change = getLookup_NodeByWorkflow(prodWF.getAD_Workflow_ID());
+//							//UtilWebui.setLookup_class(onlyActivity, "lookup", lkp_change);
+//						} catch (Exception e1) {
+//							e1.printStackTrace();
+//						}
+//						
+//						pNode = prodWF.getLastActivity();
+//						if(pNode!=null) {
+//							prodNode.setValue(pNode.getAD_WF_Node().getName());
+//							posPanel.getProduction().setAD_WF_Node_ID(pNode.getAD_WF_Node_ID());
+//						}
+//						posPanel.getProduction().setDocumentNo(prod_order.getDocumentNo());
+//						posPanel.getProduction().setDocStatus(prod_order.getDocStatus());
+//						posPanel.getProduction().setS_Resource_ID((Integer)onlyResource.getValue());
+//						
+//						setDataProduct((int) onlyProduct.getValue());
+//						refreshPanel();
+//						posPanel.getInfoProduct().setColor(posPanel.setMaterialAndColor());
+//						posPanel.getQtyProduct().updateSummaryInventory(mProduction_ID);
+//						posPanel.getInfoProduct().addProductionLine(mProduction_ID);
 					}
 				}
 				
@@ -286,7 +286,7 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		row = new Row();
 		rows.appendChild(row);
 		rows.setHeight("100%");
-		rows.setWidth("100%");
+		ZKUpdateUtil.setWidth(rows, "100%");
 		v_TotalsGroup = new Groupbox();
 		v_InfOrderGroup = new Groupbox();
 		v_InfOrderGroup.appendChild(v_OrderPanel);
@@ -418,13 +418,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		rows.setHeight("100%");
 		onlyDocType = createField(posPanel.getWindowNo(), MDocType.Table_Name, MDocType.COLUMNNAME_C_DocType_ID);
 		ZKUpdateUtil.setWidth(onlyDocType.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyDocType.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyDocType.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyDocType.getComponent().getButton(),"35px");
 		Label f_lb_docType = new Label (Msg.translate(Env.getCtx(), "C_DocType_ID") + ":");
 		f_lb_docType.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_docType);
 		row.appendCellChild(onlyDocType.getComponent(),2);
-		onlyDocType.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyDocType.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyDocType.getComponent().setEnabled(false);
 		/* onlyDocType.addValueChangeListener(new ValueChangeListener() {
 			@Override
@@ -438,13 +438,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		rows.setHeight("100%");
 		onlyProduct = createField(posPanel.getWindowNo(), MProduct.Table_Name, MProduct.COLUMNNAME_M_Product_ID);
 		ZKUpdateUtil.setWidth(onlyProduct.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyProduct.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyProduct.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyProduct.getComponent().getButton(),"35px");
 		Label f_lb_product = new Label (Msg.translate(Env.getCtx(), "M_Product_ID") + ":");
 		f_lb_product.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_product);
 		row.appendCellChild(onlyProduct.getComponent(), 2);
-		onlyProduct.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyProduct.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyProduct.getComponent().setEnabled(false);
 		/* onlyProduct.addValueChangeListener(new ValueChangeListener() {
 			@Override
@@ -460,13 +460,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		rows.setHeight("100%");
 		onlyWarehouse = createField(posPanel.getWindowNo(), MWarehouse.Table_Name, MWarehouse.COLUMNNAME_M_Warehouse_ID);
 		ZKUpdateUtil.setWidth(onlyWarehouse.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyWarehouse.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyWarehouse.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyWarehouse.getComponent().getButton(),"35px");
 		Label f_lb_warehouse = new Label (Msg.translate(Env.getCtx(), "M_Warehouse_ID") + ":");
 		f_lb_warehouse.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_warehouse);
 		row.appendCellChild(onlyWarehouse.getComponent(), 2);
-		onlyWarehouse.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyWarehouse.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyWarehouse.getComponent().setEnabled(false);
 		/* onlyWarehouse.addValueChangeListener(new ValueChangeListener() {
 			@Override
@@ -480,13 +480,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		rows.setHeight("100%");
 		onlyWorkflow = createField(posPanel.getWindowNo(), "M_Production", "AD_Workflow_ID"); //TODO ricontrollare la tabella per il campo.....
 		ZKUpdateUtil.setWidth(onlyWorkflow.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyWorkflow.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyWorkflow.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyWorkflow.getComponent().getButton(),"35px");
 		Label f_lb_Workflow = new Label (Msg.translate(Env.getCtx(), "AD_Workflow_ID") + ":");
 		f_lb_Workflow.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_Workflow);
 		row.appendCellChild(onlyWorkflow.getComponent(), 2);
-		onlyWorkflow.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyWorkflow.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 		onlyWorkflow.getComponent().setEnabled(false);
 		/* onlyWorkflow.addValueChangeListener(new ValueChangeListener() {
 			@Override
@@ -503,13 +503,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		rows.setHeight("100%");
 		onlyActivity = createField(posPanel.getWindowNo(), "AD_WF_Node", "AD_WF_Node_ID");
 		ZKUpdateUtil.setWidth(onlyActivity.getComponent(), "98%");
-		ZKUpdateUtil.setHeight(onlyActivity.getComponent().getCombobox(),"35px");
+		ZKUpdateUtil.setHeight(onlyActivity.getComponent().getTextbox(),"35px");
 		ZKUpdateUtil.setHeight(onlyActivity.getComponent().getButton(),"35px");
 		Label f_lb_Activity = new Label (Msg.translate(Env.getCtx(), "AD_WF_Activity_ID") + ":");
 		f_lb_Activity.setStyle(WPOS_Shopfl.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_Activity);
 		row.appendCellChild(onlyActivity.getComponent(), 2);
-		onlyActivity.getComponent().getCombobox().setStyle("Font-size:medium; font-weight:bold");
+		onlyActivity.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 	/*	
 		onlyActivity.addValueChangeListener(new ValueChangeListener() {
 			@Override
@@ -726,49 +726,49 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 	public void onEvent(Event e) throws Exception {
 		
 		if(e.getTarget().equals(buttonStart)){
-			if(posPanel.getProduction()!=null){
-				checkOK();
-				//Aggiornamento delle date
-				Timestamp dateUpdated = new Timestamp(dateGo.getValue().getTime());
-				posPanel.getProduction().setMovementDate(dateUpdated);
-				posPanel.getProduction().setDateAcct(dateUpdated);
-				posPanel.getProduction().setAD_WF_Node_ID((Integer)onlyActivity.getValue());
-				posPanel.getProduction().saveEx();
-				DB.commit(false, posPanel.getProduction().get_TrxName());
-
-				if(pNode==null) {	
-					pNode = new Query(ctx, MProductionNode.Table_Name, "AD_WF_Node_ID=? AND M_Production_ID=?", null)
-							.setOnlyActiveRecords(true)
-							.setClient_ID()
-							.setParameters(((Integer)onlyActivity.getValue()), posPanel.getProduction().getM_Production_ID())
-							.first();
-					pNode.setS_Resource_ID(posPanel.getProduction().getS_Resource_ID());
-					pNode.setDateStart(posPanel.getProduction().getMovementDate());
-					pNode.setDateStartSchedule(pNode.getDateStart());
-					pNode.setDateFinish(null);
-					pNode.setLIT_ReferenceFrom(new BigDecimal(txtReference_1.getValue()));
-					pNode.setLIT_ReferenceTO(new BigDecimal(txtReference_2.getValue()));
-					pNode.saveEx();
-				}
-				else {
-					pNode.setDateStartSchedule(new Timestamp(System.currentTimeMillis()));
-					pNode.setDateFinishSchedule(null);
-					pNode.setLIT_ReferenceFrom(new BigDecimal(txtReference_1.getValue()));
-					pNode.setLIT_ReferenceTO(new BigDecimal(txtReference_2.getValue()));
-					pNode.saveEx();
-				}
-				
-				Messagebox.showDialog("FASE AVVIATA / CONFERMATA", "", Messagebox.OK, Messagebox.INFORMATION, new Callback<Integer>() {					
-					@Override
-					public void onCallback(Integer result) {
-						//Events.echoEvent("onSaveError", posPanel.getForm(), null);
-						onlyProduction.getComponent().setFocus(true);
-					}
-				});
-				posPanel.resetProduction();
-				refreshPanel();
-				
-			}
+//			if(posPanel.getProduction()!=null){
+//				checkOK();
+//				//Aggiornamento delle date
+//				Timestamp dateUpdated = new Timestamp(dateGo.getValue().getTime());
+//				posPanel.getProduction().setMovementDate(dateUpdated);
+//				posPanel.getProduction().setDateAcct(dateUpdated);
+//				posPanel.getProduction().setAD_WF_Node_ID((Integer)onlyActivity.getValue());
+//				posPanel.getProduction().saveEx();
+//				DB.commit(false, posPanel.getProduction().get_TrxName());
+//
+//				if(pNode==null) {	
+//					pNode = new Query(ctx, MProductionNode.Table_Name, "AD_WF_Node_ID=? AND M_Production_ID=?", null)
+//							.setOnlyActiveRecords(true)
+//							.setClient_ID()
+//							.setParameters(((Integer)onlyActivity.getValue()), posPanel.getProduction().getM_Production_ID())
+//							.first();
+//					pNode.setS_Resource_ID(posPanel.getProduction().getS_Resource_ID());
+//					pNode.setDateStart(posPanel.getProduction().getMovementDate());
+//					pNode.setDateStartSchedule(pNode.getDateStart());
+//					pNode.setDateFinish(null);
+//					pNode.setLIT_ReferenceFrom(new BigDecimal(txtReference_1.getValue()));
+//					pNode.setLIT_ReferenceTO(new BigDecimal(txtReference_2.getValue()));
+//					pNode.saveEx();
+//				}
+//				else {
+//					pNode.setDateStartSchedule(new Timestamp(System.currentTimeMillis()));
+//					pNode.setDateFinishSchedule(null);
+//					pNode.setLIT_ReferenceFrom(new BigDecimal(txtReference_1.getValue()));
+//					pNode.setLIT_ReferenceTO(new BigDecimal(txtReference_2.getValue()));
+//					pNode.saveEx();
+//				}
+//				
+//				Messagebox.showDialog("FASE AVVIATA / CONFERMATA", "", Messagebox.OK, Messagebox.INFORMATION, new Callback<Integer>() {					
+//					@Override
+//					public void onCallback(Integer result) {
+//						//Events.echoEvent("onSaveError", posPanel.getForm(), null);
+//						onlyProduction.getComponent().setFocus(true);
+//					}
+//				});
+//				posPanel.resetProduction();
+//				refreshPanel();
+//				
+//			}
 		}
 		else if(e.getTarget().equals(buttonStop)){
 			//completeProduction();  TODO verificare
@@ -778,106 +778,106 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 			if (qtyHour.getValue()==null || (qtyHour.getValue()).compareTo(BigDecimal.ZERO)==0 ) 
 				throw new WrongValueException(qtyHour, fillMandatory);
 
-			if(pNode!=null /*&& pNode.getAD_WF_Node_ID()==posPanel.getProduction().getAD_WF_Node_ID()*/) {	
-				//Chiudo eventuale attività aperta
-				Timestamp start  = null;
-				Timestamp finish = new Timestamp(System.currentTimeMillis());
-				BigDecimal qty = BigDecimal.ZERO;
-				
-				if(pNode.getAD_WF_Node_ID()==posPanel.getProduction().getAD_WF_Node_ID()) {
-					start = new Timestamp(dateGo.getValue().getTime());
-				}
-				else {
-					start =  pNode.getDateStartSchedule();
-				}
-				if(pNode.getDateFinishSchedule()==null || pNode.getAD_WF_Node_ID()==posPanel.getProduction().getAD_WF_Node_ID()) {
-					finish = new Timestamp(dateGo.getValue().getTime());
-					double duration = getDurationAndSetDateFinish(start, finish, qtyHour.getValue().doubleValue());
-					qty = differenceTime(duration);
-					pNode.setDurationReal(pNode.getDurationReal().add(qty));
-				}
-				else {
-					finish = pNode.getDateFinishSchedule();
-				}
-				
-				if((Integer)onlyActivity.getValue()!=posPanel.getProduction().getAD_WF_Node_ID() || ((Integer)onlyActivity.getValue()==posPanel.getProduction().getAD_WF_Node_ID() && chkActivity.isChecked())) {
-					pNode.setDateFinish(finish);
-					pNode.setDateStartSchedule(null);
-					pNode.setDateFinishSchedule(null);
-					//salvo l'avanzamento, SOLO in questo caso perchè poi dopo c'è un altro avanzamento di un'altra fase
-					if(qty.compareTo(BigDecimal.ZERO)>0) {
-						posPanel.getProduction().setMovementDate(new Timestamp(dateGo.getValue().getTime()));
-						posPanel.getProduction().setDurationReal(qty);
-						posPanel.getProduction().saveEx();
-					}
-					///
-				}
-				else {
-					pNode.setDateStartSchedule(start);
-					pNode.setDateFinishSchedule(finish);
-				}
-				pNode.saveEx();
-				durationReal = qty;
-				pNode = null;
-				
-			}
-			if(pNode==null && onlyActivity.getValue()!=null && ((Integer)onlyActivity.getValue()!=posPanel.getProduction().getAD_WF_Node_ID() || posPanel.getProduction().getAD_WF_Node_ID()<=0)) {
-				if(posPanel.getProduction().getLIT_ShopfloorControl_ID()>0) {
-					posPanel.getProduction().setLIT_ShopfloorControl_ID(0); //vedi commento riga sopra, n.777
-					posPanel.getProduction().setLIT_ShopfloorControl_UU(null);
-				}
-				Timestamp start  = null;
-				Timestamp finish = new Timestamp(System.currentTimeMillis());
-				BigDecimal qty = BigDecimal.ZERO;
-				pNode = new Query(ctx, MProductionNode.Table_Name, "AD_WF_Node_ID=? AND M_Production_ID=?", null)
-						.setOnlyActiveRecords(true)
-						.setClient_ID()
-						.setParameters(((Integer)onlyActivity.getValue()), posPanel.getProduction().getM_Production_ID())
-						.first();
-				
-				pNode.setS_Resource_ID(posPanel.getProduction().getS_Resource_ID());
-				if(chkActivity.isChecked()) {
-					start = new Timestamp(dateGo.getValue().getTime());
-					if(pNode.getDateStart()==null)
-						pNode.setDateStart(start);
-					pNode.setDateStartSchedule(start);
-
-					double duration = getDurationAndSetDateFinish(start, finish, qtyHour.getValue().doubleValue());
-					qty = differenceTime(duration);
-					pNode.setDateFinishSchedule(finish);
-					pNode.setDurationReal(((pNode.getDurationReal()==null)?BigDecimal.ZERO:pNode.getDurationReal()).add(qty));
-					pNode.setDateFinish(pNode.getDateFinishSchedule());
-					pNode.setDateStartSchedule(null);
-					pNode.setDateFinishSchedule(null);
-				}
-				else {
-					start = new Timestamp(dateGo.getValue().getTime());
-					if(pNode.getDateStart()==null)
-						pNode.setDateStart(start);
-					pNode.setDateStartSchedule(start);
-
-					double duration = getDurationAndSetDateFinish(start, finish, qtyHour.getValue().doubleValue());
-					qty = differenceTime(duration);
-					pNode.setDateStartSchedule(start);
-					pNode.setDateFinishSchedule(finish);
-					pNode.setDurationReal(((pNode.getDurationReal()==null)?BigDecimal.ZERO:pNode.getDurationReal()).add(qty));
-				}
-				pNode.setLIT_ReferenceFrom(new BigDecimal(txtReference_1.getValue()));
-				pNode.setLIT_ReferenceTO(new BigDecimal(txtReference_2.getValue()));
-				pNode.saveEx();
-				durationReal = qty;
-				
-			}
-			//Verifico se siamo in una gestione di START/STOP immediato di una nuova fase; se è nuova, inserisco record su "Controllo Avanzamento Produzione
-			if(posPanel.getProduction().getLIT_ShopfloorControl_ID()<=0) {
-				posPanel.getProduction().setMovementDate(new Timestamp(dateGo.getValue().getTime()));
-				posPanel.getProduction().setAD_WF_Node_ID((Integer)onlyActivity.getValue());
-				posPanel.getProduction().setDurationReal(durationReal);
-				posPanel.getProduction().saveEx();
-			}
-			else {
-				
-			}
+//			if(pNode!=null /*&& pNode.getAD_WF_Node_ID()==posPanel.getProduction().getAD_WF_Node_ID()*/) {	
+//				//Chiudo eventuale attività aperta
+//				Timestamp start  = null;
+//				Timestamp finish = new Timestamp(System.currentTimeMillis());
+//				BigDecimal qty = BigDecimal.ZERO;
+//				
+//				if(pNode.getAD_WF_Node_ID()==posPanel.getProduction().getAD_WF_Node_ID()) {
+//					start = new Timestamp(dateGo.getValue().getTime());
+//				}
+//				else {
+//					start =  pNode.getDateStartSchedule();
+//				}
+//				if(pNode.getDateFinishSchedule()==null || pNode.getAD_WF_Node_ID()==posPanel.getProduction().getAD_WF_Node_ID()) {
+//					finish = new Timestamp(dateGo.getValue().getTime());
+//					double duration = getDurationAndSetDateFinish(start, finish, qtyHour.getValue().doubleValue());
+//					qty = differenceTime(duration);
+//					pNode.setDurationReal(pNode.getDurationReal().add(qty));
+//				}
+//				else {
+//					finish = pNode.getDateFinishSchedule();
+//				}
+//				
+//				if((Integer)onlyActivity.getValue()!=posPanel.getProduction().getAD_WF_Node_ID() || ((Integer)onlyActivity.getValue()==posPanel.getProduction().getAD_WF_Node_ID() && chkActivity.isChecked())) {
+//					pNode.setDateFinish(finish);
+//					pNode.setDateStartSchedule(null);
+//					pNode.setDateFinishSchedule(null);
+//					//salvo l'avanzamento, SOLO in questo caso perchè poi dopo c'è un altro avanzamento di un'altra fase
+//					if(qty.compareTo(BigDecimal.ZERO)>0) {
+//						posPanel.getProduction().setMovementDate(new Timestamp(dateGo.getValue().getTime()));
+//						posPanel.getProduction().setDurationReal(qty);
+//						posPanel.getProduction().saveEx();
+//					}
+//					///
+//				}
+//				else {
+//					pNode.setDateStartSchedule(start);
+//					pNode.setDateFinishSchedule(finish);
+//				}
+//				pNode.saveEx();
+//				durationReal = qty;
+//				pNode = null;
+//				
+//			}
+//			if(pNode==null && onlyActivity.getValue()!=null && ((Integer)onlyActivity.getValue()!=posPanel.getProduction().getAD_WF_Node_ID() || posPanel.getProduction().getAD_WF_Node_ID()<=0)) {
+//				if(posPanel.getProduction().getLIT_ShopfloorControl_ID()>0) {
+//					posPanel.getProduction().setLIT_ShopfloorControl_ID(0); //vedi commento riga sopra, n.777
+//					posPanel.getProduction().setLIT_ShopfloorControl_UU(null);
+//				}
+//				Timestamp start  = null;
+//				Timestamp finish = new Timestamp(System.currentTimeMillis());
+//				BigDecimal qty = BigDecimal.ZERO;
+//				pNode = new Query(ctx, MProductionNode.Table_Name, "AD_WF_Node_ID=? AND M_Production_ID=?", null)
+//						.setOnlyActiveRecords(true)
+//						.setClient_ID()
+//						.setParameters(((Integer)onlyActivity.getValue()), posPanel.getProduction().getM_Production_ID())
+//						.first();
+//				
+//				pNode.setS_Resource_ID(posPanel.getProduction().getS_Resource_ID());
+//				if(chkActivity.isChecked()) {
+//					start = new Timestamp(dateGo.getValue().getTime());
+//					if(pNode.getDateStart()==null)
+//						pNode.setDateStart(start);
+//					pNode.setDateStartSchedule(start);
+//
+//					double duration = getDurationAndSetDateFinish(start, finish, qtyHour.getValue().doubleValue());
+//					qty = differenceTime(duration);
+//					pNode.setDateFinishSchedule(finish);
+//					pNode.setDurationReal(((pNode.getDurationReal()==null)?BigDecimal.ZERO:pNode.getDurationReal()).add(qty));
+//					pNode.setDateFinish(pNode.getDateFinishSchedule());
+//					pNode.setDateStartSchedule(null);
+//					pNode.setDateFinishSchedule(null);
+//				}
+//				else {
+//					start = new Timestamp(dateGo.getValue().getTime());
+//					if(pNode.getDateStart()==null)
+//						pNode.setDateStart(start);
+//					pNode.setDateStartSchedule(start);
+//
+//					double duration = getDurationAndSetDateFinish(start, finish, qtyHour.getValue().doubleValue());
+//					qty = differenceTime(duration);
+//					pNode.setDateStartSchedule(start);
+//					pNode.setDateFinishSchedule(finish);
+//					pNode.setDurationReal(((pNode.getDurationReal()==null)?BigDecimal.ZERO:pNode.getDurationReal()).add(qty));
+//				}
+//				pNode.setLIT_ReferenceFrom(new BigDecimal(txtReference_1.getValue()));
+//				pNode.setLIT_ReferenceTO(new BigDecimal(txtReference_2.getValue()));
+//				pNode.saveEx();
+//				durationReal = qty;
+//				
+//			}
+//			//Verifico se siamo in una gestione di START/STOP immediato di una nuova fase; se è nuova, inserisco record su "Controllo Avanzamento Produzione
+//			if(posPanel.getProduction().getLIT_ShopfloorControl_ID()<=0) {
+//				posPanel.getProduction().setMovementDate(new Timestamp(dateGo.getValue().getTime()));
+//				posPanel.getProduction().setAD_WF_Node_ID((Integer)onlyActivity.getValue());
+//				posPanel.getProduction().setDurationReal(durationReal);
+//				posPanel.getProduction().saveEx();
+//			}
+//			else {
+//				
+//			}
 			//FDialog.info(posPanel.getWindowNo(), posPanel.getForm(), "FASE FERMATA / TERMINATA");
 			Messagebox.showDialog("FASE FERMATA / TERMINATA", "", Messagebox.OK, Messagebox.INFORMATION, new Callback<Integer>() {					
 				@Override
@@ -887,11 +887,11 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 				}
 			});
 			if(chkCompleteOrder.isChecked()) {
-				MProduction productionforComplete = new MProduction(ctx, posPanel.getProduction().getM_Production_ID(), null);
-				productionforComplete.setIsComplete(true);
-				productionforComplete.saveEx();
+//				MProduction productionforComplete = new MProduction(ctx, posPanel.getProduction().getM_Production_ID(), null);
+//				productionforComplete.setIsComplete(true);
+//				productionforComplete.saveEx();
 			}
-			posPanel.resetProduction();
+		//	posPanel.resetProduction();
 			refreshPanel();
 			posPanel.refreshPanel();
 		}
@@ -960,68 +960,68 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 	public void refreshPanel() {
 		log.fine("RefreshPanel");
 		isStandardMaskMode = (posPanel.getM_POS().get_ValueAsString("LIT_maskMode").equals("S"));
-		if (!posPanel.hasProduction() && posPanel.getProduction()==null) {
-			//	Document Info
-			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Info"));
-			salesRep.setText(posPanel.getSalesRepName());
-			documentNo.setText(Msg.getMsg(posPanel.getCtx(), "New"));
-			documentStatus.setText("");
-			documentDate.setText("");
-			infoMInout.setText("");
-			
-			onlyProduction.setValue(null);          
-			//onlyResource.setValue(0);         
-			onlyDocType.setValue(null);          
-			onlyProduct.setValue(null);          
-			onlyWarehouse.setValue(null);        
-			onlyWorkflow.setValue(null);
-			onlyActivity.setValue(null);
-			execution.setVisible(false);
-//			if(!isStandardMaskMode) {
-				//buttonStart.setEnabled(true);
-				buttonStart.setDisabled(true);
-				buttonStop.setEnabled(true);
-				dateGo.setValue(null);
-				if(isStandardMaskMode)
-					dateGo.setEnabled(true);
-				else
-					dateGo.setEnabled(false);
-//			}
-//			else 
-//				buttonStart_Stop.setEnabled(true);
-			prodNode.setValue("");
-			qtyHour.setValue(0);
-			fieldQuantity.setValue(0);
-			
-			txtReference_1.setValue(null);
-			txtReference_2.setValue(null);
-			chkActivity.setChecked(false);
-			
-		} else {
-			//	Set Values
-			//	Document Info
-			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Info"));
-			salesRep.setText(posPanel.getSalesRepName());
-			documentNo.setText(posPanel.getDocumentNo());
-			documentStatus.setText(MRefList.getListName(Env.getCtx(), 131, posPanel.getProduction().getDocStatus()));
-			documentDate.setText(posPanel.getDateOrderedForView());
-			infoMInout.setText(posPanel.getDocumentNoMinOut());
-		}
+//		if (!posPanel.hasProduction() && posPanel.getProduction()==null) {
+//			//	Document Info
+//			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Info"));
+//			salesRep.setText(posPanel.getSalesRepName());
+//			documentNo.setText(Msg.getMsg(posPanel.getCtx(), "New"));
+//			documentStatus.setText("");
+//			documentDate.setText("");
+//			infoMInout.setText("");
+//			
+//			onlyProduction.setValue(null);          
+//			//onlyResource.setValue(0);         
+//			onlyDocType.setValue(null);          
+//			onlyProduct.setValue(null);          
+//			onlyWarehouse.setValue(null);        
+//			onlyWorkflow.setValue(null);
+//			onlyActivity.setValue(null);
+//			execution.setVisible(false);
+////			if(!isStandardMaskMode) {
+//				//buttonStart.setEnabled(true);
+//				buttonStart.setDisabled(true);
+//				buttonStop.setEnabled(true);
+//				dateGo.setValue(null);
+//				if(isStandardMaskMode)
+//					dateGo.setEnabled(true);
+//				else
+//					dateGo.setEnabled(false);
+////			}
+////			else 
+////				buttonStart_Stop.setEnabled(true);
+//			prodNode.setValue("");
+//			qtyHour.setValue(0);
+//			fieldQuantity.setValue(0);
+//			
+//			txtReference_1.setValue(null);
+//			txtReference_2.setValue(null);
+//			chkActivity.setChecked(false);
+//			
+//		} else {
+//			//	Set Values
+//			//	Document Info
+//			v_TitleBorder.setLabel(Msg.getMsg(Env.getCtx(), "Info"));
+//			salesRep.setText(posPanel.getSalesRepName());
+//			documentNo.setText(posPanel.getDocumentNo());
+//			documentStatus.setText(MRefList.getListName(Env.getCtx(), 131, posPanel.getProduction().getDocStatus()));
+//			documentDate.setText(posPanel.getDateOrderedForView());
+//			infoMInout.setText(posPanel.getDocumentNoMinOut());
+//		}
 		//	Repaint
 //		v_TotalsPanel.invalidate();
 //		v_OrderPanel.invalidate();
 //		v_GroupPanel.invalidate();
 	}
 
-	private MProductionWorkflow getWorkflowProduction(int mProduction_ID) {
-		MProductionWorkflow prodWF =  new Query(ctx, MProductionWorkflow.Table_Name, "M_Production_ID=?", null)
-				.setOnlyActiveRecords(true)
-				.setClient_ID()
-				.setParameters(mProduction_ID)
-				.first();
-		
-		return prodWF;
-	}
+//	private MProductionWorkflow getWorkflowProduction(int mProduction_ID) {
+//		MProductionWorkflow prodWF =  new Query(ctx, MProductionWorkflow.Table_Name, "M_Production_ID=?", null)
+//				.setOnlyActiveRecords(true)
+//				.setClient_ID()
+//				.setParameters(mProduction_ID)
+//				.first();
+//		
+//		return prodWF;
+//	}
 	
 	public void setQuantity(BigDecimal value) {
 		fieldQuantity.setValue(value);
@@ -1031,13 +1031,13 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 		int id_productionLine = 0;
 		//int m_production_id = ((Integer)onlyProduction.getValue());
 		int m_production_id = -1;
-		if(posPanel.getProduction()!=null && posPanel.getProduction().getM_Production_ID()>0) {
-			m_production_id = posPanel.getProduction().getM_Production_ID();
-			MProduction production = new MProduction(ctx, m_production_id, null);
-			id_productionLine = Arrays.asList(production.getLines()).stream()
-					.filter(ln -> ln.isEndProduct())
-					.findFirst().get().getM_ProductionLine_ID();
-		}
+//		if(posPanel.getProduction()!=null && posPanel.getProduction().getM_Production_ID()>0) {
+//			m_production_id = posPanel.getProduction().getM_Production_ID();
+//			MProduction production = new MProduction(ctx, m_production_id, null);
+//			id_productionLine = Arrays.asList(production.getLines()).stream()
+//					.filter(ln -> ln.isEndProduct())
+//					.findFirst().get().getM_ProductionLine_ID();
+//		}
 		return id_productionLine;
 	}
 	
@@ -1120,7 +1120,7 @@ public class WPOSDocumentPanel_Shopfl extends WPOSSubPanel_Shopfl implements POS
 	}
 	
 	public void setPrimaryFocus(){
-		onlyProduction.getComponent().getCombobox().focus();
+		onlyProduction.getComponent().getTextbox().focus();
 	}
 
 	private void onProva() {

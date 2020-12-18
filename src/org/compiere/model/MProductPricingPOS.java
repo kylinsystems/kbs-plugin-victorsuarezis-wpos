@@ -17,13 +17,12 @@ public class MProductPricingPOS extends MProductPricing {
 
 	public MProductPricingPOS(int M_Product_ID, int C_BPartner_ID,
 			BigDecimal Qty, boolean isSOTrx) {
-		super(M_Product_ID, C_BPartner_ID, Qty, isSOTrx);
-		// TODO Auto-generated constructor stub
+		super(M_Product_ID, C_BPartner_ID, Qty, isSOTrx, null);
 	}
 
 	public MProductPricingPOS(int productId, int partnerId,
 			   BigDecimal quantity, boolean isSOTrx, String trxName) {
-		super(productId, partnerId, quantity, isSOTrx);
+		super(productId, partnerId, quantity, isSOTrx, trxName);
 		this.productId = productId;
 		this.partnerId = partnerId;
 		this.trxName = trxName;

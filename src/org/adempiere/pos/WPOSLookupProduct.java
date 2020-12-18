@@ -43,7 +43,7 @@ import org.zkoss.zul.event.TreeDataListener;
  * @author Mario Calderon, mario.calderon@westfalia-it.com, Systemhaus Westfalia, http://www.westfalia-it.com
  * @author Raul Muñoz, rmunoz@erpcya.com, ERPCYA http://www.erpcya.com
  */
-public class WPOSLookupProduct extends AutoComplete implements EventListener {
+public class WPOSLookupProduct extends AutoComplete implements EventListener<Event> {
 
 	private static final long serialVersionUID = -2303830709901143774L;
     private POSLookupProductInterface lookupProductInterface = null;
@@ -238,7 +238,7 @@ public class WPOSLookupProduct extends AutoComplete implements EventListener {
         String[] searchValues = new String[line.size()];
         String[] searchDescription = new String[line.size()];
         // Issue 137
-        Iterator it = line.keySet().iterator();
+        Iterator<String> it = line.keySet().iterator();
         int i = 0;
         while(it.hasNext()){
           String key = (String)it.next();

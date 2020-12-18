@@ -24,7 +24,7 @@ import java.util.Vector;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.POSKeyListener;
 import org.adempiere.pos.WPOSLookupProduct;
-import org.adempiere.pos.WPOSTextField;
+//import org.adempiere.pos.WPOSTextField;
 import org.adempiere.pos.posmovement.search.WQueryDocType_Move;
 import org.adempiere.pos.posmovement.search.WQueryInventoryHistory;
 import org.adempiere.pos.posmovement.service.CPOS_Move;
@@ -279,7 +279,7 @@ public class WPOSActionPanel_Move extends WPOSSubPanel_Move
 		row.setSpans("12");
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) {
 //			lookupProduct = new WPOSLookupProduct(this, fieldProductName, new Long("1"));
-			lookupProduct = new WPOSLookupProduct(this, null, new Long("1"));
+			lookupProduct = new WPOSLookupProduct(this, null, 1);
 			lookupProduct.setWarehouseId(posPanel.getM_Warehouse_ID());
 			findProductTimer = new Timer(500); // , lookupProduct);
 			lookupProduct.setWidth("100%");

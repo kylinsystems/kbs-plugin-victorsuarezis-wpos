@@ -32,7 +32,7 @@ import java.net.Socket;
 import java.util.Random;
 
 import org.compiere.model.MSysConfig;
-import org.compiere.print.ReportCtlPOS;
+//import org.compiere.print.ReportCtlPOS;
 import org.compiere.util.CLogger;
 
 

@@ -45,8 +45,8 @@ import org.zkoss.zul.Center;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.North;
 
-import org.adempiere.pos.posshopfloor.WPOS_Shopfl;
-import org.adempiere.pos.service.POSQueryInterface;
+//import org.adempiere.pos.posshopfloor.WPOS_Shopfl;
+//import org.adempiere.pos.service.POSQueryInterface;
 
 /**
  * POS Query DocType

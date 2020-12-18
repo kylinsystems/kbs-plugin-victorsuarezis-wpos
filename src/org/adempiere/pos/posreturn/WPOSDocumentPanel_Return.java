@@ -128,7 +128,7 @@ public class WPOSDocumentPanel_Return extends WPOSSubPanel_Return implements POS
 		row = new Row();
 		rows.appendChild(row);
 		rows.setHeight("100%");
-		rows.setWidth("100%");
+		ZKUpdateUtil.setWidth(rows, "100%");
 		v_TotalsGroup = new Groupbox();
 		v_InfOrderGroup = new Groupbox();
 		v_InfOrderGroup.appendChild(v_ReturnPanel);
@@ -198,7 +198,7 @@ public class WPOSDocumentPanel_Return extends WPOSSubPanel_Return implements POS
 		
 		row = rows.newRow();
 		row.setHeight("20px");
-		row.setWidth("100%");
+		ZKUpdateUtil.setWidth(row, "100%");
 		Label f_lb_DocumentType = new Label (Msg.translate(Env.getCtx(), I_M_InOut.COLUMNNAME_C_DocType_ID) + ":");
 		f_lb_DocumentType.setStyle(WPOS_Return.FONTSIZEMEDIUM);
 		row.appendChild(f_lb_DocumentType);

@@ -17,6 +17,7 @@
 package org.adempiere.pos.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -33,11 +34,11 @@ import java.util.Vector;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.pos.AdempierePOSException;
 import org.adempiere.pos.command.CommandManager;
-import org.adempiere.pos.posproduction.WPOSInfoProduct_Produc;
-import org.adempiere.pos.util.POSTicketHandler;
+//import org.adempiere.pos.posproduction.WPOSInfoProduct_Produc;
+//import org.adempiere.pos.util.POSTicketHandler;
 import org.adempiere.webui.apps.WProcessCtl;
-import org.adempiere.webui.panel.action.ReportAction;
-import org.adempiere.webui.window.FDialog;
+//import org.adempiere.webui.panel.action.ReportAction;
+//import org.adempiere.webui.window.FDialog;
 import org.compiere.model.I_AD_User;
 import org.compiere.model.I_C_OrderLine;
 import org.compiere.model.MAllocationHdr;
@@ -55,7 +56,7 @@ import org.compiere.model.MLocator;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MOrderTax;
-import org.compiere.model.MPInstance;
+//import org.compiere.model.MPInstance;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MPayment;
 import org.compiere.model.MPaymentPOS;
@@ -80,7 +81,7 @@ import org.compiere.model.Query;
 import org.compiere.model.X_C_Order;
 import org.compiere.print.MPrintFormat;
 import org.compiere.print.ReportCtl;
-import org.compiere.print.ReportCtlPOS;
+//import org.compiere.print.ReportCtlPOS;
 import org.compiere.print.ReportEngine;
 import org.compiere.process.DocAction;
 import org.compiere.process.ProcessInfo;
@@ -822,6 +823,7 @@ public class CPOS {
 			currentOrder.setInvoiceRule(getInvoiceRule());
 		currentOrder.setC_POS_ID(entityPOS.getC_POS_ID());
 		currentOrder.setM_Warehouse_ID(entityPOS.getM_Warehouse_ID());
+		currentOrder.setDeliveryViaRule(MOrder.DELIVERYVIARULE_Delivery);
 		if (docTypeTargetId != 0) {
 			currentOrder.setC_DocTypeTarget_ID(docTypeTargetId);
 		} else {
@@ -2441,8 +2443,8 @@ public class CPOS {
 				String  productValue = resultSet.getString(2).trim();
 				String  productName = resultSet.getString(3).trim();
 				String  qtyAvailable = resultSet.getBigDecimal(4) != null ? resultSet.getBigDecimal(4).toString().trim() : "0";
-				String  priceStd = resultSet.getBigDecimal(5) != null ? resultSet.getBigDecimal(5).setScale(2, BigDecimal.ROUND_UP).toString().trim() :  "0";
-				String  priceList = resultSet.getBigDecimal(6) != null ? resultSet.getBigDecimal(6).setScale(2, BigDecimal.ROUND_UP).toString().trim() : "0 ";
+				String  priceStd = resultSet.getBigDecimal(5) != null ? resultSet.getBigDecimal(5).setScale(2, RoundingMode.HALF_UP).toString().trim() :  "0";
+				String  priceList = resultSet.getBigDecimal(6) != null ? resultSet.getBigDecimal(6).setScale(2, RoundingMode.HALF_UP).toString().trim() : "0 ";
 				columns.add(productId);
 				columns.add(productValue);
 				columns.add(productName);

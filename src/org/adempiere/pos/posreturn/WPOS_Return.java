@@ -70,7 +70,7 @@ import org.zkoss.zul.West;
 /**
  *	Point of Sales Main Window. 
  */
-public class WPOS_Return extends CPOS_Return implements IFormController, EventListener, POSPanelInterface, POSScalesPanelInterface {
+public class WPOS_Return extends CPOS_Return implements IFormController, EventListener<Event>, POSPanelInterface, POSScalesPanelInterface {
 
 	/** Window No 							*/
 	private int 							windowNo 	 = 0 ;
@@ -566,7 +566,7 @@ public class WPOS_Return extends CPOS_Return implements IFormController, EventLi
 	 * return User Pin Listener
 	 * @return
      */
-	public EventListener getUserPinListener()
+	public EventListener<Event> getUserPinListener()
 	{
 		return userPinListener;
 	}

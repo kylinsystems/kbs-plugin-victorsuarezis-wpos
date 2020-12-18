@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.adempiere.pos.WPOS;
 import org.adempiere.pos.WPOSTextField;
-import org.adempiere.pos.posmovement.WPOS_Move;
+//import org.adempiere.pos.posmovement.WPOS_Move;
 import org.adempiere.pos.posproduction.WPOS_Produc;
 import org.adempiere.pos.service.POSQueryInterface;
 import org.adempiere.webui.component.Grid;
@@ -36,7 +36,7 @@ import org.adempiere.webui.component.Rows;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.compiere.minigrid.ColumnInfo;
 import org.compiere.minigrid.IDColumn;
-import org.compiere.model.MOrder;
+//import org.compiere.model.MOrder;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;

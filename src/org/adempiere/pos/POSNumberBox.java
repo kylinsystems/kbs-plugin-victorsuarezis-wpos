@@ -31,6 +31,7 @@ import org.compiere.util.Env;
 import org.zkoss.zhtml.Table;
 import org.zkoss.zhtml.Td;
 import org.zkoss.zhtml.Tr;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Decimalbox;
@@ -479,7 +480,7 @@ public class POSNumberBox extends Div
 	}
 	
 	@Override
-	public boolean addEventListener(String evtnm, EventListener listener)
+	public boolean addEventListener(String evtnm, EventListener<? extends Event> listener)
 	{
 	     if(Events.ON_CLICK.equals(evtnm))
 	     {

@@ -33,8 +33,8 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Menuitem;
 import org.zkoss.zul.Menupopup;
-import org.adempiere.pos.service.POSQueryListener;
-import org.zkoss.zk.ui.event.EventListener;
+//import org.adempiere.pos.service.POSQueryListener;
+//import org.zkoss.zk.ui.event.EventListener;
 
 /**
  * Class that execute business logic from POS

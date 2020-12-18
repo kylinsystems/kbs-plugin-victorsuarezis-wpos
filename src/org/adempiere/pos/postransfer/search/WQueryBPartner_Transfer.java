@@ -20,7 +20,7 @@ import org.adempiere.model.MBPartnerInfoPOS;
 import org.adempiere.pos.WPOS;
 import org.adempiere.pos.WPOSKeyboard;
 import org.adempiere.pos.WPOSTextField;
-import org.adempiere.pos.grid.WPOSBPartner;
+//import org.adempiere.pos.grid.WPOSBPartner;
 import org.adempiere.pos.postransfer.WPOS_Transfer;
 import org.adempiere.pos.postransfer.grid.WPOSBPartner_Transfer;
 import org.adempiere.pos.service.POSQueryListener;
