@@ -125,12 +125,12 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		buttonDelete.addActionListener(this);
 		row.appendChild (buttonDelete);
 
+		buttonMinus = createButtonAction("Minus", "Ctrl+0");
+		row.appendChild(buttonMinus);
+		
 		buttonPlus = createButtonAction("Plus", "Ctrl+1");
 		buttonPlus.setTooltiptext("Ctrl+0-"+Msg.translate(ctx, "add"));
 		row.appendChild(buttonPlus);
-
-		buttonMinus = createButtonAction("Minus", "Ctrl+0");
-		row.appendChild(buttonMinus);
 
 		buttonUp = createButtonAction(ACTION_UP, "Alt+Up");
 		buttonUp.setTooltiptext("Alt+Up-"+Msg.translate(ctx, "Previous"));
@@ -151,9 +151,9 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		row.appendChild (buttonFilter);
 		
 		btnAddInfo = new Button("INFO");
-		btnAddInfo.setHeight("45px");
-		btnAddInfo.setWidth("55px");
-		btnAddInfo.setStyle("Font-size:1.0em; font-weight:bold");
+		btnAddInfo.setHeight("55px");
+		btnAddInfo.setWidth("90px");
+		btnAddInfo.setStyle("Font-size:2.0em; font-weight:bold");
 		btnAddInfo.addActionListener(this);
 		row.appendChild (btnAddInfo);
 
