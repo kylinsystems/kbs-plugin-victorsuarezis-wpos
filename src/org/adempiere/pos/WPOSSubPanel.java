@@ -62,9 +62,9 @@ public abstract class WPOSSubPanel extends Panel
 	
 
 	/** Button Width = 55			*/
-	private static final int	WIDTH = 45;	
+	private static final int	WIDTH = 75;	
 	/** Button Height = 55			*/
-	private static final int	HEIGHT = 45;
+	private static final int	HEIGHT = 75;
 	
 	/**
 	 * 	Initialize
