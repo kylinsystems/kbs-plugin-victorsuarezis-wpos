@@ -154,7 +154,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		bPartnerName.addEventListener(this);
 		
 		btnAddInfo = new Button(" INFO ");
-		btnAddInfo.setHeight("35px");
+		btnAddInfo.setHeight("55px");
 		btnAddInfo.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
 		btnAddInfo.addActionListener(this);
 		
@@ -169,7 +169,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		v_GroupPanel.setStyle("Overflow:hidden;");
 		v_OrderPanel.setStyle("Overflow:hidden;");
 		v_TotalsGroup.appendChild(v_TotalsPanel);
-		v_TotalsGroup.setWidth("85%");
+		v_TotalsGroup.setWidth("99%");
 		
 		v_TitleBorder = new Caption(Msg.getMsg(Env.getCtx(), "Totals"));
 		Style style = new Style();
@@ -201,7 +201,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		
 		Label f_lb_DocumentNo = new Label (Msg.translate(Env.getCtx(), I_C_Order.COLUMNNAME_DocumentNo) + ":");
 		f_lb_DocumentNo.setStyle(WPOS.FONTSIZEMEDIUM);
-		row.appendChild(f_lb_DocumentNo.rightAlign());
+		row.appendChild(f_lb_DocumentNo);
 		
 		documentNo = new Label();
 		documentNo.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
@@ -313,12 +313,8 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 					LocalDateTime dd = datePromised.toLocalDateTime().plusDays(1);
 					datePromised = Timestamp.valueOf(dd);
 					posPanel.getOrder().setDatePromised(datePromised);
-					
 					posPanel.getOrder().saveEx();
-					
 					posPanel.refreshHeader();
-					
-					
 				}
 				
 			}
@@ -329,34 +325,34 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		row.setHeight("10px");
 		
 		Label lNet = new Label (Msg.translate(Env.getCtx(), "SubTotal")+":");
-		lNet.setStyle(WPOS.FONTSIZEMEDIUM);
+		lNet.setStyle(WPOS.FONTSIZELARGE);
 		row.appendChild(lNet);
 		
 		totalLines = new Label(String.valueOf(DisplayType.Amount));
-		totalLines.setStyle(WPOS.FONTSIZEMEDIUM);
+		totalLines.setStyle(WPOS.FONTSIZELARGE);
 		row.appendChild(totalLines.rightAlign());
 		
 		totalLines.setText("0.00");
 		
 		row = rows.newRow();
-		row.setHeight("20px");
+		row.setHeight("10px");
 		
 		Label lTax = new Label (Msg.translate(Env.getCtx(), "C_Tax_ID")+":");
-		lTax.setStyle(WPOS.FONTSIZEMEDIUM);
+		lTax.setStyle(WPOS.FONTSIZELARGE);
 		row.appendChild(lTax);
 		taxAmount = new Label(String.valueOf(DisplayType.Amount));
-		taxAmount.setStyle(WPOS.FONTSIZEMEDIUM);
+		taxAmount.setStyle(WPOS.FONTSIZELARGE);
 		row.appendChild(taxAmount.rightAlign());
 		taxAmount.setText(Env.ZERO.toString());
 		
 		row = rows.newRow();
 		Label lTotal = new Label (Msg.translate(Env.getCtx(), "GrandTotal")+":");
-		lTotal.setStyle(WPOS.FONTSIZEMEDIUM);
+		lTotal.setStyle("Font-size:2.2em" + "; " + WPOS.FONTSTYLE);
 		row.appendChild(lTotal);
 		grandTotal = new Label(String.valueOf(DisplayType.Amount));
 		row.appendChild(grandTotal.rightAlign());
 		grandTotal.setText(Env.ZERO.toString());
-		grandTotal.setStyle("Font-size:1.9em;font-weight:bold");
+		grandTotal.setStyle("Font-size:2.5em;font-weight:bold");
 
 		// Center Panel
 		Grid layout = GridFactory.newGridLayout();

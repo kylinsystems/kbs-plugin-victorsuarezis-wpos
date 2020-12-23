@@ -251,7 +251,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		row.setHeight("55px");
 
 		fieldProductName = new Label(Msg.translate(Env.getCtx(), "M_Product_ID"));
-		ZKUpdateUtil.setWidth(fieldProductName,"98%");
+		ZKUpdateUtil.setWidth(fieldProductName,"100%");
 		ZKUpdateUtil.setHeight(fieldProductName,"35px");
 		
 		onlyProduct = createProduct(posPanel.getWindowNo());
@@ -266,7 +266,7 @@ public class WPOSActionPanel extends WPOSSubPanel
     	keyListener.addEventListener(Events.ON_CTRL_KEY, this);
     	keyListener.setAutoBlur(false);
     	
-		fieldProductName.setStyle("Font-size:medium; font-weight:bold");
+		fieldProductName.setStyle("Font-size:large; font-weight:bold");
 		fieldProductName.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
 		
 		onlyProduct.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
@@ -321,6 +321,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		});
 		
 		Label qtyLabel = new Label(Msg.translate(Env.getCtx(), "QtyOrdered"));
+		qtyLabel.setStyle("Font-size:medium");
 //		row.appendChild(qtyLabel);
 
 		//		fieldQuantity = new POSNumberBox(false);
@@ -330,12 +331,13 @@ public class WPOSActionPanel extends WPOSSubPanel
 		fieldQuantity.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
 		fieldQuantity.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
 		//		fieldQuantity.setStyle("display: inline;width:65px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldQuantity, "65px");
+		ZKUpdateUtil.setWidth(fieldQuantity, "85px");
 		ZKUpdateUtil.setHeight(fieldQuantity.getDecimalbox(),"30px");
 		ZKUpdateUtil.setHeight(fieldQuantity.getButton(),"30px");
 		fieldQuantity.getDecimalbox().setStyle("display: inline;Font-size:medium;");
 
 		Label priceLabel = new Label(Msg.translate(Env.getCtx(), "PriceActual"));
+		priceLabel.setStyle("Font-size:medium");
 //		row.appendChild(priceLabel);
 
 		//		fieldPrice = new POSNumberBox(false);
@@ -352,12 +354,13 @@ public class WPOSActionPanel extends WPOSSubPanel
 			fieldPrice.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
 		}
 		//		fieldPrice.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldPrice, "70px");
+		ZKUpdateUtil.setWidth(fieldPrice, "85px");
 		ZKUpdateUtil.setHeight(fieldPrice.getDecimalbox(),"30px");
 		ZKUpdateUtil.setHeight(fieldPrice.getButton(),"30px");
 		fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
 
 		Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
+		priceDiscount.setStyle("Font-size:medium");
 //		row.appendChild(priceDiscount);
 
 		//		fieldDiscountPercentage = new POSNumberBox(false);
@@ -371,7 +374,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			fieldDiscountPercentage.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
 		}
 		//		fieldDiscountPercentage.setStyle("display: inline;width:70px;height:30px;Font-size:medium;");
-		ZKUpdateUtil.setWidth(fieldDiscountPercentage, "70px");
+		ZKUpdateUtil.setWidth(fieldDiscountPercentage, "85px");
 		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getDecimalbox(),"30px");
 		ZKUpdateUtil.setHeight(fieldDiscountPercentage.getButton(),"30px");
 		fieldDiscountPercentage.getDecimalbox().setStyle("display: inline;Font-size:medium;");
@@ -410,7 +413,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 			row.appendCellChild(onlyProduct.getComponent(),3);
 //			onlyProduct.getComponent().setWidth("30%");
 //			fieldProductName.setWidth("40%");
-			row.appendCellChild(fieldProductName,3);
+			row.appendCellChild(fieldProductName,2);
 			row.appendCellChild(qtyLabel);
 			row.appendCellChild(fieldQuantity);
 			row.appendCellChild(priceLabel);

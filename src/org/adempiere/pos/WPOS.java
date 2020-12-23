@@ -122,7 +122,7 @@ public class WPOS extends CPOS implements IFormController, EventListener<Event>,
 	private List<MPOS> poss;
 
 	/** Default Font Size Medium 				*/
-	public static final String 	FONTSIZEMEDIUM	= "Font-size:1.3em;";
+	public static final String 	FONTSIZEMEDIUM	= "Font-size:1.5em;";
 	/** Default Font Size Small 				*/
 	public static final String 	FONTSIZESMALL 	= "Font-size:small;";
 	/** Default Font Size Large 				*/
@@ -205,6 +205,7 @@ public class WPOS extends CPOS implements IFormController, EventListener<Event>,
 		actionPanel = new WPOSActionPanel(this);
 		documentPanel = new WPOSDocumentPanel(this);
 		orderLinePanel = new WPOSOrderLinePanel(this, showPanelDescProduct());
+		
 		infoProductPanel = new WPOSInfoProduct(this);
 		East east = new East();
 		Center center = new Center();

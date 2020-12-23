@@ -97,8 +97,10 @@ public class WPOSOrderLinePanel extends WPOSSubPanel implements WTableModelListe
 		posTable.addEventListener(Events.ON_CLICK, this);
 		posTable.getModel().addTableModelListener(this);
 		posTable.setClass("Table-OrderLine");
-		posTable.setStyle("overflow-y: scroll; zoom:1.4;");
+		posTable.setStyle("overflow-y: scroll; zoom:1.5;");
 		posTable.setColumnReadOnly(POSOrderLineTableHandle.POSITION_QTYORDERED, true);
+		//posTable.setStyle("font-size:2.5em");
+		//posTable.setHeight("70px");
 		
 		List<ListHeader> lisss = posTable.getListHead().getChildren();
 		for (ListHeader listHeader : lisss) {
