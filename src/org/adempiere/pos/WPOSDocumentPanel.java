@@ -269,7 +269,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 					if(item != null && item.getValue()!=null){
 						Integer salesR_ID = (Integer)item.getValue();
 						posPanel.getOrder().setSalesRep_ID(salesR_ID);
-						posPanel.getOrder().saveEx();
+						posPanel.getOrder().save(null);
 						
 						posPanel.refreshHeader();
 					}

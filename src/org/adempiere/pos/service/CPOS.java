@@ -316,7 +316,8 @@ public class CPOS {
 		//	
 		return !isCompleted() 
 				&& !isVoided() 
-				&& X_C_Order.DOCSTATUS_Drafted.equals(currentOrder.getDocStatus());
+				&& (X_C_Order.DOCSTATUS_Drafted.equals(currentOrder.getDocStatus()) || 
+						isInProgress());
 	}
 	
 	/**
@@ -487,7 +488,12 @@ public class CPOS {
 			return false;
 		}
 		//	
-		return currentOrder.isDelivered();
+		MInOut[] ios = getOrder().getShipments();
+		boolean orderDelivered = false;
+		if(ios != null && ios.length > 0) 
+			orderDelivered = ios[0].getDocStatus().equalsIgnoreCase(MInOut.DOCSTATUS_Completed);
+		
+		return currentOrder.isDelivered() || orderDelivered;
 	}
 	
 	/**
