@@ -17,6 +17,7 @@
 
 package org.adempiere.pos;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -59,6 +60,7 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MLookupFactory;
 import org.compiere.model.MPOSKey;
 import org.compiere.model.MProduct;
+import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
@@ -306,16 +308,19 @@ public class WPOSActionPanel extends WPOSSubPanel
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-//					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
-//					MPOSKey key = new Query(ctx, MPOSKey.Table_Name, where, null)
-//							.setOnlyActiveRecords(true)
-//							.setClient_ID()
-//							.setParameters(prod_ID, posPanel.getC_POSKeyLayout_ID())
-//							.first();
-//					
-//					keyReturned(key);
-////					//((WSearchEditor)evt.getSource()).getComponent().focus();
-//					((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
+					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
+					MPOSKey key2 = new Query(ctx, MPOSKey.Table_Name, where, null)
+							.setOnlyActiveRecords(true)
+							.setClient_ID()
+							.setParameters(prod_ID, posPanel.getC_POSKeyLayout_ID())
+							.first();
+					if(key2 != null)
+						keyReturned(key2);
+					else {
+						addProduct(prod_ID);
+					}
+//					//((WSearchEditor)evt.getSource()).getComponent().focus();
+					((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
 				}
 			}
 		});
@@ -994,6 +999,9 @@ public class WPOSActionPanel extends WPOSSubPanel
 
 	@Override
 	public void keyReturned(MPOSKey key) {
+		
+		if(key == null)
+			return;
 
 		// processed order
 		if (posPanel.hasOrder()
@@ -1017,8 +1025,30 @@ public class WPOSActionPanel extends WPOSSubPanel
 		//	Show Product Info
 		posPanel.refreshProductInfo(key);
 		return;
+	}
 	
-
+	public void addProduct(int M_Product_ID) {
+		// processed order
+		if (posPanel.hasOrder()
+				&& posPanel.isCompleted()) {
+			//	Show Product Info
+			posPanel.refreshProductInfo(null);
+			return;
+		}
+		// Add line
+		try {
+      //  Issue 139
+			posPanel.setAddQty(true);
+			posPanel.addOrUpdateLine(M_Product_ID, BigDecimal.ONE, posPanel.getOrder().isSOTrx());
+			posPanel.refreshPanel();
+			posPanel.changeViewPanel();
+	//			posPanel.getMainFocus();
+		} catch (Exception exception) {
+			FDialog.error(posPanel.getWindowNo(), this, exception.getLocalizedMessage());
+		}
+		//	Show Product Info
+		posPanel.refreshProductInfo(null);
+		return;
 	}
 	
 	public void updateProductPlaceholder(String name)

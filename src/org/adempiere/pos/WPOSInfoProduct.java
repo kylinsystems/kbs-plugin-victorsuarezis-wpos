@@ -87,7 +87,7 @@ public class WPOSInfoProduct extends WPOSSubPanel {
 
 	@Override
 	public void onEvent(Event arg0) throws Exception {
-		
+		System.out.println("On Event Product");
 	}
 
 	@Override

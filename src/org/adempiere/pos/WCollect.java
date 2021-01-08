@@ -412,9 +412,8 @@ public class WCollect extends Collect implements WPOSKeyListener, EventListener<
 		try {
 			Trx.run(new TrxRunnable() {
 				public void run(String trxName) {
-					trxName = posPanel.get_TrxName();
-					if(posPanel.processOrder(trxName, isAllowsPartialPayment(), getBalance(posPanel.getOpenAmt()).doubleValue() <= 0)) {
-						processTenderTypes(trxName, posPanel.getOpenAmt());
+					if(posPanel.processOrder(null, isAllowsPartialPayment(), getBalance(posPanel.getOpenAmt()).doubleValue() <= 0)) {
+						processTenderTypes(posPanel.get_TrxName(), posPanel.getOpenAmt());
 						String error = getErrorMsg();
 						if(error != null && error.length() > 0)
 							throw new POSaveFailedException(Msg.parseTranslation(p_ctx, "@order.no@ " + posPanel.getDocumentNo() + ": "  + getErrorMsg()));
