@@ -45,7 +45,7 @@ public class MBPartnerInfoPOS extends MBPartnerInfo {
 	{
 		//iDempiereConsulting __12/07/2019 --- Controllo per eventuale utilizzo query con ricerca di SOLO BPartener con InterCompany.... (bp.ad_orgbp_id valorizzato)
 		if(sql==null)
-			sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y'");
+			sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y' AND IsCustomer = 'Y'");
 		StringBuffer sb = new StringBuffer();
 		value = getFindParameter (value);
 		if (value != null)
@@ -101,7 +101,8 @@ public class MBPartnerInfoPOS extends MBPartnerInfo {
 		}
 		if (sb.length() > 0)
 			sql.append(" AND (").append(sb).append(")");
-		sql.append(" ORDER BY Value ");
+		if(!sql.toString().contains("ORDER BY"))
+			sql.append(" ORDER BY Value ");
 		//
 		String finalSQL = MRole.getDefault().addAccessSQL(sql.toString(), 
 			"RV_BPartner", MRole.SQL_NOTQUALIFIED, MRole.SQL_RO);
