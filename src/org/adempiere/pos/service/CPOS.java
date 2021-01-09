@@ -1360,14 +1360,20 @@ public class CPOS {
 			if (currentOrder.getDocStatus().equalsIgnoreCase(MOrder.STATUS_Invalid)) 
 				currentOrder.setDocStatus(MOrder.STATUS_InProgress);
 			//	Set Document Action
-			currentOrder.setDocAction(DocAction.ACTION_Complete);
-			if (currentOrder.processIt(DocAction.ACTION_Complete)) {
-				currentOrder.saveEx();
-				orderCompleted = true;
-				setIsToPrint(true);
-			} else {
-				log.info( "Process Order FAILED " + currentOrder.getProcessMsg());
-				currentOrder.saveEx();
+			try {
+				currentOrder.setDocAction(DocAction.ACTION_Complete);
+				if (currentOrder.processIt(DocAction.ACTION_Complete)) {
+					currentOrder.saveEx();
+					orderCompleted = true;
+					setIsToPrint(true);
+				} else {
+					log.info( "Process Order FAILED " + currentOrder.getProcessMsg());
+					currentOrder.saveEx();
+					return orderCompleted;
+				}
+			} catch (Exception e) {
+				currentOrder.setProcessMessage(currentOrder.getProcessMsg() + " - " + e.getLocalizedMessage());
+				log.severe( "Process Order FAILED " + currentOrder.getProcessMsg());
 				return orderCompleted;
 			}
 		}
