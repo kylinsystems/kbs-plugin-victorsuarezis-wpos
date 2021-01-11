@@ -44,8 +44,8 @@ public class MBPartnerInfoPOS extends MBPartnerInfo {
 									   String value, String taxId, String name, String name2, String contact, String eMail, String phone, String city)
 	{
 		//iDempiereConsulting __12/07/2019 --- Controllo per eventuale utilizzo query con ricerca di SOLO BPartener con InterCompany.... (bp.ad_orgbp_id valorizzato)
-		if(sql==null)
-			sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y' AND IsCustomer = 'Y'");
+		//if(sql==null)
+		sql = new StringBuffer ("SELECT * FROM RV_BPartner WHERE IsActive='Y' AND IsCustomer = 'Y'");
 		StringBuffer sb = new StringBuffer();
 		value = getFindParameter (value);
 		if (value != null)
