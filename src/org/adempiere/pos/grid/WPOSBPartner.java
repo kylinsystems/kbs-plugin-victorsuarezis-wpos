@@ -16,6 +16,10 @@
  *****************************************************************************/
 package org.adempiere.pos.grid;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import org.adempiere.pos.WPOS;
@@ -25,6 +29,8 @@ import org.adempiere.pos.WPOSTextField;
 import org.adempiere.webui.apps.AEnv;
 import org.adempiere.webui.component.ConfirmPanel;
 import org.adempiere.webui.component.Label;
+import org.adempiere.webui.component.Listbox;
+import org.adempiere.webui.component.ListboxFactory;
 import org.adempiere.webui.component.Textbox;
 import org.adempiere.webui.component.VerticalBox;
 //import org.adempiere.webui.component.WTaxIdPopup;
@@ -51,6 +57,7 @@ import org.compiere.model.MWindow;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.compiere.util.KeyNamePair;
 import org.compiere.util.Msg;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -130,6 +137,8 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 	private boolean 			m_readOnly = false;
 
 	private boolean		 		isKeyboard;
+	private Listbox fTaxIDType = ListboxFactory.newDropdownListbox();
+	private WPOSTextField 		fTaxID = new WPOSTextField(null, null);
 	private WPOSTextField 		fValue = new WPOSTextField(null, null);
 	private WPOSTextField 		fName = new WPOSTextField(null, null);
 	private WPOSTextField 		fName2 = new WPOSTextField(null, null);
@@ -163,6 +172,8 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 		this.appendChild(confirmPanel);
 		
 		confirmPanel.addActionListener(Events.ON_CLICK, this);
+		
+		fTaxIDType.addActionListener(this);
 	}
 	
 	/**
@@ -170,6 +181,18 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 	 */
 	private void initBPartner()
 	{
+		//	Tax ID Type
+		ArrayList<KeyNamePair> taxIDTypeData = getTaxIDTypeData();
+		for(KeyNamePair pp : taxIDTypeData)
+			fTaxIDType.appendItem(pp.getName(), pp);
+		createLine (fTaxIDType, "LCO_TaxIdType_ID", true);
+		
+		//	Tax ID
+		fTaxID.addEventListener(this);
+		fTaxID.setWidth("97%");
+		fTaxID.setStyle(WPOS.FONTSIZESMALL);
+		createLine (fTaxID, "TaxID", true);
+		
 		//	Value
 		fValue.addEventListener(this);
 		fValue.setWidth("97%");
@@ -406,6 +429,10 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 		log.config("");
 
 		//	Check Mandatory fields
+		if (fTaxIDType.getSelectedItem() == null)
+		{
+			throw new WrongValueException(fTaxIDType, Msg.translate(Env.getCtx(), "FillMandatory"));
+		}
 		if (fName.getText().equals(""))
 		{
 			throw new WrongValueException(fName, Msg.translate(Env.getCtx(), "FillMandatory"));
@@ -422,6 +449,7 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 		{
 			int AD_Client_ID = Env.getAD_Client_ID(Env.getCtx());
 			partner = MBPartnerPOS.getTemplate(Env.getCtx(), AD_Client_ID, pos.getC_POS_ID());
+			partner.setC_BPartner_UU(null);
 			partner.setAD_Org_ID(Env.getAD_Org_ID(Env.getCtx())); // Elaine 2009/07/03
 			boolean isSOTrx = !"N".equals(Env.getContext(Env.getCtx(), m_WindowNo, "IsSOTrx"));
 			partner.setIsCustomer (isSOTrx);
@@ -438,7 +466,12 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 			value = DB.getDocumentNo (Env.getAD_Client_ID(Env.getCtx()), "C_BPartner", null);
 			fValue.setText(value);
 		}
-		
+		String taxID = fTaxID.getText();
+		if(taxID == null || taxID.length() == 0)
+			taxID = value;
+		KeyNamePair knp = fTaxIDType.getSelectedItem().getValue();
+		partner.set_ValueOfColumn("LCO_TaxIdType_ID", knp.getKey());
+		partner.setTaxID(fTaxID.getText());
 		partner.setValue(fValue.getText());
 		
 		partner.setName(fName.getText());
@@ -574,14 +607,50 @@ public class WPOSBPartner extends Window implements EventListener<Event>
 			 isKeyboard = false;
 		}
 		//	OK pressed
-		else if ((e.getTarget() == confirmPanel.getButton("Ok")) && actionSave())
-			this.detach();
+		else if ((e.getTarget() == confirmPanel.getButton("Ok")) && actionSave()) {
+			pos.configureBPartner(getC_BPartner_ID());
+//			//	Refresh
+			pos.refreshPanel();
+			dispose();
+		}
 		
 		//	Cancel pressed
 		else if (e.getTarget() == confirmPanel.getButton("Cancel"))
 			this.detach();
 	}
 
+	private ArrayList<KeyNamePair> getTaxIDTypeData() {
+		ArrayList<KeyNamePair> data = new ArrayList<KeyNamePair>();
+		String sql = null;
+		/**Document type**/
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			sql = MRole.getDefault().addAccessSQL(
+					"SELECT LCO_TaxIDType_ID, Name FROM LCO_TaxIdType WHERE AD_Client_ID = ?", "LCO_TaxIdType",
+				MRole.SQL_FULLYQUALIFIED, MRole.SQL_RO);
+			KeyNamePair tt = new KeyNamePair(0, "");
+			data.add(tt);
+			pstmt = DB.prepareStatement(sql, null);
+			pstmt.setInt(1, Env.getAD_Client_ID(Env.getCtx()));		//	Client
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				tt = new KeyNamePair(rs.getInt(1), rs.getString(2));
+				data.add(tt);
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, sql, e);
+		}
+		finally
+		{
+			DB.close(rs, pstmt);
+			rs = null;
+			pstmt = null;
+		}
+		return data;
+	}
 
 	
 }

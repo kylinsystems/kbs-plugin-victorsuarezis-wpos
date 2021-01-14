@@ -68,6 +68,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.zkforge.keylistener.Keylistener;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zul.Timer;
@@ -623,6 +624,12 @@ public class WPOSActionPanel extends WPOSSubPanel
             if (e.getTarget().equals(buttonHistory)) {
                 openHistory();
             }
+            if(e.getName().equals(Events.ON_OK)) {
+            	System.out.println("ON OK");
+            } 
+            if(e.getName().equals(Events.ON_CHANGE)) {
+            	System.out.println("ON CHANGE");
+            }
             posPanel.refreshPanel();
         } catch (Exception exception) {
             FDialog.error(posPanel.getWindowNo(), exception.getLocalizedMessage());
@@ -644,9 +651,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 //				query,
 //				0,
 //				true);
-		InfoWindow infoProduct = (InfoWindow)InfoManager.create(0, "M_Product", "M_Product_ID", query, false, "", true);
+		InfoWindow infoProduct = (InfoWindow)InfoManager.create(0, "M_Product", "M_Product_ID", query, true, "", true);
 		
 		AEnv.showWindow(infoProduct);
+		infoProduct.addEventListener(Events.ON_OK, posPanel.getQuantityPanel());
+		infoProduct.addEventListener(Events.ON_CHANGE, posPanel.getQuantityPanel());
+		infoProduct.addEventListener(Events.ON_OK, this);
+		infoProduct.addEventListener(Events.ON_CHANGE, this);
+		
 		Object[] result = infoProduct.getSelectedKeys();
 		if(result == null)
 			return;
