@@ -148,6 +148,7 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		}
 		buttonFilter = createButtonAction("Filter", null);
 		buttonFilter.setTooltiptext(Msg.translate(ctx, "Filter"));
+		buttonFilter.setVisible(false);
 		row.appendChild (buttonFilter);
 		
 		btnAddInfo = new Button("INFO");
@@ -155,6 +156,7 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		btnAddInfo.setWidth("90px");
 		btnAddInfo.setStyle("Font-size:2.0em; font-weight:bold");
 		btnAddInfo.addActionListener(this);
+		btnAddInfo.setVisible(false);
 		row.appendChild (btnAddInfo);
 
 		//iDempiereConsulting __07/03/2019 --- Campi spostati su pannello superiore: WPOSActionPanel.java

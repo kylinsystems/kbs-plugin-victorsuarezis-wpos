@@ -156,6 +156,7 @@ public class WPOSDocumentPanel extends WPOSSubPanel implements POSKeyListener, P
 		btnAddInfo = new Button(" INFO ");
 		btnAddInfo.setHeight("55px");
 		btnAddInfo.setStyle(WPOS.FONTSIZEMEDIUM+"; font-weight:bold");
+		btnAddInfo.setVisible(false);
 		btnAddInfo.addActionListener(this);
 		
 		row = rows.newRow();

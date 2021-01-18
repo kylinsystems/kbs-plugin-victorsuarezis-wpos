@@ -208,14 +208,16 @@ public class WPOSActionPanel extends WPOSSubPanel
 		buttonProduct = createButtonAction(ACTION_PRODUCT, "Alt+I");
 		buttonProduct.addActionListener(this);
 		buttonProduct.setTooltiptext("Alt+I-"+Msg.translate(ctx, "InfoProduct"));
+		buttonProduct.setVisible(false);
 		row.appendChild(buttonProduct);
 		// BPartner Search
 		buttonBPartner = createButtonAction(ACTION_BPARTNER, "Alt+B");
 		buttonBPartner.addActionListener(this);
 		buttonBPartner.setTooltiptext("Alt+B-"+Msg.translate(ctx, "IsCustomer"));
 		row.appendChild(buttonBPartner);
-		
+		// PROCESS
 		buttonProcess = createButtonAction(ACTION_PROCESS, "Alt+P");
+		buttonProcess.setVisible(false);
 		buttonProcess.addActionListener(this);
 		buttonProcess.setTooltiptext("ALT+P-"+Msg.translate(ctx, "Process"));
 		
@@ -270,7 +272,7 @@ public class WPOSActionPanel extends WPOSSubPanel
     	keyListener.setAutoBlur(false);
     	
 		fieldProductName.setStyle("Font-size:large; font-weight:bold");
-		fieldProductName.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
+		//fieldProductName.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
 		
 		onlyProduct.getComponent().getTextbox().setStyle("Font-size:medium; font-weight:bold");
 //		onlyProduct.setValue(Msg.translate(Env.getCtx(), "M_Product_ID"));
@@ -366,6 +368,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		fieldPrice.getDecimalbox().setStyle("display: inline;Font-size:medium;");
 
 		Label priceDiscount = new Label(Msg.translate(Env.getCtx(), "Discount"));
+		priceDiscount.setVisible(false);
 		priceDiscount.setStyle("Font-size:medium");
 //		row.appendChild(priceDiscount);
 
@@ -373,6 +376,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 		fieldDiscountPercentage = new NumberBox(false);
 //		row.appendChild(fieldDiscountPercentage);
 		fieldDiscountPercentage.setTooltiptext(Msg.translate(Env.getCtx(), "Discount"));
+		fieldDiscountPercentage.setVisible(false);
 		if (!posPanel.isModifyPrice())
 			fieldDiscountPercentage.setEnabled(false);
 		else{
@@ -434,6 +438,10 @@ public class WPOSActionPanel extends WPOSSubPanel
 //		//	List Orders
 		posPanel.listOrder();
 		getMainFocus();
+	}
+
+	public WSearchEditor getOnlyProduct() {
+		return this.onlyProduct;
 	}
 
 	/** 
@@ -575,8 +583,8 @@ public class WPOSActionPanel extends WPOSSubPanel
             }
             else if(e.getTarget().equals(buttonProcess)){
                 if(posPanel.isUserPinValid()) {
-//                    actionProcessMenu.getPopUp().setPage(this.getPage());
-//                    actionProcessMenu.getPopUp().open(buttonProcess);
+                    actionProcessMenu.getPopUp().setPage(this.getPage());
+                    actionProcessMenu.getPopUp().open(buttonProcess);
                 	
         			ProcessButtonPopup popup = new ProcessButtonPopup();
         			popup.setWidgetAttribute(AdempiereWebUI.WIDGET_INSTANCE_NAME, "processButtonPopup");
@@ -623,12 +631,6 @@ public class WPOSActionPanel extends WPOSSubPanel
             //	History
             if (e.getTarget().equals(buttonHistory)) {
                 openHistory();
-            }
-            if(e.getName().equals(Events.ON_OK)) {
-            	System.out.println("ON OK");
-            } 
-            if(e.getName().equals(Events.ON_CHANGE)) {
-            	System.out.println("ON CHANGE");
             }
             posPanel.refreshPanel();
         } catch (Exception exception) {
@@ -1114,4 +1116,5 @@ public class WPOSActionPanel extends WPOSSubPanel
 	public void setFieldProductName(String nameProd) {
 		fieldProductName.setText(nameProd);
 	}
+	
 }//	WPOSActionPanel
