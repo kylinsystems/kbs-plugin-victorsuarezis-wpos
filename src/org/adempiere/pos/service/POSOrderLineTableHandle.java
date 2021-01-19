@@ -60,6 +60,8 @@ public class POSOrderLineTableHandle {
 	public static final String 	TAX 		= "C_Tax_ID";
 	public static final String 	DISCOUNT 	= "Discount";
 	public static final String 	LINENETAMT  = "LineNetAmt";
+	public static final String  TOTALLINES = "TotalLines";
+	public static final String  TOTALLINE = "TotalLine";
 	public static final String 	GRANDTOTAL  = "GrandTotal";
 	
 	/**	Columns Quantity	*/
@@ -72,6 +74,7 @@ public class POSOrderLineTableHandle {
 	public static final int	POSITION_PRICE 			= 4;
 	public static final int	POSITION_DISCOUNT 		= 5;
 	public static final int	POSITION_LINENETAMT 	= 6;
+	public static final int	POSITION_TOTALLINE 		= 7;
 	public static final int	POSITION_GRANDTOTAL 	= 8;
 	
 	/**	Table Column Layout Info	*/
@@ -85,7 +88,7 @@ public class POSOrderLineTableHandle {
 		new ColumnInfo(Msg.translate(Env.getCtx(), DISCOUNT), DISCOUNT, BigDecimal.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), "SubTotal"), LINENETAMT, BigDecimal.class),
 		new ColumnInfo(Msg.translate(Env.getCtx(), TAX), "TaxIndicator", String.class),
-		new ColumnInfo(Msg.translate(Env.getCtx(), "Total"), GRANDTOTAL, BigDecimal.class),
+		new ColumnInfo(Msg.translate(Env.getCtx(), TOTALLINE), TOTALLINE, BigDecimal.class),
 	};
 	
 	/**	From Clause					*/
