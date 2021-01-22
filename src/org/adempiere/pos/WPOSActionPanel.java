@@ -309,6 +309,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						evtChangeStop = false;
 					}
 					String where = "M_Product_ID=? AND C_POSKeyLayout_ID=?";
 					MPOSKey key2 = new Query(ctx, MPOSKey.Table_Name, where, null)
@@ -323,6 +324,7 @@ public class WPOSActionPanel extends WPOSSubPanel
 					}
 //					//((WSearchEditor)evt.getSource()).getComponent().focus();
 					((WSearchEditor)evt.getSource()).getComponent().getTextbox().focus();
+					evtChangeStop = false;
 				}
 			}
 		});
@@ -418,6 +420,8 @@ public class WPOSActionPanel extends WPOSSubPanel
 	        row.appendChild(onlyProduct.getComponent());
 	        onlyProduct.setVisible(false);
 			onlyProduct.getComponent().setWidth("0%");
+			onlyProduct.setValue(null);
+			onlyProduct.getComponent().setText(null);
 		} else {
 			row.appendCellChild(onlyProduct.getComponent(),3);
 //			onlyProduct.getComponent().setWidth("30%");
@@ -429,7 +433,10 @@ public class WPOSActionPanel extends WPOSSubPanel
 			row.appendCellChild(fieldPrice);
 			row.appendCellChild(priceDiscount);
 			row.appendCellChild(fieldDiscountPercentage);
-
+			if(onlyProduct != null) {
+				onlyProduct.setValue(null);
+				onlyProduct.getComponent().setText(null);
+			}
 		}
 		enableButton();
 		actionProcessMenu = new WPOSActionMenu(posPanel);
@@ -1046,6 +1053,10 @@ public class WPOSActionPanel extends WPOSSubPanel
 				&& posPanel.isCompleted()) {
 			//	Show Product Info
 			posPanel.refreshProductInfo(null);
+			if(onlyProduct != null) {
+				onlyProduct.setValue(null);
+				onlyProduct.getComponent().setText(null);
+			}
 			return;
 		}
 		// Add line
@@ -1058,6 +1069,14 @@ public class WPOSActionPanel extends WPOSSubPanel
 	//			posPanel.getMainFocus();
 		} catch (Exception exception) {
 			FDialog.error(posPanel.getWindowNo(), this, exception.getLocalizedMessage());
+			if(onlyProduct != null) {
+				onlyProduct.setValue(null);
+				onlyProduct.getComponent().setText(null);
+			}
+		}
+		if(onlyProduct != null) {
+			onlyProduct.setValue(null);
+			onlyProduct.getComponent().setText(null);
 		}
 		//	Show Product Info
 		posPanel.refreshProductInfo(null);
@@ -1068,8 +1087,8 @@ public class WPOSActionPanel extends WPOSSubPanel
 	{
 		if (posPanel.isEnableProductLookup() && !posPanel.isVirtualKeyboard()) 
 			lookupProduct.setText(name);
-//		else
-//			fieldProductName.setText(name);
+		else
+			fieldProductName.setText(name);
 	}
 	
 	/**
