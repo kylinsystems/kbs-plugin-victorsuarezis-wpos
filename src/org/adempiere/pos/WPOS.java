@@ -18,6 +18,7 @@
 package org.adempiere.pos;
 
 import java.awt.KeyboardFocusManager;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.adempiere.webui.panel.StatusBarPanel;
 import org.adempiere.webui.util.ZKUpdateUtil;
 import org.adempiere.webui.window.FDialog;
 import org.idempiere.model.MPOS;
+import org.compiere.Adempiere;
 import org.compiere.model.MPOSKey;
 import org.compiere.util.CLogger;
 import org.compiere.util.Env;
@@ -135,6 +137,8 @@ public class WPOS extends CPOS implements IFormController, EventListener<Event>,
 	private static SideServer 				sideServer;
 	
 	private static final String TYPE_POS = "POS";
+	
+	public static final String PATH_ICONS = Adempiere.getAdempiereHome() + File.separator + "WPOS_ICONS" + File.separator;
 	
 	/**
 	 * 	Constructor - see init 

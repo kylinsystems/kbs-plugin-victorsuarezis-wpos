@@ -17,6 +17,7 @@
 
 package org.adempiere.pos;
 
+import java.io.File;
 import java.util.Properties;
 
 import org.adempiere.webui.LayoutUtils;
@@ -93,6 +94,34 @@ public abstract class WPOSSubPanel extends Panel
     		LayoutUtils.addSclass("font-icon-toolbar-button", button);
     	} else {
     		button.setImage(ThemeManager.getThemeResource("images/"+action+"24.png"));
+    	}
+		button.setTooltiptext(accelerator+"-"+Msg.translate(ctx, action));
+		button.setWidth(WIDTH+"px");
+		button.setHeight(HEIGHT+"px");
+		button.addActionListener(this);
+		if(action != null || accelerator != null)
+			posPanel.addStatusBarInfo("("+action + accelerator + ") ");
+		return button;
+	}	//	getButtonAction
+	
+	/**
+	 * 	Create Action Button
+	 *	@param action action
+	 *	@param icon Path of Icon 
+	 *	@return button
+	 */
+	protected Button createButtonAction (String action, String accelerator, String iconPath) {
+		File path = new File(iconPath);
+		if(!path.exists()) {
+			return createButtonAction(action, accelerator);
+		}
+		Button button = new Button();
+		if (ThemeManager.isUseFontIconForImage()) {
+    		String iconSclass = "z-icon-" + action;
+    		button.setIconSclass(iconSclass);
+    		LayoutUtils.addSclass("font-icon-toolbar-button", button);
+    	} else {
+    		button.setImage(iconPath+action+"24.png");
     	}
 		button.setTooltiptext(accelerator+"-"+Msg.translate(ctx, action));
 		button.setWidth(WIDTH+"px");
