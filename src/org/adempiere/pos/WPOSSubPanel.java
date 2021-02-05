@@ -17,8 +17,12 @@
 
 package org.adempiere.pos;
 
-import java.io.File;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Properties;
+
+import javax.imageio.ImageIO;
 
 import org.adempiere.webui.LayoutUtils;
 import org.adempiere.webui.component.Button;
@@ -111,17 +115,28 @@ public abstract class WPOSSubPanel extends Panel
 	 *	@return button
 	 */
 	protected Button createButtonAction (String action, String accelerator, String iconPath) {
-		File path = new File(iconPath);
-		if(!path.exists()) {
-			return createButtonAction(action, accelerator);
+		BufferedImage bffImg = new BufferedImage(24, 24, BufferedImage.TYPE_INT_RGB);
+		try {
+			bffImg = ImageIO.read(getClass().getResource(iconPath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		if(bffImg == null)
+			return createButtonAction(action, accelerator);
 		Button button = new Button();
+		String icon = iconPath;
 		if (ThemeManager.isUseFontIconForImage()) {
     		String iconSclass = "z-icon-" + action;
     		button.setIconSclass(iconSclass);
     		LayoutUtils.addSclass("font-icon-toolbar-button", button);
     	} else {
-    		button.setImage(iconPath+action+"24.png");
+			try {
+				button.setImage(getClass().getResource(iconPath).toURI().toString());
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
 		button.setTooltiptext(accelerator+"-"+Msg.translate(ctx, action));
 		button.setWidth(WIDTH+"px");

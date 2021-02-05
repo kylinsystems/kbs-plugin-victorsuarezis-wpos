@@ -125,10 +125,10 @@ public class WPOSQuantityPanel extends WPOSSubPanel implements POSPanelInterface
 		buttonDelete.addActionListener(this);
 		row.appendChild (buttonDelete);
 
-		buttonMinus = createButtonAction("Minus", "Ctrl+0", WPOS.PATH_ICONS);
+		buttonMinus = createButtonAction("Minus", "Ctrl+0");
 		row.appendChild(buttonMinus);
 		
-		buttonPlus = createButtonAction("Plus", "Ctrl+1", WPOS.PATH_ICONS);
+		buttonPlus = createButtonAction("Plus", "Ctrl+1");
 		buttonPlus.setTooltiptext("Ctrl+0-"+Msg.translate(ctx, "add"));
 		row.appendChild(buttonPlus);
 
